@@ -10,6 +10,7 @@
 
 import { Route as rootRouteImport } from './routes/__root'
 import { Route as VagasRouteImport } from './routes/vagas'
+import { Route as SitemapDotxmlRouteImport } from './routes/sitemap[.]xml'
 import { Route as ServicosRouteImport } from './routes/servicos'
 import { Route as ImoveisRouteImport } from './routes/imoveis'
 import { Route as FreelancesRouteImport } from './routes/freelances'
@@ -19,6 +20,11 @@ import { Route as IndexRouteImport } from './routes/index'
 const VagasRoute = VagasRouteImport.update({
   id: '/vagas',
   path: '/vagas',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const SitemapDotxmlRoute = SitemapDotxmlRouteImport.update({
+  id: '/sitemap.xml',
+  path: '/sitemap.xml',
   getParentRoute: () => rootRouteImport,
 } as any)
 const ServicosRoute = ServicosRouteImport.update({
@@ -53,6 +59,7 @@ export interface FileRoutesByFullPath {
   '/freelances': typeof FreelancesRoute
   '/imoveis': typeof ImoveisRoute
   '/servicos': typeof ServicosRoute
+  '/sitemap.xml': typeof SitemapDotxmlRoute
   '/vagas': typeof VagasRoute
 }
 export interface FileRoutesByTo {
@@ -61,6 +68,7 @@ export interface FileRoutesByTo {
   '/freelances': typeof FreelancesRoute
   '/imoveis': typeof ImoveisRoute
   '/servicos': typeof ServicosRoute
+  '/sitemap.xml': typeof SitemapDotxmlRoute
   '/vagas': typeof VagasRoute
 }
 export interface FileRoutesById {
@@ -70,6 +78,7 @@ export interface FileRoutesById {
   '/freelances': typeof FreelancesRoute
   '/imoveis': typeof ImoveisRoute
   '/servicos': typeof ServicosRoute
+  '/sitemap.xml': typeof SitemapDotxmlRoute
   '/vagas': typeof VagasRoute
 }
 export interface FileRouteTypes {
@@ -80,9 +89,17 @@ export interface FileRouteTypes {
     | '/freelances'
     | '/imoveis'
     | '/servicos'
+    | '/sitemap.xml'
     | '/vagas'
   fileRoutesByTo: FileRoutesByTo
-  to: '/' | '/comercios' | '/freelances' | '/imoveis' | '/servicos' | '/vagas'
+  to:
+    | '/'
+    | '/comercios'
+    | '/freelances'
+    | '/imoveis'
+    | '/servicos'
+    | '/sitemap.xml'
+    | '/vagas'
   id:
     | '__root__'
     | '/'
@@ -90,6 +107,7 @@ export interface FileRouteTypes {
     | '/freelances'
     | '/imoveis'
     | '/servicos'
+    | '/sitemap.xml'
     | '/vagas'
   fileRoutesById: FileRoutesById
 }
@@ -99,6 +117,7 @@ export interface RootRouteChildren {
   FreelancesRoute: typeof FreelancesRoute
   ImoveisRoute: typeof ImoveisRoute
   ServicosRoute: typeof ServicosRoute
+  SitemapDotxmlRoute: typeof SitemapDotxmlRoute
   VagasRoute: typeof VagasRoute
 }
 
@@ -109,6 +128,13 @@ declare module '@tanstack/react-router' {
       path: '/vagas'
       fullPath: '/vagas'
       preLoaderRoute: typeof VagasRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/sitemap.xml': {
+      id: '/sitemap.xml'
+      path: '/sitemap.xml'
+      fullPath: '/sitemap.xml'
+      preLoaderRoute: typeof SitemapDotxmlRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/servicos': {
@@ -155,6 +181,7 @@ const rootRouteChildren: RootRouteChildren = {
   FreelancesRoute: FreelancesRoute,
   ImoveisRoute: ImoveisRoute,
   ServicosRoute: ServicosRoute,
+  SitemapDotxmlRoute: SitemapDotxmlRoute,
   VagasRoute: VagasRoute,
 }
 export const routeTree = rootRouteImport
