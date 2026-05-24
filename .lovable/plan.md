@@ -1,43 +1,81 @@
 ## Objetivo
-Deixar o teiyaa totalmente responsivo e confortável de usar em telas pequenas (≤390px), sem alterar funcionalidades.
+Criar uma estrutura geográfica hierárquica (Estado → Cidade → Bairro/Comunidade) onde cada anúncio (comércio, serviço, imóvel, freelance, vaga) pertence a UMA comunidade. O usuário escolhe uma comunidade como "casa" e vê o feed dela por padrão, mas pode expandir o escopo para Cidade ou Estado.
 
-## Problemas observados no mobile
-- Header com nav desktop oculto mas sem menu hambúrguer — usuário não consegue navegar.
-- Hero com `text-5xl` + paddings grandes, busca em linha (input + botão) estoura largura.
-- Quick Actions em `grid-cols-2` deixam "Bicos" sozinho; cartões com padding grande.
-- Feed em coluna única funciona, mas títulos `text-3xl`/`text-2xl` e paddings precisam encolher.
-- Footer usa `grid md:grid-cols-2` ok, mas stats em flex podem quebrar; CTA com paddings grandes.
-- CategoryPage com `text-6xl` no h1 estoura no mobile.
-- Falta `<meta viewport>` confirmado no `__root.tsx` (verificar) e tap targets ≥44px.
+Começamos com **Paraisópolis (SP/SP)** como única comunidade ativa, mas a estrutura já suporta adicionar Heliópolis, Jardim São Luís, Capão Redondo, etc., sem refatorar.
 
-## Mudanças por arquivo
+## Modelo de dados (Lovable Cloud / Postgres)
 
-**src/components/SiteHeader.tsx**
-- Adicionar botão hambúrguer (lucide `Menu`/`X`) visível em `md:hidden`.
-- Usar Sheet (já disponível) para drawer com os links de navegação no mobile.
-- Reduzir altura do header para `h-16 md:h-20` e logo `text-2xl md:text-3xl`.
+```text
+states (estados)
+ └─ cities (cidades)
+     └─ communities (bairros/comunidades) ← unidade central do feed
+         └─ listings (anúncios de qualquer tipo)
+```
 
-**src/routes/index.tsx**
-- Hero: `py-12 md:py-20`, `px-4 md:px-6`, h1 `text-4xl md:text-6xl`, parágrafo `text-base md:text-xl`.
-- Formulário de busca: empilhar no mobile (`flex-col md:flex-row`), botão full-width.
-- Quick Actions: `grid-cols-3 md:grid-cols-5` (5 itens cabem melhor 3+2), padding `p-4 md:p-6`, ícone `size-10 md:size-12`, label `text-xs md:text-base`.
-- Feed: títulos `text-2xl md:text-3xl`, cards com `p-4 md:p-6`, tamanhos de texto reduzidos no mobile, gap `gap-5 md:gap-8`.
-- Header das ações (Recentes/Perto de mim): garantir wrap suave.
+**Tabelas:**
 
-**src/components/CategoryPage.tsx**
-- h1 `text-3xl md:text-6xl`, paddings `px-4 md:px-6 pt-12 md:pt-20`.
-- Card interno `p-6 md:p-12`, grid bullets `grid-cols-1 md:grid-cols-2`.
-- Botões CTA com `w-full sm:w-auto`.
+- `states` — id, code (ex: "SP"), name ("São Paulo"), slug ("sp")
+- `cities` — id, state_id (FK), name, slug ("sao-paulo"), unique(state_id, slug)
+- `communities` — id, city_id (FK), name ("Paraisópolis"), slug ("paraisopolis"), description, cover_image_url, is_active (bool — só ativas aparecem), unique(city_id, slug)
+- `listings` — id, community_id (FK, **obrigatório**), category (enum: 'comercio' | 'servico' | 'imovel' | 'freelance' | 'vaga'), subcategory (texto livre por enquanto: "açougue", "barbearia", "eletricista"...), title, description, price_cents (nullable), contact_whatsapp, contact_phone, images (jsonb array de URLs), owner_id (FK auth.users), status ('active'|'paused'|'archived'), created_at, updated_at
 
-**src/components/SiteFooter.tsx**
-- `py-12 md:py-16`, `px-4 md:px-6`, h2 `text-2xl md:text-4xl`.
-- Stats: `flex-wrap gap-3` e cards `flex-1 min-w-[110px]`.
-- Form CTA padding reduzido no mobile.
-- Rodapé inferior: já é `flex-col md:flex-row`, confirmar.
+**Por que `community_id` obrigatório em `listings`:** garante que TODO anúncio pertença a uma comunidade. Filtrar por cidade ou estado é só JOIN subindo a hierarquia. Sem dados órfãos, sem ambiguidade.
 
-**src/routes/__root.tsx**
-- Confirmar meta viewport `width=device-width, initial-scale=1` (adicionar se faltando).
+**Índices:** `listings(community_id, category, status, created_at desc)` — cobre o caso de uso principal (feed de uma comunidade filtrado por categoria, mais recentes primeiro).
 
-## Fora de escopo
-- Backend, Lovable Cloud, novas funcionalidades, mudança de design/cores.
-- Apenas ajustes responsivos com Tailwind nos componentes/rotas existentes.
+**RLS:**
+- `states`, `cities`, `communities`: SELECT público (qualquer um lê).
+- `listings`: SELECT público de `status='active'`. INSERT/UPDATE/DELETE só pelo `owner_id` autenticado.
+
+## Escopo de visualização (micro → macro)
+
+URL é a fonte de verdade — ótimo para SEO e compartilhamento:
+
+```text
+/c/paraisopolis                       → feed da comunidade (micro, padrão)
+/c/paraisopolis/comercios             → categoria dentro da comunidade
+/cidade/sao-paulo                     → feed agregado da cidade (macro)
+/cidade/sao-paulo/comercios           → categoria por cidade
+/estado/sp                            → feed do estado inteiro
+/estado/sp/comercios                  → categoria por estado
+```
+
+Um seletor de escopo no topo (chips: "Paraisópolis" • "São Paulo (cidade)" • "São Paulo (estado)") troca a URL. A comunidade escolhida fica salva em `localStorage` como "casa" do usuário e vira o destino padrão de `/`.
+
+## Páginas e mudanças no app
+
+**Novas rotas:**
+- `src/routes/c.$communitySlug.tsx` — feed da comunidade + filtro por categoria via search param `?cat=comercios`
+- `src/routes/c.$communitySlug.$category.tsx` — atalho SEO para categoria
+- `src/routes/cidade.$citySlug.tsx` — feed agregado da cidade
+- `src/routes/estado.$stateSlug.tsx` — feed agregado do estado
+- `src/routes/anunciar.tsx` — formulário de criar anúncio (exige login; pré-seleciona comunidade do usuário)
+
+**Rotas existentes que mudam:**
+- `/` (index): se o usuário já escolheu uma comunidade, redireciona para `/c/{slug}`. Senão, mostra um onboarding curto: "Escolha sua comunidade" (lista comunidades ativas; hoje só Paraisópolis).
+- `/comercios`, `/servicos`, `/imoveis`, `/freelances`, `/vagas`: viram redirects para `/c/{comunidadeAtual}/{categoria}` (mantém os links antigos funcionando).
+
+**Componentes novos:**
+- `CommunityScopeSwitcher` — chips para alternar entre Comunidade / Cidade / Estado
+- `ListingCard` — card unificado de anúncio (usado em todos os feeds)
+- `ListingsFeed` — lista paginada com filtro por categoria
+- `useCurrentCommunity()` — hook que lê o slug da URL ou do localStorage
+
+## Seed inicial
+
+Migration semeia:
+- 1 estado: São Paulo (SP)
+- 1 cidade: São Paulo
+- 1 comunidade ativa: Paraisópolis
+- 4 comunidades **inativas** já cadastradas (Heliópolis, Jardim São Luís, Capão Redondo, Brasilândia) — aparecem em "Em breve" para validar demanda
+
+## Fora de escopo (próximos passos, não agora)
+- Autenticação real (login/cadastro) — virá quando ativarmos Lovable Cloud no próximo passo
+- Upload de imagens de anúncios (storage)
+- Busca textual / geolocalização real
+- Avaliações, chat, favoritos
+- Painel do anunciante
+
+## O que preciso de você antes de implementar
+1. Posso **ativar o Lovable Cloud agora** para criar essas tabelas e ter login real? (sem isso não dá pra cadastrar anúncios de verdade)
+2. Confirma: comunidade escolhida pelo usuário é salva só no navegador (localStorage) por enquanto, e depois migra pro perfil quando ele logar? Ou prefere já exigir login no primeiro acesso?
