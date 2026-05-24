@@ -16,6 +16,9 @@ import { Route as ImoveisRouteImport } from './routes/imoveis'
 import { Route as FreelancesRouteImport } from './routes/freelances'
 import { Route as ComerciosRouteImport } from './routes/comercios'
 import { Route as IndexRouteImport } from './routes/index'
+import { Route as EstadoStateSlugRouteImport } from './routes/estado.$stateSlug'
+import { Route as CidadeCitySlugRouteImport } from './routes/cidade.$citySlug'
+import { Route as CCommunitySlugRouteImport } from './routes/c.$communitySlug'
 
 const VagasRoute = VagasRouteImport.update({
   id: '/vagas',
@@ -52,6 +55,21 @@ const IndexRoute = IndexRouteImport.update({
   path: '/',
   getParentRoute: () => rootRouteImport,
 } as any)
+const EstadoStateSlugRoute = EstadoStateSlugRouteImport.update({
+  id: '/estado/$stateSlug',
+  path: '/estado/$stateSlug',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const CidadeCitySlugRoute = CidadeCitySlugRouteImport.update({
+  id: '/cidade/$citySlug',
+  path: '/cidade/$citySlug',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const CCommunitySlugRoute = CCommunitySlugRouteImport.update({
+  id: '/c/$communitySlug',
+  path: '/c/$communitySlug',
+  getParentRoute: () => rootRouteImport,
+} as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
@@ -61,6 +79,9 @@ export interface FileRoutesByFullPath {
   '/servicos': typeof ServicosRoute
   '/sitemap.xml': typeof SitemapDotxmlRoute
   '/vagas': typeof VagasRoute
+  '/c/$communitySlug': typeof CCommunitySlugRoute
+  '/cidade/$citySlug': typeof CidadeCitySlugRoute
+  '/estado/$stateSlug': typeof EstadoStateSlugRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
@@ -70,6 +91,9 @@ export interface FileRoutesByTo {
   '/servicos': typeof ServicosRoute
   '/sitemap.xml': typeof SitemapDotxmlRoute
   '/vagas': typeof VagasRoute
+  '/c/$communitySlug': typeof CCommunitySlugRoute
+  '/cidade/$citySlug': typeof CidadeCitySlugRoute
+  '/estado/$stateSlug': typeof EstadoStateSlugRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
@@ -80,6 +104,9 @@ export interface FileRoutesById {
   '/servicos': typeof ServicosRoute
   '/sitemap.xml': typeof SitemapDotxmlRoute
   '/vagas': typeof VagasRoute
+  '/c/$communitySlug': typeof CCommunitySlugRoute
+  '/cidade/$citySlug': typeof CidadeCitySlugRoute
+  '/estado/$stateSlug': typeof EstadoStateSlugRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
@@ -91,6 +118,9 @@ export interface FileRouteTypes {
     | '/servicos'
     | '/sitemap.xml'
     | '/vagas'
+    | '/c/$communitySlug'
+    | '/cidade/$citySlug'
+    | '/estado/$stateSlug'
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/'
@@ -100,6 +130,9 @@ export interface FileRouteTypes {
     | '/servicos'
     | '/sitemap.xml'
     | '/vagas'
+    | '/c/$communitySlug'
+    | '/cidade/$citySlug'
+    | '/estado/$stateSlug'
   id:
     | '__root__'
     | '/'
@@ -109,6 +142,9 @@ export interface FileRouteTypes {
     | '/servicos'
     | '/sitemap.xml'
     | '/vagas'
+    | '/c/$communitySlug'
+    | '/cidade/$citySlug'
+    | '/estado/$stateSlug'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
@@ -119,6 +155,9 @@ export interface RootRouteChildren {
   ServicosRoute: typeof ServicosRoute
   SitemapDotxmlRoute: typeof SitemapDotxmlRoute
   VagasRoute: typeof VagasRoute
+  CCommunitySlugRoute: typeof CCommunitySlugRoute
+  CidadeCitySlugRoute: typeof CidadeCitySlugRoute
+  EstadoStateSlugRoute: typeof EstadoStateSlugRoute
 }
 
 declare module '@tanstack/react-router' {
@@ -172,6 +211,27 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof IndexRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/estado/$stateSlug': {
+      id: '/estado/$stateSlug'
+      path: '/estado/$stateSlug'
+      fullPath: '/estado/$stateSlug'
+      preLoaderRoute: typeof EstadoStateSlugRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/cidade/$citySlug': {
+      id: '/cidade/$citySlug'
+      path: '/cidade/$citySlug'
+      fullPath: '/cidade/$citySlug'
+      preLoaderRoute: typeof CidadeCitySlugRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/c/$communitySlug': {
+      id: '/c/$communitySlug'
+      path: '/c/$communitySlug'
+      fullPath: '/c/$communitySlug'
+      preLoaderRoute: typeof CCommunitySlugRouteImport
+      parentRoute: typeof rootRouteImport
+    }
   }
 }
 
@@ -183,7 +243,20 @@ const rootRouteChildren: RootRouteChildren = {
   ServicosRoute: ServicosRoute,
   SitemapDotxmlRoute: SitemapDotxmlRoute,
   VagasRoute: VagasRoute,
+  CCommunitySlugRoute: CCommunitySlugRoute,
+  CidadeCitySlugRoute: CidadeCitySlugRoute,
+  EstadoStateSlugRoute: EstadoStateSlugRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
   ._addFileTypes<FileRouteTypes>()
+
+import type { getRouter } from './router.tsx'
+import type { startInstance } from './start.ts'
+declare module '@tanstack/react-start' {
+  interface Register {
+    ssr: true
+    router: Awaited<ReturnType<typeof getRouter>>
+    config: Awaited<ReturnType<typeof startInstance.getOptions>>
+  }
+}
