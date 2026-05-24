@@ -15,7 +15,11 @@ import { Route as ServicosRouteImport } from './routes/servicos'
 import { Route as ImoveisRouteImport } from './routes/imoveis'
 import { Route as FreelancesRouteImport } from './routes/freelances'
 import { Route as ComerciosRouteImport } from './routes/comercios'
+import { Route as AnunciarRouteImport } from './routes/anunciar'
 import { Route as IndexRouteImport } from './routes/index'
+import { Route as EstadoStateSlugRouteImport } from './routes/estado.$stateSlug'
+import { Route as CidadeCitySlugRouteImport } from './routes/cidade.$citySlug'
+import { Route as CCommunitySlugRouteImport } from './routes/c.$communitySlug'
 
 const VagasRoute = VagasRouteImport.update({
   id: '/vagas',
@@ -47,78 +51,126 @@ const ComerciosRoute = ComerciosRouteImport.update({
   path: '/comercios',
   getParentRoute: () => rootRouteImport,
 } as any)
+const AnunciarRoute = AnunciarRouteImport.update({
+  id: '/anunciar',
+  path: '/anunciar',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const IndexRoute = IndexRouteImport.update({
   id: '/',
   path: '/',
   getParentRoute: () => rootRouteImport,
 } as any)
+const EstadoStateSlugRoute = EstadoStateSlugRouteImport.update({
+  id: '/estado/$stateSlug',
+  path: '/estado/$stateSlug',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const CidadeCitySlugRoute = CidadeCitySlugRouteImport.update({
+  id: '/cidade/$citySlug',
+  path: '/cidade/$citySlug',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const CCommunitySlugRoute = CCommunitySlugRouteImport.update({
+  id: '/c/$communitySlug',
+  path: '/c/$communitySlug',
+  getParentRoute: () => rootRouteImport,
+} as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
+  '/anunciar': typeof AnunciarRoute
   '/comercios': typeof ComerciosRoute
   '/freelances': typeof FreelancesRoute
   '/imoveis': typeof ImoveisRoute
   '/servicos': typeof ServicosRoute
   '/sitemap.xml': typeof SitemapDotxmlRoute
   '/vagas': typeof VagasRoute
+  '/c/$communitySlug': typeof CCommunitySlugRoute
+  '/cidade/$citySlug': typeof CidadeCitySlugRoute
+  '/estado/$stateSlug': typeof EstadoStateSlugRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
+  '/anunciar': typeof AnunciarRoute
   '/comercios': typeof ComerciosRoute
   '/freelances': typeof FreelancesRoute
   '/imoveis': typeof ImoveisRoute
   '/servicos': typeof ServicosRoute
   '/sitemap.xml': typeof SitemapDotxmlRoute
   '/vagas': typeof VagasRoute
+  '/c/$communitySlug': typeof CCommunitySlugRoute
+  '/cidade/$citySlug': typeof CidadeCitySlugRoute
+  '/estado/$stateSlug': typeof EstadoStateSlugRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
+  '/anunciar': typeof AnunciarRoute
   '/comercios': typeof ComerciosRoute
   '/freelances': typeof FreelancesRoute
   '/imoveis': typeof ImoveisRoute
   '/servicos': typeof ServicosRoute
   '/sitemap.xml': typeof SitemapDotxmlRoute
   '/vagas': typeof VagasRoute
+  '/c/$communitySlug': typeof CCommunitySlugRoute
+  '/cidade/$citySlug': typeof CidadeCitySlugRoute
+  '/estado/$stateSlug': typeof EstadoStateSlugRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
   fullPaths:
     | '/'
+    | '/anunciar'
     | '/comercios'
     | '/freelances'
     | '/imoveis'
     | '/servicos'
     | '/sitemap.xml'
     | '/vagas'
+    | '/c/$communitySlug'
+    | '/cidade/$citySlug'
+    | '/estado/$stateSlug'
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/'
+    | '/anunciar'
     | '/comercios'
     | '/freelances'
     | '/imoveis'
     | '/servicos'
     | '/sitemap.xml'
     | '/vagas'
+    | '/c/$communitySlug'
+    | '/cidade/$citySlug'
+    | '/estado/$stateSlug'
   id:
     | '__root__'
     | '/'
+    | '/anunciar'
     | '/comercios'
     | '/freelances'
     | '/imoveis'
     | '/servicos'
     | '/sitemap.xml'
     | '/vagas'
+    | '/c/$communitySlug'
+    | '/cidade/$citySlug'
+    | '/estado/$stateSlug'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
+  AnunciarRoute: typeof AnunciarRoute
   ComerciosRoute: typeof ComerciosRoute
   FreelancesRoute: typeof FreelancesRoute
   ImoveisRoute: typeof ImoveisRoute
   ServicosRoute: typeof ServicosRoute
   SitemapDotxmlRoute: typeof SitemapDotxmlRoute
   VagasRoute: typeof VagasRoute
+  CCommunitySlugRoute: typeof CCommunitySlugRoute
+  CidadeCitySlugRoute: typeof CidadeCitySlugRoute
+  EstadoStateSlugRoute: typeof EstadoStateSlugRoute
 }
 
 declare module '@tanstack/react-router' {
@@ -165,6 +217,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof ComerciosRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/anunciar': {
+      id: '/anunciar'
+      path: '/anunciar'
+      fullPath: '/anunciar'
+      preLoaderRoute: typeof AnunciarRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/': {
       id: '/'
       path: '/'
@@ -172,28 +231,43 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof IndexRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/estado/$stateSlug': {
+      id: '/estado/$stateSlug'
+      path: '/estado/$stateSlug'
+      fullPath: '/estado/$stateSlug'
+      preLoaderRoute: typeof EstadoStateSlugRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/cidade/$citySlug': {
+      id: '/cidade/$citySlug'
+      path: '/cidade/$citySlug'
+      fullPath: '/cidade/$citySlug'
+      preLoaderRoute: typeof CidadeCitySlugRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/c/$communitySlug': {
+      id: '/c/$communitySlug'
+      path: '/c/$communitySlug'
+      fullPath: '/c/$communitySlug'
+      preLoaderRoute: typeof CCommunitySlugRouteImport
+      parentRoute: typeof rootRouteImport
+    }
   }
 }
 
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
+  AnunciarRoute: AnunciarRoute,
   ComerciosRoute: ComerciosRoute,
   FreelancesRoute: FreelancesRoute,
   ImoveisRoute: ImoveisRoute,
   ServicosRoute: ServicosRoute,
   SitemapDotxmlRoute: SitemapDotxmlRoute,
   VagasRoute: VagasRoute,
+  CCommunitySlugRoute: CCommunitySlugRoute,
+  CidadeCitySlugRoute: CidadeCitySlugRoute,
+  EstadoStateSlugRoute: EstadoStateSlugRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
   ._addFileTypes<FileRouteTypes>()
-
-import type { getRouter } from './router.tsx'
-import type { startInstance } from './start.ts'
-declare module '@tanstack/react-start' {
-  interface Register {
-    ssr: true
-    router: Awaited<ReturnType<typeof getRouter>>
-    config: Awaited<ReturnType<typeof startInstance.getOptions>>
-  }
-}
