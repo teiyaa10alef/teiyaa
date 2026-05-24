@@ -120,7 +120,7 @@ function CommunityPage() {
 
       <main className="max-w-7xl mx-auto px-4 md:px-6 py-8 md:py-12">
         <h2 className="text-2xl md:text-3xl font-bold mb-6">
-          {cat ? CATEGORY_LABELS[cat as CategoryKey] : "Tudo no bairro"}
+          {cat ? categoryLabel(cat) : "Tudo no bairro"}
         </h2>
         <ListingsFeed
           scope={{ kind: "community", slug: community.slug }}
