@@ -3,15 +3,15 @@ import { useEffect, useState } from "react";
 const STORAGE_KEY = "teiyaa:home-community-slug";
 export const DEFAULT_COMMUNITY_SLUG = "paraisopolis";
 
-export const CATEGORY_LABELS = {
+export type CategoryKey = "comercio" | "servico" | "imovel" | "freelance" | "vaga";
+
+export const CATEGORY_LABELS: Record<CategoryKey, string> = {
   comercio: "Comércios",
   servico: "Serviços",
   imovel: "Imóveis",
   freelance: "Freelances",
   vaga: "Vagas",
-} as const;
-
-export type CategoryKey = keyof typeof CATEGORY_LABELS;
+};
 
 export const CATEGORY_ORDER: CategoryKey[] = [
   "comercio",
