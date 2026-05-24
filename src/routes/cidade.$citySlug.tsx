@@ -5,7 +5,7 @@ import { SiteHeader } from "@/components/SiteHeader";
 import { SiteFooter } from "@/components/SiteFooter";
 import { ScopeSwitcher } from "@/components/ScopeSwitcher";
 import { ListingsFeed } from "@/components/ListingsFeed";
-import { useHomeCommunitySlug, CATEGORY_LABELS } from "@/lib/community";
+import { useHomeCommunitySlug, categoryLabel } from "@/lib/community";
 import { supabase } from "@/integrations/supabase/client";
 
 const searchSchema = z.object({
@@ -87,7 +87,7 @@ function CityPage() {
 
       <main className="max-w-7xl mx-auto px-4 md:px-6 py-8 md:py-12">
         <h2 className="text-2xl md:text-3xl font-bold mb-6">
-          {cat ? CATEGORY_LABELS[cat] : `Tudo em ${city.name}`}
+          {cat ? categoryLabel(cat) : `Tudo em ${city.name}`}
         </h2>
         <ListingsFeed
           scope={{ kind: "city", slug: city.slug }}
