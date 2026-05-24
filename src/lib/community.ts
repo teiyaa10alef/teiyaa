@@ -64,3 +64,8 @@ export function useHomeCommunitySlug(): string {
   }, []);
   return slug;
 }
+
+export function categoryLabel(cat: string | undefined | null): string {
+  if (!cat) return "";
+  return (CATEGORY_LABELS as Record<string, string>)[cat] ?? "";
+}
