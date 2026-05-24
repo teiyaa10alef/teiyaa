@@ -1,17 +1,12 @@
-import { createFileRoute, notFound, useRouter } from "@tanstack/react-router";
+import { createFileRoute, notFound } from "@tanstack/react-router";
 import { useEffect } from "react";
-import { useSuspenseQuery } from "@tanstack/react-query";
 import { z } from "zod";
 import { zodValidator, fallback } from "@tanstack/zod-adapter";
 import { SiteHeader } from "@/components/SiteHeader";
 import { SiteFooter } from "@/components/SiteFooter";
 import { ScopeSwitcher } from "@/components/ScopeSwitcher";
 import { ListingsFeed } from "@/components/ListingsFeed";
-import {
-  communityBySlugQuery,
-  cityBySlugQuery,
-  stateBySlugQuery,
-} from "@/lib/listings-api";
+import { communityBySlugQuery } from "@/lib/listings-api";
 import { setStoredCommunitySlug, categoryLabel } from "@/lib/community";
 import { supabase } from "@/integrations/supabase/client";
 
