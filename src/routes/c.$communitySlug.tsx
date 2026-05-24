@@ -12,7 +12,7 @@ import {
   cityBySlugQuery,
   stateBySlugQuery,
 } from "@/lib/listings-api";
-import { setStoredCommunitySlug, CATEGORY_LABELS } from "@/lib/community";
+import { setStoredCommunitySlug, categoryLabel } from "@/lib/community";
 import { supabase } from "@/integrations/supabase/client";
 
 const searchSchema = z.object({
