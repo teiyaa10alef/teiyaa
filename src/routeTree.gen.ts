@@ -15,6 +15,7 @@ import { Route as ServicosRouteImport } from './routes/servicos'
 import { Route as ImoveisRouteImport } from './routes/imoveis'
 import { Route as FreelancesRouteImport } from './routes/freelances'
 import { Route as ComerciosRouteImport } from './routes/comercios'
+import { Route as AnunciarRouteImport } from './routes/anunciar'
 import { Route as IndexRouteImport } from './routes/index'
 import { Route as EstadoStateSlugRouteImport } from './routes/estado.$stateSlug'
 import { Route as CidadeCitySlugRouteImport } from './routes/cidade.$citySlug'
@@ -50,6 +51,11 @@ const ComerciosRoute = ComerciosRouteImport.update({
   path: '/comercios',
   getParentRoute: () => rootRouteImport,
 } as any)
+const AnunciarRoute = AnunciarRouteImport.update({
+  id: '/anunciar',
+  path: '/anunciar',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const IndexRoute = IndexRouteImport.update({
   id: '/',
   path: '/',
@@ -73,6 +79,7 @@ const CCommunitySlugRoute = CCommunitySlugRouteImport.update({
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
+  '/anunciar': typeof AnunciarRoute
   '/comercios': typeof ComerciosRoute
   '/freelances': typeof FreelancesRoute
   '/imoveis': typeof ImoveisRoute
@@ -85,6 +92,7 @@ export interface FileRoutesByFullPath {
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
+  '/anunciar': typeof AnunciarRoute
   '/comercios': typeof ComerciosRoute
   '/freelances': typeof FreelancesRoute
   '/imoveis': typeof ImoveisRoute
@@ -98,6 +106,7 @@ export interface FileRoutesByTo {
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
+  '/anunciar': typeof AnunciarRoute
   '/comercios': typeof ComerciosRoute
   '/freelances': typeof FreelancesRoute
   '/imoveis': typeof ImoveisRoute
@@ -112,6 +121,7 @@ export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
   fullPaths:
     | '/'
+    | '/anunciar'
     | '/comercios'
     | '/freelances'
     | '/imoveis'
@@ -124,6 +134,7 @@ export interface FileRouteTypes {
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/'
+    | '/anunciar'
     | '/comercios'
     | '/freelances'
     | '/imoveis'
@@ -136,6 +147,7 @@ export interface FileRouteTypes {
   id:
     | '__root__'
     | '/'
+    | '/anunciar'
     | '/comercios'
     | '/freelances'
     | '/imoveis'
@@ -149,6 +161,7 @@ export interface FileRouteTypes {
 }
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
+  AnunciarRoute: typeof AnunciarRoute
   ComerciosRoute: typeof ComerciosRoute
   FreelancesRoute: typeof FreelancesRoute
   ImoveisRoute: typeof ImoveisRoute
@@ -204,6 +217,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof ComerciosRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/anunciar': {
+      id: '/anunciar'
+      path: '/anunciar'
+      fullPath: '/anunciar'
+      preLoaderRoute: typeof AnunciarRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/': {
       id: '/'
       path: '/'
@@ -237,6 +257,7 @@ declare module '@tanstack/react-router' {
 
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
+  AnunciarRoute: AnunciarRoute,
   ComerciosRoute: ComerciosRoute,
   FreelancesRoute: FreelancesRoute,
   ImoveisRoute: ImoveisRoute,
@@ -250,3 +271,13 @@ const rootRouteChildren: RootRouteChildren = {
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
   ._addFileTypes<FileRouteTypes>()
+
+import type { getRouter } from './router.tsx'
+import type { startInstance } from './start.ts'
+declare module '@tanstack/react-start' {
+  interface Register {
+    ssr: true
+    router: Awaited<ReturnType<typeof getRouter>>
+    config: Awaited<ReturnType<typeof startInstance.getOptions>>
+  }
+}
