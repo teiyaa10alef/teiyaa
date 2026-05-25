@@ -12,6 +12,7 @@ import { Route as rootRouteImport } from './routes/__root'
 import { Route as VagasRouteImport } from './routes/vagas'
 import { Route as SitemapDotxmlRouteImport } from './routes/sitemap[.]xml'
 import { Route as ServicosRouteImport } from './routes/servicos'
+import { Route as LoginRouteImport } from './routes/login'
 import { Route as ImoveisRouteImport } from './routes/imoveis'
 import { Route as FreelancesRouteImport } from './routes/freelances'
 import { Route as ComerciosRouteImport } from './routes/comercios'
@@ -34,6 +35,11 @@ const SitemapDotxmlRoute = SitemapDotxmlRouteImport.update({
 const ServicosRoute = ServicosRouteImport.update({
   id: '/servicos',
   path: '/servicos',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const LoginRoute = LoginRouteImport.update({
+  id: '/login',
+  path: '/login',
   getParentRoute: () => rootRouteImport,
 } as any)
 const ImoveisRoute = ImoveisRouteImport.update({
@@ -83,6 +89,7 @@ export interface FileRoutesByFullPath {
   '/comercios': typeof ComerciosRoute
   '/freelances': typeof FreelancesRoute
   '/imoveis': typeof ImoveisRoute
+  '/login': typeof LoginRoute
   '/servicos': typeof ServicosRoute
   '/sitemap.xml': typeof SitemapDotxmlRoute
   '/vagas': typeof VagasRoute
@@ -96,6 +103,7 @@ export interface FileRoutesByTo {
   '/comercios': typeof ComerciosRoute
   '/freelances': typeof FreelancesRoute
   '/imoveis': typeof ImoveisRoute
+  '/login': typeof LoginRoute
   '/servicos': typeof ServicosRoute
   '/sitemap.xml': typeof SitemapDotxmlRoute
   '/vagas': typeof VagasRoute
@@ -110,6 +118,7 @@ export interface FileRoutesById {
   '/comercios': typeof ComerciosRoute
   '/freelances': typeof FreelancesRoute
   '/imoveis': typeof ImoveisRoute
+  '/login': typeof LoginRoute
   '/servicos': typeof ServicosRoute
   '/sitemap.xml': typeof SitemapDotxmlRoute
   '/vagas': typeof VagasRoute
@@ -125,6 +134,7 @@ export interface FileRouteTypes {
     | '/comercios'
     | '/freelances'
     | '/imoveis'
+    | '/login'
     | '/servicos'
     | '/sitemap.xml'
     | '/vagas'
@@ -138,6 +148,7 @@ export interface FileRouteTypes {
     | '/comercios'
     | '/freelances'
     | '/imoveis'
+    | '/login'
     | '/servicos'
     | '/sitemap.xml'
     | '/vagas'
@@ -151,6 +162,7 @@ export interface FileRouteTypes {
     | '/comercios'
     | '/freelances'
     | '/imoveis'
+    | '/login'
     | '/servicos'
     | '/sitemap.xml'
     | '/vagas'
@@ -165,6 +177,7 @@ export interface RootRouteChildren {
   ComerciosRoute: typeof ComerciosRoute
   FreelancesRoute: typeof FreelancesRoute
   ImoveisRoute: typeof ImoveisRoute
+  LoginRoute: typeof LoginRoute
   ServicosRoute: typeof ServicosRoute
   SitemapDotxmlRoute: typeof SitemapDotxmlRoute
   VagasRoute: typeof VagasRoute
@@ -194,6 +207,13 @@ declare module '@tanstack/react-router' {
       path: '/servicos'
       fullPath: '/servicos'
       preLoaderRoute: typeof ServicosRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/login': {
+      id: '/login'
+      path: '/login'
+      fullPath: '/login'
+      preLoaderRoute: typeof LoginRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/imoveis': {
@@ -261,6 +281,7 @@ const rootRouteChildren: RootRouteChildren = {
   ComerciosRoute: ComerciosRoute,
   FreelancesRoute: FreelancesRoute,
   ImoveisRoute: ImoveisRoute,
+  LoginRoute: LoginRoute,
   ServicosRoute: ServicosRoute,
   SitemapDotxmlRoute: SitemapDotxmlRoute,
   VagasRoute: VagasRoute,
