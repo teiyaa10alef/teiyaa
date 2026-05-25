@@ -1,7 +1,7 @@
 import { createFileRoute, notFound } from "@tanstack/react-router";
 import { useEffect } from "react";
 import { z } from "zod";
-import { zodValidator, fallback } from "@tanstack/zod-adapter";
+import { zodValidator } from "@tanstack/zod-adapter";
 import { SiteHeader } from "@/components/SiteHeader";
 import { SiteFooter } from "@/components/SiteFooter";
 import { ScopeSwitcher } from "@/components/ScopeSwitcher";
@@ -11,7 +11,7 @@ import { setStoredCommunitySlug, categoryLabel } from "@/lib/community";
 import { supabase } from "@/integrations/supabase/client";
 
 const searchSchema = z.object({
-  cat: fallback(
+  cat: (
     z.enum(["comercio", "servico", "imovel", "freelance", "vaga"]).optional(),
     undefined,
   ),
