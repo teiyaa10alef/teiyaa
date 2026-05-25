@@ -9,10 +9,7 @@ import { useHomeCommunitySlug, categoryLabel } from "@/lib/community";
 import { supabase } from "@/integrations/supabase/client";
 
 const searchSchema = z.object({
-  cat: (
-    z.enum(["comercio", "servico", "imovel", "freelance", "vaga"]).optional(),
-    undefined,
-  ),
+  cat: z.enum(["comercio", "servico", "imovel", "freelance", "vaga"]).optional(),
 });
 
 export const Route = createFileRoute("/estado/$stateSlug")({
