@@ -116,6 +116,13 @@ export function SiteHeader() {
                     <div className="px-4 py-2 text-sm text-muted-foreground">
                       Conectado como <strong>{user.email}</strong>
                     </div>
+                    <Link
+                      to="/conta"
+                      onClick={() => setOpen(false)}
+                      className="w-full py-3 rounded-full border border-border font-semibold text-center"
+                    >
+                      Minha conta
+                    </Link>
                     <button
                       onClick={handleLogout}
                       className="w-full py-3 rounded-full border border-border font-semibold flex items-center justify-center gap-2"
