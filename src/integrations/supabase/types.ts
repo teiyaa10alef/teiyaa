@@ -14,6 +14,188 @@ export type Database = {
   }
   public: {
     Tables: {
+      business_hours: {
+        Row: {
+          business_id: string
+          closes_at: string | null
+          id: string
+          is_closed: boolean
+          opens_at: string | null
+          weekday: number
+        }
+        Insert: {
+          business_id: string
+          closes_at?: string | null
+          id?: string
+          is_closed?: boolean
+          opens_at?: string | null
+          weekday: number
+        }
+        Update: {
+          business_id?: string
+          closes_at?: string | null
+          id?: string
+          is_closed?: boolean
+          opens_at?: string | null
+          weekday?: number
+        }
+        Relationships: [
+          {
+            foreignKeyName: "business_hours_business_id_fkey"
+            columns: ["business_id"]
+            isOneToOne: false
+            referencedRelation: "businesses"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      business_media: {
+        Row: {
+          business_id: string
+          caption: string | null
+          created_at: string
+          id: string
+          media_type: string
+          media_url: string
+          sort_order: number
+        }
+        Insert: {
+          business_id: string
+          caption?: string | null
+          created_at?: string
+          id?: string
+          media_type?: string
+          media_url: string
+          sort_order?: number
+        }
+        Update: {
+          business_id?: string
+          caption?: string | null
+          created_at?: string
+          id?: string
+          media_type?: string
+          media_url?: string
+          sort_order?: number
+        }
+        Relationships: [
+          {
+            foreignKeyName: "business_media_business_id_fkey"
+            columns: ["business_id"]
+            isOneToOne: false
+            referencedRelation: "businesses"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      business_services: {
+        Row: {
+          business_id: string
+          created_at: string
+          description: string | null
+          id: string
+          price_cents: number | null
+          sort_order: number
+          title: string
+        }
+        Insert: {
+          business_id: string
+          created_at?: string
+          description?: string | null
+          id?: string
+          price_cents?: number | null
+          sort_order?: number
+          title: string
+        }
+        Update: {
+          business_id?: string
+          created_at?: string
+          description?: string | null
+          id?: string
+          price_cents?: number | null
+          sort_order?: number
+          title?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "business_services_business_id_fkey"
+            columns: ["business_id"]
+            isOneToOne: false
+            referencedRelation: "businesses"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      businesses: {
+        Row: {
+          address: string | null
+          category: string | null
+          community_id: string | null
+          cover_url: string | null
+          created_at: string
+          description: string | null
+          id: string
+          instagram: string | null
+          is_published: boolean
+          lat: number | null
+          lng: number | null
+          logo_url: string | null
+          name: string
+          owner_id: string
+          phone: string | null
+          slug: string
+          updated_at: string
+          whatsapp: string | null
+        }
+        Insert: {
+          address?: string | null
+          category?: string | null
+          community_id?: string | null
+          cover_url?: string | null
+          created_at?: string
+          description?: string | null
+          id?: string
+          instagram?: string | null
+          is_published?: boolean
+          lat?: number | null
+          lng?: number | null
+          logo_url?: string | null
+          name: string
+          owner_id: string
+          phone?: string | null
+          slug: string
+          updated_at?: string
+          whatsapp?: string | null
+        }
+        Update: {
+          address?: string | null
+          category?: string | null
+          community_id?: string | null
+          cover_url?: string | null
+          created_at?: string
+          description?: string | null
+          id?: string
+          instagram?: string | null
+          is_published?: boolean
+          lat?: number | null
+          lng?: number | null
+          logo_url?: string | null
+          name?: string
+          owner_id?: string
+          phone?: string | null
+          slug?: string
+          updated_at?: string
+          whatsapp?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "businesses_community_id_fkey"
+            columns: ["community_id"]
+            isOneToOne: false
+            referencedRelation: "communities"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       cities: {
         Row: {
           created_at: string
@@ -146,12 +328,159 @@ export type Database = {
           },
         ]
       }
+      portfolio_items: {
+        Row: {
+          caption: string | null
+          created_at: string
+          id: string
+          media_type: string
+          media_url: string
+          professional_id: string
+          sort_order: number
+        }
+        Insert: {
+          caption?: string | null
+          created_at?: string
+          id?: string
+          media_type?: string
+          media_url: string
+          professional_id: string
+          sort_order?: number
+        }
+        Update: {
+          caption?: string | null
+          created_at?: string
+          id?: string
+          media_type?: string
+          media_url?: string
+          professional_id?: string
+          sort_order?: number
+        }
+        Relationships: [
+          {
+            foreignKeyName: "portfolio_items_professional_id_fkey"
+            columns: ["professional_id"]
+            isOneToOne: false
+            referencedRelation: "professional_profiles"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      professional_profiles: {
+        Row: {
+          about: string | null
+          avatar_url: string | null
+          community_id: string | null
+          cover_url: string | null
+          created_at: string
+          headline: string | null
+          id: string
+          instagram: string | null
+          is_published: boolean
+          phone: string | null
+          profession: string
+          service_area_km: number | null
+          updated_at: string
+          user_id: string
+          whatsapp: string | null
+          years_experience: number | null
+        }
+        Insert: {
+          about?: string | null
+          avatar_url?: string | null
+          community_id?: string | null
+          cover_url?: string | null
+          created_at?: string
+          headline?: string | null
+          id?: string
+          instagram?: string | null
+          is_published?: boolean
+          phone?: string | null
+          profession: string
+          service_area_km?: number | null
+          updated_at?: string
+          user_id: string
+          whatsapp?: string | null
+          years_experience?: number | null
+        }
+        Update: {
+          about?: string | null
+          avatar_url?: string | null
+          community_id?: string | null
+          cover_url?: string | null
+          created_at?: string
+          headline?: string | null
+          id?: string
+          instagram?: string | null
+          is_published?: boolean
+          phone?: string | null
+          profession?: string
+          service_area_km?: number | null
+          updated_at?: string
+          user_id?: string
+          whatsapp?: string | null
+          years_experience?: number | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "professional_profiles_community_id_fkey"
+            columns: ["community_id"]
+            isOneToOne: false
+            referencedRelation: "communities"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      professional_services: {
+        Row: {
+          created_at: string
+          description: string | null
+          id: string
+          price_from_cents: number | null
+          price_unit: string | null
+          professional_id: string
+          sort_order: number
+          title: string
+        }
+        Insert: {
+          created_at?: string
+          description?: string | null
+          id?: string
+          price_from_cents?: number | null
+          price_unit?: string | null
+          professional_id: string
+          sort_order?: number
+          title: string
+        }
+        Update: {
+          created_at?: string
+          description?: string | null
+          id?: string
+          price_from_cents?: number | null
+          price_unit?: string | null
+          professional_id?: string
+          sort_order?: number
+          title?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "professional_services_professional_id_fkey"
+            columns: ["professional_id"]
+            isOneToOne: false
+            referencedRelation: "professional_profiles"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       profiles: {
         Row: {
           avatar_url: string | null
+          bio: string | null
           created_at: string
           display_name: string | null
           id: string
+          is_business: boolean
+          is_professional: boolean
           phone: string | null
           updated_at: string
           user_id: string
@@ -159,9 +488,12 @@ export type Database = {
         }
         Insert: {
           avatar_url?: string | null
+          bio?: string | null
           created_at?: string
           display_name?: string | null
           id?: string
+          is_business?: boolean
+          is_professional?: boolean
           phone?: string | null
           updated_at?: string
           user_id: string
@@ -169,9 +501,12 @@ export type Database = {
         }
         Update: {
           avatar_url?: string | null
+          bio?: string | null
           created_at?: string
           display_name?: string | null
           id?: string
+          is_business?: boolean
+          is_professional?: boolean
           phone?: string | null
           updated_at?: string
           user_id?: string

@@ -55,10 +55,12 @@ export function SiteHeader() {
         <div className="flex items-center gap-2 md:gap-4">
           {user ? (
             <>
-              <span className="hidden sm:inline-flex items-center gap-2 text-sm text-foreground/80">
-                <UserIcon className="size-4" />
-                {user.email?.split("@")[0]}
-              </span>
+              <Link
+                to="/conta"
+                className="hidden sm:inline-flex items-center gap-1 px-3 md:px-4 py-2 text-sm font-semibold text-foreground/80 hover:text-foreground"
+              >
+                <UserIcon className="size-4" /> Minha conta
+              </Link>
               <button
                 onClick={handleLogout}
                 className="hidden sm:inline-flex items-center gap-1 px-3 md:px-4 py-2 text-sm font-semibold text-foreground/80 hover:text-foreground"
@@ -114,6 +116,13 @@ export function SiteHeader() {
                     <div className="px-4 py-2 text-sm text-muted-foreground">
                       Conectado como <strong>{user.email}</strong>
                     </div>
+                    <Link
+                      to="/conta"
+                      onClick={() => setOpen(false)}
+                      className="w-full py-3 rounded-full border border-border font-semibold text-center"
+                    >
+                      Minha conta
+                    </Link>
                     <button
                       onClick={handleLogout}
                       className="w-full py-3 rounded-full border border-border font-semibold flex items-center justify-center gap-2"

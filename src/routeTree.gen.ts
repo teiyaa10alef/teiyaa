@@ -15,12 +15,19 @@ import { Route as ServicosRouteImport } from './routes/servicos'
 import { Route as LoginRouteImport } from './routes/login'
 import { Route as ImoveisRouteImport } from './routes/imoveis'
 import { Route as FreelancesRouteImport } from './routes/freelances'
+import { Route as ContaRouteImport } from './routes/conta'
 import { Route as ComerciosRouteImport } from './routes/comercios'
 import { Route as AnunciarRouteImport } from './routes/anunciar'
 import { Route as IndexRouteImport } from './routes/index'
+import { Route as NegociosSlugRouteImport } from './routes/negocios.$slug'
 import { Route as EstadoStateSlugRouteImport } from './routes/estado.$stateSlug'
+import { Route as ContaProfissionalRouteImport } from './routes/conta.profissional'
+import { Route as ContaNegociosRouteImport } from './routes/conta.negocios'
 import { Route as CidadeCitySlugRouteImport } from './routes/cidade.$citySlug'
 import { Route as CCommunitySlugRouteImport } from './routes/c.$communitySlug'
+import { Route as ProfissionaisPerfilUserIdRouteImport } from './routes/profissionais.perfil.$userId'
+import { Route as ContaNegociosNovoRouteImport } from './routes/conta.negocios.novo'
+import { Route as ContaNegociosBusinessIdRouteImport } from './routes/conta.negocios.$businessId'
 
 const VagasRoute = VagasRouteImport.update({
   id: '/vagas',
@@ -52,6 +59,11 @@ const FreelancesRoute = FreelancesRouteImport.update({
   path: '/freelances',
   getParentRoute: () => rootRouteImport,
 } as any)
+const ContaRoute = ContaRouteImport.update({
+  id: '/conta',
+  path: '/conta',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const ComerciosRoute = ComerciosRouteImport.update({
   id: '/comercios',
   path: '/comercios',
@@ -67,10 +79,25 @@ const IndexRoute = IndexRouteImport.update({
   path: '/',
   getParentRoute: () => rootRouteImport,
 } as any)
+const NegociosSlugRoute = NegociosSlugRouteImport.update({
+  id: '/negocios/$slug',
+  path: '/negocios/$slug',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const EstadoStateSlugRoute = EstadoStateSlugRouteImport.update({
   id: '/estado/$stateSlug',
   path: '/estado/$stateSlug',
   getParentRoute: () => rootRouteImport,
+} as any)
+const ContaProfissionalRoute = ContaProfissionalRouteImport.update({
+  id: '/profissional',
+  path: '/profissional',
+  getParentRoute: () => ContaRoute,
+} as any)
+const ContaNegociosRoute = ContaNegociosRouteImport.update({
+  id: '/negocios',
+  path: '/negocios',
+  getParentRoute: () => ContaRoute,
 } as any)
 const CidadeCitySlugRoute = CidadeCitySlugRouteImport.update({
   id: '/cidade/$citySlug',
@@ -82,11 +109,28 @@ const CCommunitySlugRoute = CCommunitySlugRouteImport.update({
   path: '/c/$communitySlug',
   getParentRoute: () => rootRouteImport,
 } as any)
+const ProfissionaisPerfilUserIdRoute =
+  ProfissionaisPerfilUserIdRouteImport.update({
+    id: '/profissionais/perfil/$userId',
+    path: '/profissionais/perfil/$userId',
+    getParentRoute: () => rootRouteImport,
+  } as any)
+const ContaNegociosNovoRoute = ContaNegociosNovoRouteImport.update({
+  id: '/novo',
+  path: '/novo',
+  getParentRoute: () => ContaNegociosRoute,
+} as any)
+const ContaNegociosBusinessIdRoute = ContaNegociosBusinessIdRouteImport.update({
+  id: '/$businessId',
+  path: '/$businessId',
+  getParentRoute: () => ContaNegociosRoute,
+} as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
   '/anunciar': typeof AnunciarRoute
   '/comercios': typeof ComerciosRoute
+  '/conta': typeof ContaRouteWithChildren
   '/freelances': typeof FreelancesRoute
   '/imoveis': typeof ImoveisRoute
   '/login': typeof LoginRoute
@@ -95,12 +139,19 @@ export interface FileRoutesByFullPath {
   '/vagas': typeof VagasRoute
   '/c/$communitySlug': typeof CCommunitySlugRoute
   '/cidade/$citySlug': typeof CidadeCitySlugRoute
+  '/conta/negocios': typeof ContaNegociosRouteWithChildren
+  '/conta/profissional': typeof ContaProfissionalRoute
   '/estado/$stateSlug': typeof EstadoStateSlugRoute
+  '/negocios/$slug': typeof NegociosSlugRoute
+  '/conta/negocios/$businessId': typeof ContaNegociosBusinessIdRoute
+  '/conta/negocios/novo': typeof ContaNegociosNovoRoute
+  '/profissionais/perfil/$userId': typeof ProfissionaisPerfilUserIdRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/anunciar': typeof AnunciarRoute
   '/comercios': typeof ComerciosRoute
+  '/conta': typeof ContaRouteWithChildren
   '/freelances': typeof FreelancesRoute
   '/imoveis': typeof ImoveisRoute
   '/login': typeof LoginRoute
@@ -109,13 +160,20 @@ export interface FileRoutesByTo {
   '/vagas': typeof VagasRoute
   '/c/$communitySlug': typeof CCommunitySlugRoute
   '/cidade/$citySlug': typeof CidadeCitySlugRoute
+  '/conta/negocios': typeof ContaNegociosRouteWithChildren
+  '/conta/profissional': typeof ContaProfissionalRoute
   '/estado/$stateSlug': typeof EstadoStateSlugRoute
+  '/negocios/$slug': typeof NegociosSlugRoute
+  '/conta/negocios/$businessId': typeof ContaNegociosBusinessIdRoute
+  '/conta/negocios/novo': typeof ContaNegociosNovoRoute
+  '/profissionais/perfil/$userId': typeof ProfissionaisPerfilUserIdRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
   '/anunciar': typeof AnunciarRoute
   '/comercios': typeof ComerciosRoute
+  '/conta': typeof ContaRouteWithChildren
   '/freelances': typeof FreelancesRoute
   '/imoveis': typeof ImoveisRoute
   '/login': typeof LoginRoute
@@ -124,7 +182,13 @@ export interface FileRoutesById {
   '/vagas': typeof VagasRoute
   '/c/$communitySlug': typeof CCommunitySlugRoute
   '/cidade/$citySlug': typeof CidadeCitySlugRoute
+  '/conta/negocios': typeof ContaNegociosRouteWithChildren
+  '/conta/profissional': typeof ContaProfissionalRoute
   '/estado/$stateSlug': typeof EstadoStateSlugRoute
+  '/negocios/$slug': typeof NegociosSlugRoute
+  '/conta/negocios/$businessId': typeof ContaNegociosBusinessIdRoute
+  '/conta/negocios/novo': typeof ContaNegociosNovoRoute
+  '/profissionais/perfil/$userId': typeof ProfissionaisPerfilUserIdRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
@@ -132,6 +196,7 @@ export interface FileRouteTypes {
     | '/'
     | '/anunciar'
     | '/comercios'
+    | '/conta'
     | '/freelances'
     | '/imoveis'
     | '/login'
@@ -140,12 +205,19 @@ export interface FileRouteTypes {
     | '/vagas'
     | '/c/$communitySlug'
     | '/cidade/$citySlug'
+    | '/conta/negocios'
+    | '/conta/profissional'
     | '/estado/$stateSlug'
+    | '/negocios/$slug'
+    | '/conta/negocios/$businessId'
+    | '/conta/negocios/novo'
+    | '/profissionais/perfil/$userId'
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/'
     | '/anunciar'
     | '/comercios'
+    | '/conta'
     | '/freelances'
     | '/imoveis'
     | '/login'
@@ -154,12 +226,19 @@ export interface FileRouteTypes {
     | '/vagas'
     | '/c/$communitySlug'
     | '/cidade/$citySlug'
+    | '/conta/negocios'
+    | '/conta/profissional'
     | '/estado/$stateSlug'
+    | '/negocios/$slug'
+    | '/conta/negocios/$businessId'
+    | '/conta/negocios/novo'
+    | '/profissionais/perfil/$userId'
   id:
     | '__root__'
     | '/'
     | '/anunciar'
     | '/comercios'
+    | '/conta'
     | '/freelances'
     | '/imoveis'
     | '/login'
@@ -168,13 +247,20 @@ export interface FileRouteTypes {
     | '/vagas'
     | '/c/$communitySlug'
     | '/cidade/$citySlug'
+    | '/conta/negocios'
+    | '/conta/profissional'
     | '/estado/$stateSlug'
+    | '/negocios/$slug'
+    | '/conta/negocios/$businessId'
+    | '/conta/negocios/novo'
+    | '/profissionais/perfil/$userId'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
   AnunciarRoute: typeof AnunciarRoute
   ComerciosRoute: typeof ComerciosRoute
+  ContaRoute: typeof ContaRouteWithChildren
   FreelancesRoute: typeof FreelancesRoute
   ImoveisRoute: typeof ImoveisRoute
   LoginRoute: typeof LoginRoute
@@ -184,6 +270,8 @@ export interface RootRouteChildren {
   CCommunitySlugRoute: typeof CCommunitySlugRoute
   CidadeCitySlugRoute: typeof CidadeCitySlugRoute
   EstadoStateSlugRoute: typeof EstadoStateSlugRoute
+  NegociosSlugRoute: typeof NegociosSlugRoute
+  ProfissionaisPerfilUserIdRoute: typeof ProfissionaisPerfilUserIdRoute
 }
 
 declare module '@tanstack/react-router' {
@@ -230,6 +318,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof FreelancesRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/conta': {
+      id: '/conta'
+      path: '/conta'
+      fullPath: '/conta'
+      preLoaderRoute: typeof ContaRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/comercios': {
       id: '/comercios'
       path: '/comercios'
@@ -251,12 +346,33 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof IndexRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/negocios/$slug': {
+      id: '/negocios/$slug'
+      path: '/negocios/$slug'
+      fullPath: '/negocios/$slug'
+      preLoaderRoute: typeof NegociosSlugRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/estado/$stateSlug': {
       id: '/estado/$stateSlug'
       path: '/estado/$stateSlug'
       fullPath: '/estado/$stateSlug'
       preLoaderRoute: typeof EstadoStateSlugRouteImport
       parentRoute: typeof rootRouteImport
+    }
+    '/conta/profissional': {
+      id: '/conta/profissional'
+      path: '/profissional'
+      fullPath: '/conta/profissional'
+      preLoaderRoute: typeof ContaProfissionalRouteImport
+      parentRoute: typeof ContaRoute
+    }
+    '/conta/negocios': {
+      id: '/conta/negocios'
+      path: '/negocios'
+      fullPath: '/conta/negocios'
+      preLoaderRoute: typeof ContaNegociosRouteImport
+      parentRoute: typeof ContaRoute
     }
     '/cidade/$citySlug': {
       id: '/cidade/$citySlug'
@@ -272,13 +388,61 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof CCommunitySlugRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/profissionais/perfil/$userId': {
+      id: '/profissionais/perfil/$userId'
+      path: '/profissionais/perfil/$userId'
+      fullPath: '/profissionais/perfil/$userId'
+      preLoaderRoute: typeof ProfissionaisPerfilUserIdRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/conta/negocios/novo': {
+      id: '/conta/negocios/novo'
+      path: '/novo'
+      fullPath: '/conta/negocios/novo'
+      preLoaderRoute: typeof ContaNegociosNovoRouteImport
+      parentRoute: typeof ContaNegociosRoute
+    }
+    '/conta/negocios/$businessId': {
+      id: '/conta/negocios/$businessId'
+      path: '/$businessId'
+      fullPath: '/conta/negocios/$businessId'
+      preLoaderRoute: typeof ContaNegociosBusinessIdRouteImport
+      parentRoute: typeof ContaNegociosRoute
+    }
   }
 }
+
+interface ContaNegociosRouteChildren {
+  ContaNegociosBusinessIdRoute: typeof ContaNegociosBusinessIdRoute
+  ContaNegociosNovoRoute: typeof ContaNegociosNovoRoute
+}
+
+const ContaNegociosRouteChildren: ContaNegociosRouteChildren = {
+  ContaNegociosBusinessIdRoute: ContaNegociosBusinessIdRoute,
+  ContaNegociosNovoRoute: ContaNegociosNovoRoute,
+}
+
+const ContaNegociosRouteWithChildren = ContaNegociosRoute._addFileChildren(
+  ContaNegociosRouteChildren,
+)
+
+interface ContaRouteChildren {
+  ContaNegociosRoute: typeof ContaNegociosRouteWithChildren
+  ContaProfissionalRoute: typeof ContaProfissionalRoute
+}
+
+const ContaRouteChildren: ContaRouteChildren = {
+  ContaNegociosRoute: ContaNegociosRouteWithChildren,
+  ContaProfissionalRoute: ContaProfissionalRoute,
+}
+
+const ContaRouteWithChildren = ContaRoute._addFileChildren(ContaRouteChildren)
 
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
   AnunciarRoute: AnunciarRoute,
   ComerciosRoute: ComerciosRoute,
+  ContaRoute: ContaRouteWithChildren,
   FreelancesRoute: FreelancesRoute,
   ImoveisRoute: ImoveisRoute,
   LoginRoute: LoginRoute,
@@ -288,17 +452,9 @@ const rootRouteChildren: RootRouteChildren = {
   CCommunitySlugRoute: CCommunitySlugRoute,
   CidadeCitySlugRoute: CidadeCitySlugRoute,
   EstadoStateSlugRoute: EstadoStateSlugRoute,
+  NegociosSlugRoute: NegociosSlugRoute,
+  ProfissionaisPerfilUserIdRoute: ProfissionaisPerfilUserIdRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
   ._addFileTypes<FileRouteTypes>()
-
-import type { getRouter } from './router.tsx'
-import type { startInstance } from './start.ts'
-declare module '@tanstack/react-start' {
-  interface Register {
-    ssr: true
-    router: Awaited<ReturnType<typeof getRouter>>
-    config: Awaited<ReturnType<typeof startInstance.getOptions>>
-  }
-}
