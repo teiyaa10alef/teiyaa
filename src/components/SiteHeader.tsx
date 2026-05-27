@@ -55,10 +55,12 @@ export function SiteHeader() {
         <div className="flex items-center gap-2 md:gap-4">
           {user ? (
             <>
-              <span className="hidden sm:inline-flex items-center gap-2 text-sm text-foreground/80">
-                <UserIcon className="size-4" />
-                {user.email?.split("@")[0]}
-              </span>
+              <Link
+                to="/conta"
+                className="hidden sm:inline-flex items-center gap-1 px-3 md:px-4 py-2 text-sm font-semibold text-foreground/80 hover:text-foreground"
+              >
+                <UserIcon className="size-4" /> Minha conta
+              </Link>
               <button
                 onClick={handleLogout}
                 className="hidden sm:inline-flex items-center gap-1 px-3 md:px-4 py-2 text-sm font-semibold text-foreground/80 hover:text-foreground"

@@ -19,12 +19,15 @@ import { Route as ContaRouteImport } from './routes/conta'
 import { Route as ComerciosRouteImport } from './routes/comercios'
 import { Route as AnunciarRouteImport } from './routes/anunciar'
 import { Route as IndexRouteImport } from './routes/index'
+import { Route as NegociosSlugRouteImport } from './routes/negocios.$slug'
 import { Route as EstadoStateSlugRouteImport } from './routes/estado.$stateSlug'
 import { Route as ContaProfissionalRouteImport } from './routes/conta.profissional'
 import { Route as ContaNegociosRouteImport } from './routes/conta.negocios'
 import { Route as CidadeCitySlugRouteImport } from './routes/cidade.$citySlug'
 import { Route as CCommunitySlugRouteImport } from './routes/c.$communitySlug'
+import { Route as ProfissionaisPerfilUserIdRouteImport } from './routes/profissionais.perfil.$userId'
 import { Route as ContaNegociosNovoRouteImport } from './routes/conta.negocios.novo'
+import { Route as ContaNegociosBusinessIdRouteImport } from './routes/conta.negocios.$businessId'
 
 const VagasRoute = VagasRouteImport.update({
   id: '/vagas',
@@ -76,6 +79,11 @@ const IndexRoute = IndexRouteImport.update({
   path: '/',
   getParentRoute: () => rootRouteImport,
 } as any)
+const NegociosSlugRoute = NegociosSlugRouteImport.update({
+  id: '/negocios/$slug',
+  path: '/negocios/$slug',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const EstadoStateSlugRoute = EstadoStateSlugRouteImport.update({
   id: '/estado/$stateSlug',
   path: '/estado/$stateSlug',
@@ -101,9 +109,20 @@ const CCommunitySlugRoute = CCommunitySlugRouteImport.update({
   path: '/c/$communitySlug',
   getParentRoute: () => rootRouteImport,
 } as any)
+const ProfissionaisPerfilUserIdRoute =
+  ProfissionaisPerfilUserIdRouteImport.update({
+    id: '/profissionais/perfil/$userId',
+    path: '/profissionais/perfil/$userId',
+    getParentRoute: () => rootRouteImport,
+  } as any)
 const ContaNegociosNovoRoute = ContaNegociosNovoRouteImport.update({
   id: '/novo',
   path: '/novo',
+  getParentRoute: () => ContaNegociosRoute,
+} as any)
+const ContaNegociosBusinessIdRoute = ContaNegociosBusinessIdRouteImport.update({
+  id: '/$businessId',
+  path: '/$businessId',
   getParentRoute: () => ContaNegociosRoute,
 } as any)
 
@@ -123,7 +142,10 @@ export interface FileRoutesByFullPath {
   '/conta/negocios': typeof ContaNegociosRouteWithChildren
   '/conta/profissional': typeof ContaProfissionalRoute
   '/estado/$stateSlug': typeof EstadoStateSlugRoute
+  '/negocios/$slug': typeof NegociosSlugRoute
+  '/conta/negocios/$businessId': typeof ContaNegociosBusinessIdRoute
   '/conta/negocios/novo': typeof ContaNegociosNovoRoute
+  '/profissionais/perfil/$userId': typeof ProfissionaisPerfilUserIdRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
@@ -141,7 +163,10 @@ export interface FileRoutesByTo {
   '/conta/negocios': typeof ContaNegociosRouteWithChildren
   '/conta/profissional': typeof ContaProfissionalRoute
   '/estado/$stateSlug': typeof EstadoStateSlugRoute
+  '/negocios/$slug': typeof NegociosSlugRoute
+  '/conta/negocios/$businessId': typeof ContaNegociosBusinessIdRoute
   '/conta/negocios/novo': typeof ContaNegociosNovoRoute
+  '/profissionais/perfil/$userId': typeof ProfissionaisPerfilUserIdRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
@@ -160,7 +185,10 @@ export interface FileRoutesById {
   '/conta/negocios': typeof ContaNegociosRouteWithChildren
   '/conta/profissional': typeof ContaProfissionalRoute
   '/estado/$stateSlug': typeof EstadoStateSlugRoute
+  '/negocios/$slug': typeof NegociosSlugRoute
+  '/conta/negocios/$businessId': typeof ContaNegociosBusinessIdRoute
   '/conta/negocios/novo': typeof ContaNegociosNovoRoute
+  '/profissionais/perfil/$userId': typeof ProfissionaisPerfilUserIdRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
@@ -180,7 +208,10 @@ export interface FileRouteTypes {
     | '/conta/negocios'
     | '/conta/profissional'
     | '/estado/$stateSlug'
+    | '/negocios/$slug'
+    | '/conta/negocios/$businessId'
     | '/conta/negocios/novo'
+    | '/profissionais/perfil/$userId'
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/'
@@ -198,7 +229,10 @@ export interface FileRouteTypes {
     | '/conta/negocios'
     | '/conta/profissional'
     | '/estado/$stateSlug'
+    | '/negocios/$slug'
+    | '/conta/negocios/$businessId'
     | '/conta/negocios/novo'
+    | '/profissionais/perfil/$userId'
   id:
     | '__root__'
     | '/'
@@ -216,7 +250,10 @@ export interface FileRouteTypes {
     | '/conta/negocios'
     | '/conta/profissional'
     | '/estado/$stateSlug'
+    | '/negocios/$slug'
+    | '/conta/negocios/$businessId'
     | '/conta/negocios/novo'
+    | '/profissionais/perfil/$userId'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
@@ -233,6 +270,8 @@ export interface RootRouteChildren {
   CCommunitySlugRoute: typeof CCommunitySlugRoute
   CidadeCitySlugRoute: typeof CidadeCitySlugRoute
   EstadoStateSlugRoute: typeof EstadoStateSlugRoute
+  NegociosSlugRoute: typeof NegociosSlugRoute
+  ProfissionaisPerfilUserIdRoute: typeof ProfissionaisPerfilUserIdRoute
 }
 
 declare module '@tanstack/react-router' {
@@ -307,6 +346,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof IndexRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/negocios/$slug': {
+      id: '/negocios/$slug'
+      path: '/negocios/$slug'
+      fullPath: '/negocios/$slug'
+      preLoaderRoute: typeof NegociosSlugRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/estado/$stateSlug': {
       id: '/estado/$stateSlug'
       path: '/estado/$stateSlug'
@@ -342,6 +388,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof CCommunitySlugRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/profissionais/perfil/$userId': {
+      id: '/profissionais/perfil/$userId'
+      path: '/profissionais/perfil/$userId'
+      fullPath: '/profissionais/perfil/$userId'
+      preLoaderRoute: typeof ProfissionaisPerfilUserIdRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/conta/negocios/novo': {
       id: '/conta/negocios/novo'
       path: '/novo'
@@ -349,14 +402,23 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof ContaNegociosNovoRouteImport
       parentRoute: typeof ContaNegociosRoute
     }
+    '/conta/negocios/$businessId': {
+      id: '/conta/negocios/$businessId'
+      path: '/$businessId'
+      fullPath: '/conta/negocios/$businessId'
+      preLoaderRoute: typeof ContaNegociosBusinessIdRouteImport
+      parentRoute: typeof ContaNegociosRoute
+    }
   }
 }
 
 interface ContaNegociosRouteChildren {
+  ContaNegociosBusinessIdRoute: typeof ContaNegociosBusinessIdRoute
   ContaNegociosNovoRoute: typeof ContaNegociosNovoRoute
 }
 
 const ContaNegociosRouteChildren: ContaNegociosRouteChildren = {
+  ContaNegociosBusinessIdRoute: ContaNegociosBusinessIdRoute,
   ContaNegociosNovoRoute: ContaNegociosNovoRoute,
 }
 
@@ -390,6 +452,8 @@ const rootRouteChildren: RootRouteChildren = {
   CCommunitySlugRoute: CCommunitySlugRoute,
   CidadeCitySlugRoute: CidadeCitySlugRoute,
   EstadoStateSlugRoute: EstadoStateSlugRoute,
+  NegociosSlugRoute: NegociosSlugRoute,
+  ProfissionaisPerfilUserIdRoute: ProfissionaisPerfilUserIdRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
