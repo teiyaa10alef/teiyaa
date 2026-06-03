@@ -1,4 +1,5 @@
-import { createFileRoute, Link, redirect } from "@tanstack/react-router";
+import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
+import { useEffect } from "react";
 import { useSuspenseQuery } from "@tanstack/react-query";
 import { SiteHeader } from "@/components/SiteHeader";
 import { SiteFooter } from "@/components/SiteFooter";
@@ -6,19 +7,22 @@ import { communitiesQuery } from "@/lib/listings-api";
 import { getStoredCommunitySlug } from "@/lib/community";
 
 export const Route = createFileRoute("/")({
-  beforeLoad: () => {
-    // If user already chose a community, send them there
-    const slug = getStoredCommunitySlug();
-    if (slug) {
-      throw redirect({ to: "/c/$communitySlug", params: { communitySlug: slug } });
-    }
-  },
   loader: ({ context }) => context.queryClient.ensureQueryData(communitiesQuery),
   component: OnboardingHome,
 });
 
 function OnboardingHome() {
   const { data: communities } = useSuspenseQuery(communitiesQuery);
+  const navigate = useNavigate();
+
+  // Client-only redirect avoids SSR/client hydration mismatch (localStorage is client-only).
+  useEffect(() => {
+    const slug = getStoredCommunitySlug();
+    if (slug) {
+      navigate({ to: "/c/$communitySlug", params: { communitySlug: slug }, replace: true });
+    }
+  }, [navigate]);
+
   const active = communities.filter((c) => c.is_active);
   const soon = communities.filter((c) => !c.is_active);
 
