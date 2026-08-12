@@ -7,6 +7,7 @@ import { CATEGORY_ICONS, CATEGORY_SOFT, VISUAL_LABELS } from "@/lib/category-vis
 import { ListingCard } from "./ListingCard";
 import { BusinessFeed } from "./BusinessFeed";
 import { ProfessionalFeed } from "./ProfessionalFeed";
+import { GigFeed } from "./GigFeed";
 
 
 interface ListingsFeedProps {
