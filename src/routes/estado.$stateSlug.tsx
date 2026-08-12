@@ -3,9 +3,9 @@ import { z } from "zod";
 import { zodValidator } from "@tanstack/zod-adapter";
 import { SiteHeader } from "@/components/SiteHeader";
 import { SiteFooter } from "@/components/SiteFooter";
-import { ScopeSwitcher } from "@/components/ScopeSwitcher";
-import { ListingsFeed } from "@/components/ListingsFeed";
-import { useHomeCommunitySlug, categoryLabel } from "@/lib/community";
+import { ScopeBar } from "@/components/ScopeBar";
+import { ListingsFeed, CategoryPrompt } from "@/components/ListingsFeed";
+import { categoryLabel } from "@/lib/community";
 import { supabase } from "@/integrations/supabase/client";
 
 const searchSchema = z.object({
@@ -52,45 +52,36 @@ export const Route = createFileRoute("/estado/$stateSlug")({
 function StatePage() {
   const { state, city } = Route.useLoaderData();
   const { cat } = Route.useSearch();
-  const homeCommunity = useHomeCommunitySlug();
 
   return (
     <div className="min-h-screen bg-background text-foreground">
       <SiteHeader />
-      <section className="bg-surface border-b border-border">
-        <div className="max-w-7xl mx-auto px-4 md:px-6 py-8 md:py-12">
-          <span className="inline-block px-3 py-1 bg-brand-soft text-brand text-xs font-bold uppercase tracking-widest rounded-full">
-            Visão do estado
-          </span>
-          <h1 className="mt-4 text-3xl md:text-5xl font-bold leading-tight">
-            {state.name}
-          </h1>
-          <p className="mt-3 text-base md:text-lg text-muted-foreground max-w-2xl">
-            Anúncios de todas as cidades e comunidades em {state.name}.
-          </p>
-          <div className="mt-6">
-            <ScopeSwitcher
-              active="state"
-              communitySlug={homeCommunity}
-              communityName="Minha comunidade"
-              citySlug={city?.slug ?? "sao-paulo"}
-              cityName={city?.name ?? "Cidade"}
-              stateSlug={state.slug}
-              stateName={state.name}
-            />
-          </div>
-        </div>
-      </section>
+      <ScopeBar
+        active="state"
+        currentLabel={state.name}
+        citySlug={city?.slug ?? "sao-paulo"}
+        cityName={city?.name ?? "Cidade"}
+        stateSlug={state.slug}
+        stateName={state.name}
+        basePath={`/estado/${state.slug}`}
+        category={cat}
+      />
 
-      <main className="max-w-7xl mx-auto px-4 md:px-6 py-8 md:py-12">
-        <h2 className="text-2xl md:text-3xl font-bold mb-6">
-          {cat ? categoryLabel(cat) : `Tudo em ${state.name}`}
-        </h2>
-        <ListingsFeed
-          scope={{ kind: "state", slug: state.slug }}
-          category={cat}
-          basePath={`/estado/${state.slug}`}
-        />
+      <main className="max-w-7xl mx-auto px-4 md:px-6 py-6 md:py-10">
+        {cat ? (
+          <>
+            <h1 className="text-xl md:text-2xl font-bold mb-5">
+              {categoryLabel(cat)} em {state.name}
+            </h1>
+            <ListingsFeed
+              scope={{ kind: "state", slug: state.slug }}
+              category={cat}
+              basePath={`/estado/${state.slug}`}
+            />
+          </>
+        ) : (
+          <CategoryPrompt basePath={`/estado/${state.slug}`} />
+        )}
       </main>
       <SiteFooter />
     </div>
