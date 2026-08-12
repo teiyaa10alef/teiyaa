@@ -32,6 +32,7 @@ function LoginPage() {
   const [communitySlug, setCommunitySlug] = useState("");
   const [photo, setPhoto] = useState<File | null>(null);
   const [loading, setLoading] = useState(false);
+  const [pendingEmail, setPendingEmail] = useState<string | null>(null);
 
   const { data: communities = [] } = useQuery(communitiesQuery);
   const activeCommunities = communities.filter((c) => c.is_active);
@@ -87,6 +88,7 @@ function LoginPage() {
           toast.success("Conta criada!");
           navigate({ to: "/" });
         } else {
+          setPendingEmail(email);
           toast.success("Conta criada! Verifique seu e-mail para confirmar.");
         }
       } else {
@@ -115,6 +117,28 @@ function LoginPage() {
               ? "Acesse sua conta para anunciar e se candidatar."
               : "Cadastre-se para anunciar, se candidatar e contratar."}
           </p>
+
+          {pendingEmail && (
+            <div className="mb-6 rounded-2xl border border-brand/30 bg-brand/10 p-4 text-sm">
+              <p className="font-semibold text-foreground">Conta criada!</p>
+              <p className="mt-1 text-muted-foreground">
+                Enviamos um link de confirmação para <strong>{pendingEmail}</strong>. Confirme seu
+                e-mail e depois entre com sua senha.
+              </p>
+              <button
+                type="button"
+                onClick={() => {
+                  setPendingEmail(null);
+                  setMode("login");
+                }}
+                className="mt-3 text-brand font-semibold"
+              >
+                Ir para o login
+              </button>
+            </div>
+          )}
+
+
 
           <form onSubmit={handleSubmit} className="flex flex-col gap-3">
             {mode === "signup" && (
