@@ -32,6 +32,7 @@ function LoginPage() {
   const [communitySlug, setCommunitySlug] = useState("");
   const [photo, setPhoto] = useState<File | null>(null);
   const [loading, setLoading] = useState(false);
+  const [pendingEmail, setPendingEmail] = useState<string | null>(null);
 
   const { data: communities = [] } = useQuery(communitiesQuery);
   const activeCommunities = communities.filter((c) => c.is_active);
