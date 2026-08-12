@@ -69,3 +69,36 @@ export function categoryLabel(cat: string | undefined | null): string {
   if (!cat) return "";
   return (CATEGORY_LABELS as Record<string, string>)[cat] ?? "";
 }
+
+const CATEGORY_STORAGE_KEY = "teiyaa:last-category";
+
+function isCategoryKey(value: string | null): value is CategoryKey {
+  return !!value && (CATEGORY_ORDER as string[]).includes(value);
+}
+
+export function getStoredCategory(): CategoryKey | null {
+  if (typeof window === "undefined") return null;
+  try {
+    const value = localStorage.getItem(CATEGORY_STORAGE_KEY);
+    return isCategoryKey(value) ? value : null;
+  } catch {
+    return null;
+  }
+}
+
+export function setStoredCategory(cat: CategoryKey) {
+  if (typeof window === "undefined") return;
+  try {
+    localStorage.setItem(CATEGORY_STORAGE_KEY, cat);
+  } catch {
+    // ignore
+  }
+}
+
+export function useStoredCategory(): CategoryKey | null {
+  const [cat, setCat] = useState<CategoryKey | null>(null);
+  useEffect(() => {
+    setCat(getStoredCategory());
+  }, []);
+  return cat;
+}
