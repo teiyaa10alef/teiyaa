@@ -128,8 +128,8 @@
   --cat-profissional-soft: oklch(0.96 0.03 250);
   --cat-imovel: oklch(0.55 0.14 160);
   --cat-imovel-soft: oklch(0.96 0.04 160);
-  --cat-freelance: oklch(0.55 0.18 300);
-  --cat-freelance-soft: oklch(0.96 0.04 300);
+  --cat-freelance: oklch(0.55 0.20 30);
+  --cat-freelance-soft: oklch(0.96 0.04 30);
   --cat-vaga: oklch(0.55 0.15 200);
   --cat-vaga-soft: oklch(0.96 0.04 200);
   --cat-mercado: oklch(0.58 0.19 350);
@@ -188,8 +188,8 @@
   --cat-profissional-soft: oklch(0.28 0.05 250);
   --cat-imovel: oklch(0.75 0.12 160);
   --cat-imovel-soft: oklch(0.28 0.05 160);
-  --cat-freelance: oklch(0.76 0.14 300);
-  --cat-freelance-soft: oklch(0.28 0.06 300);
+  --cat-freelance: oklch(0.75 0.15 30);
+  --cat-freelance-soft: oklch(0.28 0.06 30);
   --cat-vaga: oklch(0.75 0.12 200);
   --cat-vaga-soft: oklch(0.28 0.05 200);
   --cat-mercado: oklch(0.76 0.15 350);
