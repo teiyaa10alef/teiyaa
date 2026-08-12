@@ -1,7 +1,7 @@
 import { createFileRoute, redirect } from "@tanstack/react-router";
 import { DEFAULT_COMMUNITY_SLUG, getStoredCommunitySlug } from "@/lib/community";
 
-export const Route = createFileRoute("/freelances")({
+export const Route = createFileRoute("/freelances/")({
   beforeLoad: () => {
     throw redirect({
       to: "/c/$communitySlug",
