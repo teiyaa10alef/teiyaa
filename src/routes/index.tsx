@@ -9,6 +9,16 @@ import { getStoredCommunitySlug } from "@/lib/community";
 
 export const Route = createFileRoute("/")({
   loader: ({ context }) => context.queryClient.ensureQueryData(communitiesQuery),
+  head: () => ({
+    meta: [
+      { title: "teiyaa — Descubra o que sua comunidade oferece" },
+      { name: "description", content: "Encontre comércios, serviços, imóveis, vagas, freelances e itens à venda diretamente no seu bairro." },
+      { property: "og:title", content: "teiyaa — Descubra o que sua comunidade oferece" },
+      { property: "og:description", content: "Encontre comércios, serviços, imóveis, vagas, freelances e itens à venda diretamente no seu bairro." },
+      { property: "og:type", content: "website" },
+      { name: "twitter:card", content: "summary" },
+    ],
+  }),
   component: OnboardingHome,
 });
 
