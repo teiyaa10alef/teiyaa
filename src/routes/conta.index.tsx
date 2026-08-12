@@ -11,6 +11,8 @@ import {
   MessageCircle,
   Flame,
   ClipboardList,
+  Bell,
+
 } from "lucide-react";
 
 export const Route = createFileRoute("/conta/")({
