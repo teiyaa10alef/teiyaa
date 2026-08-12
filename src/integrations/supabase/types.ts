@@ -328,6 +328,176 @@ export type Database = {
           },
         ]
       }
+      market_conversations: {
+        Row: {
+          buyer_id: string
+          created_at: string
+          id: string
+          item_id: string
+          last_message_at: string
+          seller_id: string
+        }
+        Insert: {
+          buyer_id: string
+          created_at?: string
+          id?: string
+          item_id: string
+          last_message_at?: string
+          seller_id: string
+        }
+        Update: {
+          buyer_id?: string
+          created_at?: string
+          id?: string
+          item_id?: string
+          last_message_at?: string
+          seller_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "market_conversations_item_id_fkey"
+            columns: ["item_id"]
+            isOneToOne: false
+            referencedRelation: "market_items"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      market_items: {
+        Row: {
+          category: string
+          community_id: string | null
+          condition: Database["public"]["Enums"]["market_condition"]
+          created_at: string
+          description: string
+          id: string
+          images: Json
+          is_negotiable: boolean
+          price_cents: number | null
+          seller_id: string
+          status: Database["public"]["Enums"]["market_status"]
+          title: string
+          updated_at: string
+        }
+        Insert: {
+          category?: string
+          community_id?: string | null
+          condition?: Database["public"]["Enums"]["market_condition"]
+          created_at?: string
+          description?: string
+          id?: string
+          images?: Json
+          is_negotiable?: boolean
+          price_cents?: number | null
+          seller_id: string
+          status?: Database["public"]["Enums"]["market_status"]
+          title: string
+          updated_at?: string
+        }
+        Update: {
+          category?: string
+          community_id?: string | null
+          condition?: Database["public"]["Enums"]["market_condition"]
+          created_at?: string
+          description?: string
+          id?: string
+          images?: Json
+          is_negotiable?: boolean
+          price_cents?: number | null
+          seller_id?: string
+          status?: Database["public"]["Enums"]["market_status"]
+          title?: string
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "market_items_community_id_fkey"
+            columns: ["community_id"]
+            isOneToOne: false
+            referencedRelation: "communities"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      market_messages: {
+        Row: {
+          body: string
+          conversation_id: string
+          created_at: string
+          id: string
+          read_at: string | null
+          sender_id: string
+        }
+        Insert: {
+          body: string
+          conversation_id: string
+          created_at?: string
+          id?: string
+          read_at?: string | null
+          sender_id: string
+        }
+        Update: {
+          body?: string
+          conversation_id?: string
+          created_at?: string
+          id?: string
+          read_at?: string | null
+          sender_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "market_messages_conversation_id_fkey"
+            columns: ["conversation_id"]
+            isOneToOne: false
+            referencedRelation: "market_conversations"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      market_offers: {
+        Row: {
+          amount_cents: number
+          buyer_id: string
+          created_at: string
+          id: string
+          item_id: string
+          message: string | null
+          seller_id: string
+          status: Database["public"]["Enums"]["offer_status"]
+          updated_at: string
+        }
+        Insert: {
+          amount_cents: number
+          buyer_id: string
+          created_at?: string
+          id?: string
+          item_id: string
+          message?: string | null
+          seller_id: string
+          status?: Database["public"]["Enums"]["offer_status"]
+          updated_at?: string
+        }
+        Update: {
+          amount_cents?: number
+          buyer_id?: string
+          created_at?: string
+          id?: string
+          item_id?: string
+          message?: string | null
+          seller_id?: string
+          status?: Database["public"]["Enums"]["offer_status"]
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "market_offers_item_id_fkey"
+            columns: ["item_id"]
+            isOneToOne: false
+            referencedRelation: "market_items"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       portfolio_items: {
         Row: {
           caption: string | null
@@ -543,11 +713,17 @@ export type Database = {
       [_ in never]: never
     }
     Functions: {
-      [_ in never]: never
+      is_conversation_participant: {
+        Args: { _conversation_id: string; _user_id: string }
+        Returns: boolean
+      }
     }
     Enums: {
       listing_category: "comercio" | "servico" | "imovel" | "freelance" | "vaga"
       listing_status: "active" | "paused" | "archived"
+      market_condition: "novo" | "seminovo" | "usado"
+      market_status: "active" | "reserved" | "sold" | "paused"
+      offer_status: "pending" | "accepted" | "rejected"
     }
     CompositeTypes: {
       [_ in never]: never
@@ -677,6 +853,9 @@ export const Constants = {
     Enums: {
       listing_category: ["comercio", "servico", "imovel", "freelance", "vaga"],
       listing_status: ["active", "paused", "archived"],
+      market_condition: ["novo", "seminovo", "usado"],
+      market_status: ["active", "reserved", "sold", "paused"],
+      offer_status: ["pending", "accepted", "rejected"],
     },
   },
 } as const
