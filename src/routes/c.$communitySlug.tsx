@@ -4,8 +4,8 @@ import { z } from "zod";
 import { zodValidator } from "@tanstack/zod-adapter";
 import { SiteHeader } from "@/components/SiteHeader";
 import { SiteFooter } from "@/components/SiteFooter";
-import { ScopeSwitcher } from "@/components/ScopeSwitcher";
-import { ListingsFeed } from "@/components/ListingsFeed";
+import { ScopeBar } from "@/components/ScopeBar";
+import { ListingsFeed, CategoryPrompt } from "@/components/ListingsFeed";
 import { communityBySlugQuery } from "@/lib/listings-api";
 import { setStoredCommunitySlug, categoryLabel } from "@/lib/community";
 import { supabase } from "@/integrations/supabase/client";
@@ -83,42 +83,32 @@ function CommunityPage() {
     <div className="min-h-screen bg-background text-foreground">
       <SiteHeader />
 
-      <section className="bg-surface border-b border-border">
-        <div className="max-w-7xl mx-auto px-4 md:px-6 py-8 md:py-12">
-          <span className="inline-block px-3 py-1 bg-brand-soft text-brand text-xs font-bold uppercase tracking-widest rounded-full">
-            Sua comunidade
-          </span>
-          <h1 className="mt-4 text-3xl md:text-5xl font-bold leading-tight">
-            {community.name}
-          </h1>
-          {community.description && (
-            <p className="mt-3 text-base md:text-lg text-muted-foreground max-w-2xl">
-              {community.description}
-            </p>
-          )}
-          <div className="mt-6">
-            <ScopeSwitcher
-              active="community"
-              communitySlug={community.slug}
-              communityName={community.name}
-              citySlug={city.slug}
-              cityName={city.name}
-              stateSlug={state.slug}
-              stateName={state.name}
-            />
-          </div>
-        </div>
-      </section>
+      <ScopeBar
+        active="community"
+        currentLabel={community.name}
+        citySlug={city.slug}
+        cityName={city.name}
+        stateSlug={state.slug}
+        stateName={state.name}
+        basePath={`/c/${community.slug}`}
+        category={cat}
+      />
 
-      <main className="max-w-7xl mx-auto px-4 md:px-6 py-8 md:py-12">
-        <h2 className="text-2xl md:text-3xl font-bold mb-6">
-          {cat ? categoryLabel(cat) : "Tudo no bairro"}
-        </h2>
-        <ListingsFeed
-          scope={{ kind: "community", slug: community.slug }}
-          category={cat}
-          basePath={`/c/${community.slug}`}
-        />
+      <main className="max-w-7xl mx-auto px-4 md:px-6 py-6 md:py-10">
+        {cat ? (
+          <>
+            <h1 className="text-xl md:text-2xl font-bold mb-5">
+              {categoryLabel(cat)} em {community.name}
+            </h1>
+            <ListingsFeed
+              scope={{ kind: "community", slug: community.slug }}
+              category={cat}
+              basePath={`/c/${community.slug}`}
+            />
+          </>
+        ) : (
+          <CategoryPrompt basePath={`/c/${community.slug}`} />
+        )}
       </main>
 
       <SiteFooter />
