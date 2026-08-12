@@ -14,6 +14,35 @@ export type Database = {
   }
   public: {
     Tables: {
+      business_favorites: {
+        Row: {
+          business_id: string
+          created_at: string
+          id: string
+          user_id: string
+        }
+        Insert: {
+          business_id: string
+          created_at?: string
+          id?: string
+          user_id: string
+        }
+        Update: {
+          business_id?: string
+          created_at?: string
+          id?: string
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "business_favorites_business_id_fkey"
+            columns: ["business_id"]
+            isOneToOne: false
+            referencedRelation: "businesses"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       business_hours: {
         Row: {
           business_id: string
@@ -87,6 +116,91 @@ export type Database = {
           },
         ]
       }
+      business_promotions: {
+        Row: {
+          business_id: string
+          created_at: string
+          description: string | null
+          discount_label: string | null
+          ends_at: string | null
+          id: string
+          is_active: boolean
+          starts_at: string
+          title: string
+          updated_at: string
+        }
+        Insert: {
+          business_id: string
+          created_at?: string
+          description?: string | null
+          discount_label?: string | null
+          ends_at?: string | null
+          id?: string
+          is_active?: boolean
+          starts_at?: string
+          title: string
+          updated_at?: string
+        }
+        Update: {
+          business_id?: string
+          created_at?: string
+          description?: string | null
+          discount_label?: string | null
+          ends_at?: string | null
+          id?: string
+          is_active?: boolean
+          starts_at?: string
+          title?: string
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "business_promotions_business_id_fkey"
+            columns: ["business_id"]
+            isOneToOne: false
+            referencedRelation: "businesses"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      business_reviews: {
+        Row: {
+          business_id: string
+          comment: string | null
+          created_at: string
+          id: string
+          rating: number
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          business_id: string
+          comment?: string | null
+          created_at?: string
+          id?: string
+          rating: number
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          business_id?: string
+          comment?: string | null
+          created_at?: string
+          id?: string
+          rating?: number
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "business_reviews_business_id_fkey"
+            columns: ["business_id"]
+            isOneToOne: false
+            referencedRelation: "businesses"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       business_services: {
         Row: {
           business_id: string
@@ -144,7 +258,9 @@ export type Database = {
           phone: string | null
           slug: string
           updated_at: string
+          view_count: number
           whatsapp: string | null
+          whatsapp_click_count: number
         }
         Insert: {
           address?: string | null
@@ -164,7 +280,9 @@ export type Database = {
           phone?: string | null
           slug: string
           updated_at?: string
+          view_count?: number
           whatsapp?: string | null
+          whatsapp_click_count?: number
         }
         Update: {
           address?: string | null
@@ -184,7 +302,9 @@ export type Database = {
           phone?: string | null
           slug?: string
           updated_at?: string
+          view_count?: number
           whatsapp?: string | null
+          whatsapp_click_count?: number
         }
         Relationships: [
           {
@@ -713,6 +833,14 @@ export type Database = {
       [_ in never]: never
     }
     Functions: {
+      increment_business_view: {
+        Args: { _business_id: string }
+        Returns: undefined
+      }
+      increment_business_whatsapp_click: {
+        Args: { _business_id: string }
+        Returns: undefined
+      }
       is_conversation_participant: {
         Args: { _conversation_id: string; _user_id: string }
         Returns: boolean
