@@ -14,7 +14,7 @@ import { toast } from "sonner";
 
 const navItems = [
   { to: "/comercios", label: "Comércios" },
-  { to: "/servicos", label: "Serviços" },
+  { to: "/servicos", label: "Profissionais" },
   { to: "/mercado", label: "Mercado" },
   { to: "/imoveis", label: "Imóveis" },
   { to: "/vagas", label: "Vagas" },

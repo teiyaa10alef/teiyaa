@@ -1,7 +1,9 @@
 import { useSuspenseQuery } from "@tanstack/react-query";
 import { Link } from "@tanstack/react-router";
+import { ShoppingBag } from "lucide-react";
 import { listingsQuery, type Scope } from "@/lib/listings-api";
-import { CATEGORY_LABELS, CATEGORY_ORDER, type CategoryKey } from "@/lib/community";
+import { CATEGORY_ORDER, type CategoryKey } from "@/lib/community";
+import { CATEGORY_ICONS, CATEGORY_SOFT, VISUAL_LABELS } from "@/lib/category-visuals";
 import { ListingCard } from "./ListingCard";
 
 interface ListingsFeedProps {
@@ -18,20 +20,33 @@ export function CategoryPrompt({ basePath }: { basePath: string }) {
         Escolha uma área para ver os anúncios da sua região.
       </p>
       <div className="grid grid-cols-2 sm:grid-cols-3 gap-3">
-        {CATEGORY_ORDER.map((cat) => (
-          <Link
-            key={cat}
-            to={basePath}
-            search={{ cat }}
-            className="px-4 py-4 rounded-2xl border border-border bg-card font-semibold text-sm hover:border-brand transition-colors"
-          >
-            {CATEGORY_LABELS[cat]}
-          </Link>
-        ))}
+        {CATEGORY_ORDER.map((cat) => {
+          const Icon = CATEGORY_ICONS[cat];
+          return (
+            <Link
+              key={cat}
+              to={basePath}
+              search={{ cat }}
+              className="px-4 py-4 rounded-2xl border bg-card font-semibold text-sm flex items-center gap-2 hover:-translate-y-0.5 transition-transform"
+            >
+              <span
+                className={`size-8 rounded-xl flex items-center justify-center border ${CATEGORY_SOFT[cat]}`}
+              >
+                <Icon className="size-4" />
+              </span>
+              {VISUAL_LABELS[cat]}
+            </Link>
+          );
+        })}
         <Link
           to="/mercado"
-          className="px-4 py-4 rounded-2xl border border-border bg-card font-semibold text-sm hover:border-brand transition-colors"
+          className="px-4 py-4 rounded-2xl border bg-card font-semibold text-sm flex items-center gap-2 hover:-translate-y-0.5 transition-transform"
         >
+          <span
+            className={`size-8 rounded-xl flex items-center justify-center border ${CATEGORY_SOFT.mercado}`}
+          >
+            <ShoppingBag className="size-4" />
+          </span>
           Marketplace
         </Link>
       </div>
