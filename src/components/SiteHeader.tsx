@@ -72,14 +72,21 @@ export function SiteHeader() {
             ))}
           </div>
         </div>
-        <div className="flex items-center gap-2 md:gap-4">
+        <div className="flex items-center gap-1 md:gap-3">
           {user ? (
             <>
+              <NotificationsBell userId={user.id} />
               <Link
                 to="/mensagens"
-                className="hidden sm:inline-flex items-center gap-1 px-3 md:px-4 py-2 text-sm font-semibold text-foreground/80 hover:text-foreground"
+                aria-label="Mensagens"
+                className="relative inline-flex items-center justify-center size-10 rounded-xl text-foreground/80 hover:bg-muted transition-colors"
               >
-                <MessageCircle className="size-4" /> Mensagens
+                <MessageCircle className="size-5" />
+                {unreadMsgs > 0 && (
+                  <span className="absolute -top-0.5 -right-0.5 min-w-[18px] h-[18px] px-1 rounded-full bg-brand text-primary-foreground text-[10px] font-bold flex items-center justify-center">
+                    {unreadMsgs > 99 ? "99+" : unreadMsgs}
+                  </span>
+                )}
               </Link>
               <Link
                 to="/conta"
@@ -88,7 +95,6 @@ export function SiteHeader() {
                 <UserIcon className="size-4" /> Minha conta
               </Link>
               <button
-
                 onClick={handleLogout}
                 className="hidden sm:inline-flex items-center gap-1 px-3 md:px-4 py-2 text-sm font-semibold text-foreground/80 hover:text-foreground"
               >
@@ -103,6 +109,7 @@ export function SiteHeader() {
               Entrar
             </Link>
           )}
+
           <Link
             to="/anunciar"
             className="hidden sm:inline-flex px-4 md:px-6 py-2.5 bg-brand text-primary-foreground rounded-full text-sm font-bold shadow-brand hover:bg-brand-dark transition-all"
