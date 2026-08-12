@@ -7,6 +7,7 @@ import { CATEGORY_ICONS, CATEGORY_SOFT, VISUAL_LABELS } from "@/lib/category-vis
 import { ListingCard } from "./ListingCard";
 import { BusinessFeed } from "./BusinessFeed";
 import { ProfessionalFeed } from "./ProfessionalFeed";
+import { GigFeed } from "./GigFeed";
 
 
 interface ListingsFeedProps {
@@ -60,6 +61,7 @@ export function CategoryPrompt({ basePath }: { basePath: string }) {
 export function ListingsFeed({ scope, category }: ListingsFeedProps) {
   if (category === "comercio") return <BusinessFeed scope={scope} />;
   if (category === "servico") return <ProfessionalFeed scope={scope} />;
+  if (category === "freelance") return <GigFeed scope={scope} />;
   return <GenericListingsFeed scope={scope} category={category} />;
 }
 

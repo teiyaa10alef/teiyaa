@@ -14,28 +14,35 @@ import { Route as SitemapDotxmlRouteImport } from './routes/sitemap[.]xml'
 import { Route as ServicosRouteImport } from './routes/servicos'
 import { Route as LoginRouteImport } from './routes/login'
 import { Route as ImoveisRouteImport } from './routes/imoveis'
-import { Route as FreelancesRouteImport } from './routes/freelances'
 import { Route as ContaRouteImport } from './routes/conta'
 import { Route as ComerciosRouteImport } from './routes/comercios'
 import { Route as AnunciarRouteImport } from './routes/anunciar'
 import { Route as IndexRouteImport } from './routes/index'
 import { Route as MercadoIndexRouteImport } from './routes/mercado.index'
 import { Route as MensagensIndexRouteImport } from './routes/mensagens.index'
+import { Route as FreelancesIndexRouteImport } from './routes/freelances.index'
 import { Route as ContaIndexRouteImport } from './routes/conta.index'
 import { Route as NegociosSlugRouteImport } from './routes/negocios.$slug'
 import { Route as MercadoNovoRouteImport } from './routes/mercado.novo'
 import { Route as MercadoItemIdRouteImport } from './routes/mercado.$itemId'
 import { Route as MensagensConversationIdRouteImport } from './routes/mensagens.$conversationId'
+import { Route as FreelancesNovoRouteImport } from './routes/freelances.novo'
+import { Route as FreelancesGigIdRouteImport } from './routes/freelances.$gigId'
 import { Route as EstadoStateSlugRouteImport } from './routes/estado.$stateSlug'
 import { Route as ContaProfissionalRouteImport } from './routes/conta.profissional'
 import { Route as ContaNegociosRouteImport } from './routes/conta.negocios'
 import { Route as ContaMercadoRouteImport } from './routes/conta.mercado'
+import { Route as ContaFreelancesRouteImport } from './routes/conta.freelances'
+import { Route as ContaCandidaturasRouteImport } from './routes/conta.candidaturas'
 import { Route as CidadeCitySlugRouteImport } from './routes/cidade.$citySlug'
 import { Route as CCommunitySlugRouteImport } from './routes/c.$communitySlug'
 import { Route as ContaNegociosIndexRouteImport } from './routes/conta.negocios.index'
+import { Route as ContaFreelancesIndexRouteImport } from './routes/conta.freelances.index'
 import { Route as ProfissionaisPerfilUserIdRouteImport } from './routes/profissionais.perfil.$userId'
+import { Route as MensagensBicoConversationIdRouteImport } from './routes/mensagens.bico.$conversationId'
 import { Route as ContaNegociosNovoRouteImport } from './routes/conta.negocios.novo'
 import { Route as ContaNegociosBusinessIdRouteImport } from './routes/conta.negocios.$businessId'
+import { Route as ContaFreelancesGigIdRouteImport } from './routes/conta.freelances.$gigId'
 
 const VagasRoute = VagasRouteImport.update({
   id: '/vagas',
@@ -60,11 +67,6 @@ const LoginRoute = LoginRouteImport.update({
 const ImoveisRoute = ImoveisRouteImport.update({
   id: '/imoveis',
   path: '/imoveis',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const FreelancesRoute = FreelancesRouteImport.update({
-  id: '/freelances',
-  path: '/freelances',
   getParentRoute: () => rootRouteImport,
 } as any)
 const ContaRoute = ContaRouteImport.update({
@@ -97,6 +99,11 @@ const MensagensIndexRoute = MensagensIndexRouteImport.update({
   path: '/mensagens/',
   getParentRoute: () => rootRouteImport,
 } as any)
+const FreelancesIndexRoute = FreelancesIndexRouteImport.update({
+  id: '/freelances/',
+  path: '/freelances/',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const ContaIndexRoute = ContaIndexRouteImport.update({
   id: '/',
   path: '/',
@@ -122,6 +129,16 @@ const MensagensConversationIdRoute = MensagensConversationIdRouteImport.update({
   path: '/mensagens/$conversationId',
   getParentRoute: () => rootRouteImport,
 } as any)
+const FreelancesNovoRoute = FreelancesNovoRouteImport.update({
+  id: '/freelances/novo',
+  path: '/freelances/novo',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const FreelancesGigIdRoute = FreelancesGigIdRouteImport.update({
+  id: '/freelances/$gigId',
+  path: '/freelances/$gigId',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const EstadoStateSlugRoute = EstadoStateSlugRouteImport.update({
   id: '/estado/$stateSlug',
   path: '/estado/$stateSlug',
@@ -142,6 +159,16 @@ const ContaMercadoRoute = ContaMercadoRouteImport.update({
   path: '/mercado',
   getParentRoute: () => ContaRoute,
 } as any)
+const ContaFreelancesRoute = ContaFreelancesRouteImport.update({
+  id: '/freelances',
+  path: '/freelances',
+  getParentRoute: () => ContaRoute,
+} as any)
+const ContaCandidaturasRoute = ContaCandidaturasRouteImport.update({
+  id: '/candidaturas',
+  path: '/candidaturas',
+  getParentRoute: () => ContaRoute,
+} as any)
 const CidadeCitySlugRoute = CidadeCitySlugRouteImport.update({
   id: '/cidade/$citySlug',
   path: '/cidade/$citySlug',
@@ -157,10 +184,21 @@ const ContaNegociosIndexRoute = ContaNegociosIndexRouteImport.update({
   path: '/',
   getParentRoute: () => ContaNegociosRoute,
 } as any)
+const ContaFreelancesIndexRoute = ContaFreelancesIndexRouteImport.update({
+  id: '/',
+  path: '/',
+  getParentRoute: () => ContaFreelancesRoute,
+} as any)
 const ProfissionaisPerfilUserIdRoute =
   ProfissionaisPerfilUserIdRouteImport.update({
     id: '/profissionais/perfil/$userId',
     path: '/profissionais/perfil/$userId',
+    getParentRoute: () => rootRouteImport,
+  } as any)
+const MensagensBicoConversationIdRoute =
+  MensagensBicoConversationIdRouteImport.update({
+    id: '/mensagens/bico/$conversationId',
+    path: '/mensagens/bico/$conversationId',
     getParentRoute: () => rootRouteImport,
   } as any)
 const ContaNegociosNovoRoute = ContaNegociosNovoRouteImport.update({
@@ -173,13 +211,17 @@ const ContaNegociosBusinessIdRoute = ContaNegociosBusinessIdRouteImport.update({
   path: '/$businessId',
   getParentRoute: () => ContaNegociosRoute,
 } as any)
+const ContaFreelancesGigIdRoute = ContaFreelancesGigIdRouteImport.update({
+  id: '/$gigId',
+  path: '/$gigId',
+  getParentRoute: () => ContaFreelancesRoute,
+} as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
   '/anunciar': typeof AnunciarRoute
   '/comercios': typeof ComerciosRoute
   '/conta': typeof ContaRouteWithChildren
-  '/freelances': typeof FreelancesRoute
   '/imoveis': typeof ImoveisRoute
   '/login': typeof LoginRoute
   '/servicos': typeof ServicosRoute
@@ -187,27 +229,34 @@ export interface FileRoutesByFullPath {
   '/vagas': typeof VagasRoute
   '/c/$communitySlug': typeof CCommunitySlugRoute
   '/cidade/$citySlug': typeof CidadeCitySlugRoute
+  '/conta/candidaturas': typeof ContaCandidaturasRoute
+  '/conta/freelances': typeof ContaFreelancesRouteWithChildren
   '/conta/mercado': typeof ContaMercadoRoute
   '/conta/negocios': typeof ContaNegociosRouteWithChildren
   '/conta/profissional': typeof ContaProfissionalRoute
   '/estado/$stateSlug': typeof EstadoStateSlugRoute
+  '/freelances/$gigId': typeof FreelancesGigIdRoute
+  '/freelances/novo': typeof FreelancesNovoRoute
   '/mensagens/$conversationId': typeof MensagensConversationIdRoute
   '/mercado/$itemId': typeof MercadoItemIdRoute
   '/mercado/novo': typeof MercadoNovoRoute
   '/negocios/$slug': typeof NegociosSlugRoute
   '/conta/': typeof ContaIndexRoute
+  '/freelances/': typeof FreelancesIndexRoute
   '/mensagens/': typeof MensagensIndexRoute
   '/mercado/': typeof MercadoIndexRoute
+  '/conta/freelances/$gigId': typeof ContaFreelancesGigIdRoute
   '/conta/negocios/$businessId': typeof ContaNegociosBusinessIdRoute
   '/conta/negocios/novo': typeof ContaNegociosNovoRoute
+  '/mensagens/bico/$conversationId': typeof MensagensBicoConversationIdRoute
   '/profissionais/perfil/$userId': typeof ProfissionaisPerfilUserIdRoute
+  '/conta/freelances/': typeof ContaFreelancesIndexRoute
   '/conta/negocios/': typeof ContaNegociosIndexRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/anunciar': typeof AnunciarRoute
   '/comercios': typeof ComerciosRoute
-  '/freelances': typeof FreelancesRoute
   '/imoveis': typeof ImoveisRoute
   '/login': typeof LoginRoute
   '/servicos': typeof ServicosRoute
@@ -215,19 +264,26 @@ export interface FileRoutesByTo {
   '/vagas': typeof VagasRoute
   '/c/$communitySlug': typeof CCommunitySlugRoute
   '/cidade/$citySlug': typeof CidadeCitySlugRoute
+  '/conta/candidaturas': typeof ContaCandidaturasRoute
   '/conta/mercado': typeof ContaMercadoRoute
   '/conta/profissional': typeof ContaProfissionalRoute
   '/estado/$stateSlug': typeof EstadoStateSlugRoute
+  '/freelances/$gigId': typeof FreelancesGigIdRoute
+  '/freelances/novo': typeof FreelancesNovoRoute
   '/mensagens/$conversationId': typeof MensagensConversationIdRoute
   '/mercado/$itemId': typeof MercadoItemIdRoute
   '/mercado/novo': typeof MercadoNovoRoute
   '/negocios/$slug': typeof NegociosSlugRoute
   '/conta': typeof ContaIndexRoute
+  '/freelances': typeof FreelancesIndexRoute
   '/mensagens': typeof MensagensIndexRoute
   '/mercado': typeof MercadoIndexRoute
+  '/conta/freelances/$gigId': typeof ContaFreelancesGigIdRoute
   '/conta/negocios/$businessId': typeof ContaNegociosBusinessIdRoute
   '/conta/negocios/novo': typeof ContaNegociosNovoRoute
+  '/mensagens/bico/$conversationId': typeof MensagensBicoConversationIdRoute
   '/profissionais/perfil/$userId': typeof ProfissionaisPerfilUserIdRoute
+  '/conta/freelances': typeof ContaFreelancesIndexRoute
   '/conta/negocios': typeof ContaNegociosIndexRoute
 }
 export interface FileRoutesById {
@@ -236,7 +292,6 @@ export interface FileRoutesById {
   '/anunciar': typeof AnunciarRoute
   '/comercios': typeof ComerciosRoute
   '/conta': typeof ContaRouteWithChildren
-  '/freelances': typeof FreelancesRoute
   '/imoveis': typeof ImoveisRoute
   '/login': typeof LoginRoute
   '/servicos': typeof ServicosRoute
@@ -244,20 +299,28 @@ export interface FileRoutesById {
   '/vagas': typeof VagasRoute
   '/c/$communitySlug': typeof CCommunitySlugRoute
   '/cidade/$citySlug': typeof CidadeCitySlugRoute
+  '/conta/candidaturas': typeof ContaCandidaturasRoute
+  '/conta/freelances': typeof ContaFreelancesRouteWithChildren
   '/conta/mercado': typeof ContaMercadoRoute
   '/conta/negocios': typeof ContaNegociosRouteWithChildren
   '/conta/profissional': typeof ContaProfissionalRoute
   '/estado/$stateSlug': typeof EstadoStateSlugRoute
+  '/freelances/$gigId': typeof FreelancesGigIdRoute
+  '/freelances/novo': typeof FreelancesNovoRoute
   '/mensagens/$conversationId': typeof MensagensConversationIdRoute
   '/mercado/$itemId': typeof MercadoItemIdRoute
   '/mercado/novo': typeof MercadoNovoRoute
   '/negocios/$slug': typeof NegociosSlugRoute
   '/conta/': typeof ContaIndexRoute
+  '/freelances/': typeof FreelancesIndexRoute
   '/mensagens/': typeof MensagensIndexRoute
   '/mercado/': typeof MercadoIndexRoute
+  '/conta/freelances/$gigId': typeof ContaFreelancesGigIdRoute
   '/conta/negocios/$businessId': typeof ContaNegociosBusinessIdRoute
   '/conta/negocios/novo': typeof ContaNegociosNovoRoute
+  '/mensagens/bico/$conversationId': typeof MensagensBicoConversationIdRoute
   '/profissionais/perfil/$userId': typeof ProfissionaisPerfilUserIdRoute
+  '/conta/freelances/': typeof ContaFreelancesIndexRoute
   '/conta/negocios/': typeof ContaNegociosIndexRoute
 }
 export interface FileRouteTypes {
@@ -267,7 +330,6 @@ export interface FileRouteTypes {
     | '/anunciar'
     | '/comercios'
     | '/conta'
-    | '/freelances'
     | '/imoveis'
     | '/login'
     | '/servicos'
@@ -275,27 +337,34 @@ export interface FileRouteTypes {
     | '/vagas'
     | '/c/$communitySlug'
     | '/cidade/$citySlug'
+    | '/conta/candidaturas'
+    | '/conta/freelances'
     | '/conta/mercado'
     | '/conta/negocios'
     | '/conta/profissional'
     | '/estado/$stateSlug'
+    | '/freelances/$gigId'
+    | '/freelances/novo'
     | '/mensagens/$conversationId'
     | '/mercado/$itemId'
     | '/mercado/novo'
     | '/negocios/$slug'
     | '/conta/'
+    | '/freelances/'
     | '/mensagens/'
     | '/mercado/'
+    | '/conta/freelances/$gigId'
     | '/conta/negocios/$businessId'
     | '/conta/negocios/novo'
+    | '/mensagens/bico/$conversationId'
     | '/profissionais/perfil/$userId'
+    | '/conta/freelances/'
     | '/conta/negocios/'
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/'
     | '/anunciar'
     | '/comercios'
-    | '/freelances'
     | '/imoveis'
     | '/login'
     | '/servicos'
@@ -303,19 +372,26 @@ export interface FileRouteTypes {
     | '/vagas'
     | '/c/$communitySlug'
     | '/cidade/$citySlug'
+    | '/conta/candidaturas'
     | '/conta/mercado'
     | '/conta/profissional'
     | '/estado/$stateSlug'
+    | '/freelances/$gigId'
+    | '/freelances/novo'
     | '/mensagens/$conversationId'
     | '/mercado/$itemId'
     | '/mercado/novo'
     | '/negocios/$slug'
     | '/conta'
+    | '/freelances'
     | '/mensagens'
     | '/mercado'
+    | '/conta/freelances/$gigId'
     | '/conta/negocios/$businessId'
     | '/conta/negocios/novo'
+    | '/mensagens/bico/$conversationId'
     | '/profissionais/perfil/$userId'
+    | '/conta/freelances'
     | '/conta/negocios'
   id:
     | '__root__'
@@ -323,7 +399,6 @@ export interface FileRouteTypes {
     | '/anunciar'
     | '/comercios'
     | '/conta'
-    | '/freelances'
     | '/imoveis'
     | '/login'
     | '/servicos'
@@ -331,20 +406,28 @@ export interface FileRouteTypes {
     | '/vagas'
     | '/c/$communitySlug'
     | '/cidade/$citySlug'
+    | '/conta/candidaturas'
+    | '/conta/freelances'
     | '/conta/mercado'
     | '/conta/negocios'
     | '/conta/profissional'
     | '/estado/$stateSlug'
+    | '/freelances/$gigId'
+    | '/freelances/novo'
     | '/mensagens/$conversationId'
     | '/mercado/$itemId'
     | '/mercado/novo'
     | '/negocios/$slug'
     | '/conta/'
+    | '/freelances/'
     | '/mensagens/'
     | '/mercado/'
+    | '/conta/freelances/$gigId'
     | '/conta/negocios/$businessId'
     | '/conta/negocios/novo'
+    | '/mensagens/bico/$conversationId'
     | '/profissionais/perfil/$userId'
+    | '/conta/freelances/'
     | '/conta/negocios/'
   fileRoutesById: FileRoutesById
 }
@@ -353,7 +436,6 @@ export interface RootRouteChildren {
   AnunciarRoute: typeof AnunciarRoute
   ComerciosRoute: typeof ComerciosRoute
   ContaRoute: typeof ContaRouteWithChildren
-  FreelancesRoute: typeof FreelancesRoute
   ImoveisRoute: typeof ImoveisRoute
   LoginRoute: typeof LoginRoute
   ServicosRoute: typeof ServicosRoute
@@ -362,12 +444,16 @@ export interface RootRouteChildren {
   CCommunitySlugRoute: typeof CCommunitySlugRoute
   CidadeCitySlugRoute: typeof CidadeCitySlugRoute
   EstadoStateSlugRoute: typeof EstadoStateSlugRoute
+  FreelancesGigIdRoute: typeof FreelancesGigIdRoute
+  FreelancesNovoRoute: typeof FreelancesNovoRoute
   MensagensConversationIdRoute: typeof MensagensConversationIdRoute
   MercadoItemIdRoute: typeof MercadoItemIdRoute
   MercadoNovoRoute: typeof MercadoNovoRoute
   NegociosSlugRoute: typeof NegociosSlugRoute
+  FreelancesIndexRoute: typeof FreelancesIndexRoute
   MensagensIndexRoute: typeof MensagensIndexRoute
   MercadoIndexRoute: typeof MercadoIndexRoute
+  MensagensBicoConversationIdRoute: typeof MensagensBicoConversationIdRoute
   ProfissionaisPerfilUserIdRoute: typeof ProfissionaisPerfilUserIdRoute
 }
 
@@ -406,13 +492,6 @@ declare module '@tanstack/react-router' {
       path: '/imoveis'
       fullPath: '/imoveis'
       preLoaderRoute: typeof ImoveisRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/freelances': {
-      id: '/freelances'
-      path: '/freelances'
-      fullPath: '/freelances'
-      preLoaderRoute: typeof FreelancesRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/conta': {
@@ -457,6 +536,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof MensagensIndexRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/freelances/': {
+      id: '/freelances/'
+      path: '/freelances'
+      fullPath: '/freelances/'
+      preLoaderRoute: typeof FreelancesIndexRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/conta/': {
       id: '/conta/'
       path: '/'
@@ -492,6 +578,20 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof MensagensConversationIdRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/freelances/novo': {
+      id: '/freelances/novo'
+      path: '/freelances/novo'
+      fullPath: '/freelances/novo'
+      preLoaderRoute: typeof FreelancesNovoRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/freelances/$gigId': {
+      id: '/freelances/$gigId'
+      path: '/freelances/$gigId'
+      fullPath: '/freelances/$gigId'
+      preLoaderRoute: typeof FreelancesGigIdRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/estado/$stateSlug': {
       id: '/estado/$stateSlug'
       path: '/estado/$stateSlug'
@@ -520,6 +620,20 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof ContaMercadoRouteImport
       parentRoute: typeof ContaRoute
     }
+    '/conta/freelances': {
+      id: '/conta/freelances'
+      path: '/freelances'
+      fullPath: '/conta/freelances'
+      preLoaderRoute: typeof ContaFreelancesRouteImport
+      parentRoute: typeof ContaRoute
+    }
+    '/conta/candidaturas': {
+      id: '/conta/candidaturas'
+      path: '/candidaturas'
+      fullPath: '/conta/candidaturas'
+      preLoaderRoute: typeof ContaCandidaturasRouteImport
+      parentRoute: typeof ContaRoute
+    }
     '/cidade/$citySlug': {
       id: '/cidade/$citySlug'
       path: '/cidade/$citySlug'
@@ -541,11 +655,25 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof ContaNegociosIndexRouteImport
       parentRoute: typeof ContaNegociosRoute
     }
+    '/conta/freelances/': {
+      id: '/conta/freelances/'
+      path: '/'
+      fullPath: '/conta/freelances/'
+      preLoaderRoute: typeof ContaFreelancesIndexRouteImport
+      parentRoute: typeof ContaFreelancesRoute
+    }
     '/profissionais/perfil/$userId': {
       id: '/profissionais/perfil/$userId'
       path: '/profissionais/perfil/$userId'
       fullPath: '/profissionais/perfil/$userId'
       preLoaderRoute: typeof ProfissionaisPerfilUserIdRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/mensagens/bico/$conversationId': {
+      id: '/mensagens/bico/$conversationId'
+      path: '/mensagens/bico/$conversationId'
+      fullPath: '/mensagens/bico/$conversationId'
+      preLoaderRoute: typeof MensagensBicoConversationIdRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/conta/negocios/novo': {
@@ -562,8 +690,29 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof ContaNegociosBusinessIdRouteImport
       parentRoute: typeof ContaNegociosRoute
     }
+    '/conta/freelances/$gigId': {
+      id: '/conta/freelances/$gigId'
+      path: '/$gigId'
+      fullPath: '/conta/freelances/$gigId'
+      preLoaderRoute: typeof ContaFreelancesGigIdRouteImport
+      parentRoute: typeof ContaFreelancesRoute
+    }
   }
 }
+
+interface ContaFreelancesRouteChildren {
+  ContaFreelancesGigIdRoute: typeof ContaFreelancesGigIdRoute
+  ContaFreelancesIndexRoute: typeof ContaFreelancesIndexRoute
+}
+
+const ContaFreelancesRouteChildren: ContaFreelancesRouteChildren = {
+  ContaFreelancesGigIdRoute: ContaFreelancesGigIdRoute,
+  ContaFreelancesIndexRoute: ContaFreelancesIndexRoute,
+}
+
+const ContaFreelancesRouteWithChildren = ContaFreelancesRoute._addFileChildren(
+  ContaFreelancesRouteChildren,
+)
 
 interface ContaNegociosRouteChildren {
   ContaNegociosBusinessIdRoute: typeof ContaNegociosBusinessIdRoute
@@ -582,6 +731,8 @@ const ContaNegociosRouteWithChildren = ContaNegociosRoute._addFileChildren(
 )
 
 interface ContaRouteChildren {
+  ContaCandidaturasRoute: typeof ContaCandidaturasRoute
+  ContaFreelancesRoute: typeof ContaFreelancesRouteWithChildren
   ContaMercadoRoute: typeof ContaMercadoRoute
   ContaNegociosRoute: typeof ContaNegociosRouteWithChildren
   ContaProfissionalRoute: typeof ContaProfissionalRoute
@@ -589,6 +740,8 @@ interface ContaRouteChildren {
 }
 
 const ContaRouteChildren: ContaRouteChildren = {
+  ContaCandidaturasRoute: ContaCandidaturasRoute,
+  ContaFreelancesRoute: ContaFreelancesRouteWithChildren,
   ContaMercadoRoute: ContaMercadoRoute,
   ContaNegociosRoute: ContaNegociosRouteWithChildren,
   ContaProfissionalRoute: ContaProfissionalRoute,
@@ -602,7 +755,6 @@ const rootRouteChildren: RootRouteChildren = {
   AnunciarRoute: AnunciarRoute,
   ComerciosRoute: ComerciosRoute,
   ContaRoute: ContaRouteWithChildren,
-  FreelancesRoute: FreelancesRoute,
   ImoveisRoute: ImoveisRoute,
   LoginRoute: LoginRoute,
   ServicosRoute: ServicosRoute,
@@ -611,12 +763,16 @@ const rootRouteChildren: RootRouteChildren = {
   CCommunitySlugRoute: CCommunitySlugRoute,
   CidadeCitySlugRoute: CidadeCitySlugRoute,
   EstadoStateSlugRoute: EstadoStateSlugRoute,
+  FreelancesGigIdRoute: FreelancesGigIdRoute,
+  FreelancesNovoRoute: FreelancesNovoRoute,
   MensagensConversationIdRoute: MensagensConversationIdRoute,
   MercadoItemIdRoute: MercadoItemIdRoute,
   MercadoNovoRoute: MercadoNovoRoute,
   NegociosSlugRoute: NegociosSlugRoute,
+  FreelancesIndexRoute: FreelancesIndexRoute,
   MensagensIndexRoute: MensagensIndexRoute,
   MercadoIndexRoute: MercadoIndexRoute,
+  MensagensBicoConversationIdRoute: MensagensBicoConversationIdRoute,
   ProfissionaisPerfilUserIdRoute: ProfissionaisPerfilUserIdRoute,
 }
 export const routeTree = rootRouteImport
