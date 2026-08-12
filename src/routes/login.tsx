@@ -88,6 +88,7 @@ function LoginPage() {
           toast.success("Conta criada!");
           navigate({ to: "/" });
         } else {
+          setPendingEmail(email);
           toast.success("Conta criada! Verifique seu e-mail para confirmar.");
         }
       } else {
