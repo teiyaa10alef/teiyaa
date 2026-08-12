@@ -1,6 +1,6 @@
 import { Link } from "@tanstack/react-router";
 import { useQuery } from "@tanstack/react-query";
-import { ChevronDown, MapPin, Check } from "lucide-react";
+import { ChevronDown, MapPin, Check, ShoppingBag } from "lucide-react";
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -10,7 +10,13 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import { communitiesQuery } from "@/lib/listings-api";
-import { CATEGORY_LABELS, CATEGORY_ORDER, type CategoryKey } from "@/lib/community";
+import { CATEGORY_ORDER, type CategoryKey } from "@/lib/community";
+import {
+  CATEGORY_ICONS,
+  CATEGORY_SOFT,
+  CATEGORY_SOLID,
+  VISUAL_LABELS,
+} from "@/lib/category-visuals";
 
 interface ScopeBarProps {
   active: "community" | "city" | "state";
@@ -106,24 +112,28 @@ export function ScopeBar(props: ScopeBarProps) {
 
         {/* Category filter row */}
         <div className="flex gap-2 overflow-x-auto border-t border-border py-2 -mx-4 px-4 md:mx-0 md:px-0 scrollbar-none">
-          {CATEGORY_ORDER.map((cat) => (
-            <Link
-              key={cat}
-              to={props.basePath}
-              search={{ cat }}
-              className={`shrink-0 px-3.5 py-1.5 rounded-full text-sm font-semibold border transition-colors ${
-                props.category === cat
-                  ? "bg-brand text-primary-foreground border-brand"
-                  : "bg-card border-border hover:border-brand/40"
-              }`}
-            >
-              {CATEGORY_LABELS[cat]}
-            </Link>
-          ))}
+          {CATEGORY_ORDER.map((cat) => {
+            const Icon = CATEGORY_ICONS[cat];
+            const isActive = props.category === cat;
+            return (
+              <Link
+                key={cat}
+                to={props.basePath}
+                search={{ cat }}
+                className={`shrink-0 inline-flex items-center gap-1.5 px-3.5 py-1.5 rounded-full text-sm font-semibold border transition-colors ${
+                  isActive ? CATEGORY_SOLID[cat] : `${CATEGORY_SOFT[cat]} hover:brightness-95`
+                }`}
+              >
+                <Icon className="size-4" />
+                {VISUAL_LABELS[cat]}
+              </Link>
+            );
+          })}
           <Link
             to="/mercado"
-            className="shrink-0 px-3.5 py-1.5 rounded-full text-sm font-semibold border bg-card border-border hover:border-brand/40"
+            className={`shrink-0 inline-flex items-center gap-1.5 px-3.5 py-1.5 rounded-full text-sm font-semibold border transition-colors hover:brightness-95 ${CATEGORY_SOFT.mercado}`}
           >
+            <ShoppingBag className="size-4" />
             Marketplace
           </Link>
         </div>
