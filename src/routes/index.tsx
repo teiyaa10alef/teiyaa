@@ -24,7 +24,7 @@ export const Route = createFileRoute("/")({
 
 const categoryHighlights = [
   { icon: Store, label: "Comércios", desc: "Mercados, lanchonetes, barbearias..." },
-  { icon: Search, label: "Serviços", desc: "Pedreiros, pintores, eletricistas..." },
+  { icon: Search, label: "Profissionais", desc: "Pedreiros, pintores, eletricistas..." },
   { icon: Home, label: "Imóveis", desc: "Aluguel e venda perto de você" },
   { icon: Truck, label: "Freelances", desc: "Bicos rápidos na comunidade" },
   { icon: Briefcase, label: "Vagas", desc: "Empregos reais no bairro" },

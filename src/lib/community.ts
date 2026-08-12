@@ -7,7 +7,7 @@ export type CategoryKey = "comercio" | "servico" | "imovel" | "freelance" | "vag
 
 export const CATEGORY_LABELS: Record<CategoryKey, string> = {
   comercio: "Comércios",
-  servico: "Serviços",
+  servico: "Profissionais",
   imovel: "Imóveis",
   freelance: "Freelances",
   vaga: "Vagas",
