@@ -1,4 +1,7 @@
+import { Suspense } from "react";
+import { FeedSkeleton } from "./PageSkeletons";
 import { useSuspenseQuery } from "@tanstack/react-query";
+
 import { Link } from "@tanstack/react-router";
 import { ShoppingBag } from "lucide-react";
 import { listingsQuery, type Scope } from "@/lib/listings-api";
