@@ -57,8 +57,10 @@ export function CategoryPrompt({ basePath }: { basePath: string }) {
 
 export function ListingsFeed({ scope, category }: ListingsFeedProps) {
   if (category === "comercio") return <BusinessFeed scope={scope} />;
+  if (category === "servico") return <ProfessionalFeed scope={scope} />;
   return <GenericListingsFeed scope={scope} category={category} />;
 }
+
 
 function GenericListingsFeed({ scope, category }: Omit<ListingsFeedProps, "basePath">) {
   const { data: listings } = useSuspenseQuery(listingsQuery(scope, category));
