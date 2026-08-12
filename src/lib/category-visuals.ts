@@ -2,7 +2,7 @@ import {
   Store,
   HardHat,
   Home,
-  Bike,
+  Flame,
   Briefcase,
   ShoppingBag,
   type LucideIcon,
@@ -15,7 +15,7 @@ export const CATEGORY_ICONS: Record<VisualKey, LucideIcon> = {
   comercio: Store,
   servico: HardHat,
   imovel: Home,
-  freelance: Bike,
+  freelance: Flame,
   vaga: Briefcase,
   mercado: ShoppingBag,
 };
