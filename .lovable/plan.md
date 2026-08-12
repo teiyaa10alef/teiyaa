@@ -1,117 +1,86 @@
-## Visão geral
+# Sistema completo de comércios (anunciar + descobrir)
 
-Separar **comércios** e **serviços profissionais** do fluxo genérico de "listings". Criar dois sub-sistemas com perfis ricos e áreas de administração próprias, mantendo o feed atual da comunidade (que passa a exibir cards desses perfis também).
+Hoje já existem as tabelas `businesses`, `business_hours`, `business_services`, `business_media`, o admin em `/conta/negocios` e a página pública `/negocios/$slug`. Porém a aba **Comércios** do bairro ainda busca da tabela genérica `listings`, o `/anunciar` é uma página "em construção", e não existem avaliações, promoções nem favoritos.
 
-```text
-profiles (já existe)
-  ├── is_professional ──► professional_profiles ──► professional_services
-  │                                              └─► portfolio_items (fotos/vídeos)
-  └── is_business     ──► businesses ──► business_hours
-                                       └─► business_services
-                                       └─► business_media (logo, fotos)
-```
-
-Imóveis, freelances e vagas continuam usando `listings` (sem mudança agora).
+O objetivo é fechar o ciclo: quem anuncia tem um fluxo guiado e um painel com resultado; quem busca encontra rápido, filtra e confia.
 
 ---
 
-## 1. Banco de dados (migration)
+## 1. Banco de dados (uma migration)
 
-**`profiles`** — adicionar flags:
-- `is_professional boolean default false`
-- `is_business boolean default false`
-- `bio text`
+**`business_reviews`** — avaliações
+- `business_id`, `user_id`, `rating` (1–5), `comment`, `created_at`
+- 1 avaliação por pessoa por comércio; o dono não avalia o próprio
+- Leitura pública; escrita/edição só do autor
 
-**`professional_profiles`** (1‑para‑1 com user):
-- `user_id`, `community_id` (bairro principal), `headline`, `about`, `years_experience`, `service_area_km`, `whatsapp`, `phone`, `instagram`, `avatar_url`, `cover_url`, `is_published`
+**`business_promotions`** — promoções e cupons
+- `business_id`, `title`, `description`, `discount_label` (ex.: "20% OFF"), `starts_at`, `ends_at`, `is_active`
+- Leitura pública quando o comércio está publicado e a promoção está vigente; CRUD só do dono
+- Validação de datas por trigger (não por CHECK)
 
-**`professional_services`** (N por profissional):
-- `professional_id`, `title`, `description`, `price_from_cents`, `price_unit` (hora/serviço/diária)
+**`business_favorites`** — salvos
+- `user_id`, `business_id`, único por par; só o próprio usuário lê e escreve
 
-**`portfolio_items`** (fotos e vídeos):
-- `professional_id`, `media_url`, `media_type` (image/video), `caption`, `sort_order`
+**Ajustes em `businesses`**
+- `view_count` e `whatsapp_click_count` (contadores simples para o painel do dono)
+- Índices por `community_id`, `category`, `is_published`
+- Função de busca por nome/descrição/serviços
 
-**`businesses`** (N por user — um dono pode ter mais de um comércio):
-- `owner_id`, `community_id`, `name`, `slug`, `category` (alimentação, beleza, varejo, etc.), `description`, `logo_url`, `cover_url`, `address`, `lat`, `lng`, `whatsapp`, `phone`, `instagram`, `is_published`
-
-**`business_hours`**:
-- `business_id`, `weekday` (0–6), `opens_at time`, `closes_at time`, `is_closed boolean`
-
-**`business_services`**:
-- `business_id`, `title`, `description`, `price_cents`
-
-**`business_media`**:
-- `business_id`, `media_url`, `caption`, `sort_order`
-
-**RLS:**
-- Leitura pública apenas quando `is_published = true` (ou dono).
-- Insert/update/delete apenas pelo dono (`auth.uid() = user_id` / `owner_id`).
-- GRANTs apropriados (`anon` SELECT para perfis publicados, `authenticated` CRUD próprios).
-
-**Storage bucket** `profiles-media` (público) para logos, capas, portfólio.
+Todas com GRANTs corretos (`anon` só para leitura pública, `authenticated` para o resto) e RLS.
 
 ---
 
-## 2. Rotas novas
+## 2. Fluxo de quem anuncia
 
-```text
-/profissionais/$communitySlug          lista de profissionais do bairro
-/profissionais/perfil/$userId          perfil público do profissional
-/negocios/$communitySlug               lista de comércios do bairro
-/negocios/$slug                        página pública do comércio
+**`/anunciar`** deixa de ser placeholder e vira a porta de entrada: explica os benefícios e leva para "Cadastrar meu comércio" (ou login, se não logado).
 
-/conta                                 hub do usuário (ativar perfis)
-/conta/profissional                    admin do perfil profissional
-/conta/profissional/portfolio          gerenciar fotos/vídeos
-/conta/profissional/servicos           gerenciar serviços oferecidos
-/conta/negocios                        lista dos meus comércios
-/conta/negocios/novo                   criar comércio
-/conta/negocios/$id                    editar comércio (info, horários, serviços, mídia)
-```
+**Cadastro em etapas** (`/conta/negocios/novo`), com barra de progresso e possibilidade de sair e voltar:
+1. Identidade — nome, categoria, bairro, descrição curta
+2. Contato e endereço — WhatsApp, telefone, Instagram, endereço
+3. Visual — logo e capa
+4. Horários — grade dos 7 dias com atalhos ("copiar para todos", "fechado")
+5. Serviços/produtos — lista com preço opcional
+6. Revisão e **Publicar** — publica na hora, sem moderação
 
-As páginas `/c/$communitySlug` com `cat=comercio` e `cat=servico` passam a buscar de `businesses` / `professional_profiles` em vez de `listings`.
+**Painel do comércio** (`/conta/negocios/$businessId`) em abas: Visão geral (visualizações, cliques no WhatsApp, nota média, nº de avaliações), Informações, Horários, Serviços, Galeria, **Promoções**, **Avaliações** (ler e responder não entra agora; só visualizar). Botão de publicar/despublicar sempre visível, além de indicador de "perfil completo" (checklist do que falta: logo, horários, ao menos 1 serviço, WhatsApp).
 
 ---
 
-## 3. UI
+## 3. Fluxo de quem busca
 
-- **Hub `/conta`**: dois toggles — "Sou profissional" e "Tenho um negócio". Ativar abre o admin correspondente.
-- **Admin profissional**: formulário em abas (Sobre, Serviços, Portfólio, Contato). Upload múltiplo para portfólio.
-- **Admin negócio**: formulário (Identidade, Endereço, Horários grid 7 dias, Serviços, Galeria, Contato). Suporte a múltiplos comércios por dono.
-- **Perfil público profissional**: cover + avatar + headline + bio + serviços + grid portfólio + botão WhatsApp.
-- **Página pública do comércio**: logo + cover + horários (com status "Aberto agora"), serviços, galeria, mapa estático opcional, contatos.
+**Aba Comércios do bairro** (`/c/$slug?cat=comercio`, e equivalentes de cidade/estado) passa a listar `businesses` publicados em vez de `listings`:
+- Barra de busca por nome/serviço
+- Chips de subcategoria (Alimentação, Beleza, Mercado, Saúde, Moda, Serviços, Outros)
+- Filtros rápidos: "Abertos agora", "Com promoção", "Melhor avaliados"
+- Card do comércio: logo, nome, categoria, nota (estrelas + nº), selo "Aberto agora", selo de promoção, botão WhatsApp direto e ícone de favoritar
 
-Tudo usando design tokens existentes (sem cores hard‑coded).
+**Página pública `/negocios/$slug`** ganha:
+- Nota média e lista de avaliações + formulário para avaliar (exige login)
+- Bloco de promoções vigentes
+- Botão de favoritar
+- Contadores de visualização e clique no WhatsApp
+- Metadados de compartilhamento com nome, descrição e imagem do comércio; JSON-LD `LocalBusiness` com horários e nota
 
----
-
-## 4. Server functions
-
-`src/lib/professional.functions.ts` e `src/lib/business.functions.ts` com:
-- `upsertProfessionalProfile`, `listProfessionalServices`, `addPortfolioItem`, `deletePortfolioItem`
-- `createBusiness`, `updateBusiness`, `upsertBusinessHours`, `addBusinessMedia`, etc.
-
-Leitura pública (listagens e perfil) usa `supabase` browser client direto (RLS faz o filtro `is_published`).
+**`/conta/salvos`** — lista dos comércios favoritados.
 
 ---
 
-## 5. Header
+## 4. Detalhes técnicos
 
-Adicionar no menu (quando logado): "Minha conta" → dropdown com Profissional / Meus negócios.
+- `src/lib/business-api.ts`: queries de listagem com filtros/busca, agregados de nota, promoções, favoritos e contadores (leitura pública via client do browser, protegida por RLS).
+- `src/lib/business-hours.ts`: lógica de "aberto agora" reaproveitada por card e página (hoje está inline em `negocios.$slug.tsx`).
+- Novos componentes: `BusinessCard`, `BusinessFilters`, `RatingStars`, `ReviewList`/`ReviewForm`, `PromotionBadge`, `FavoriteButton`, `HoursGrid`, `BusinessWizard`.
+- `ListingsFeed` passa a delegar para o feed de comércios quando `cat=comercio`; as outras categorias continuam em `listings`.
+- Contadores incrementados por função no banco (evita corrida e não exige expor update).
+- Somente tokens de design existentes; layout mobile-first, seguindo o padrão atual do app.
 
 ---
 
 ## Ordem de execução
 
-1. Migration (tabelas + RLS + bucket).
-2. Server functions + queries.
-3. Hub `/conta` + páginas de admin.
-4. Páginas públicas (lista + perfil + comércio).
-5. Integrar no feed do bairro (substituir `comercio`/`servico` por dados novos).
-6. Atualizar header.
-
----
-
-## Pergunta antes de seguir
-
-Antes de criar a migration: confirma que **um usuário pode ter vários comércios** (ex.: dono de 2 lojas) mas **só um perfil profissional**? E os perfis devem entrar **automaticamente publicados** ou ficar como rascunho até o usuário clicar "Publicar"?
+1. Migration (avaliações, promoções, favoritos, contadores, índices, RLS + GRANTs)
+2. `business-api.ts` + utilitários de horário
+3. Wizard de cadastro + painel do dono com abas e checklist
+4. Feed de comércios (busca, filtros, cards) substituindo `listings` em `cat=comercio`
+5. Página pública enriquecida (avaliações, promoções, favoritar, SEO)
+6. `/anunciar` reformulado e `/conta/salvos`
