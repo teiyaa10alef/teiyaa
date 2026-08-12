@@ -1,6 +1,6 @@
 import { Link, useNavigate } from "@tanstack/react-router";
 import { useState } from "react";
-import { Menu, LogOut, User as UserIcon } from "lucide-react";
+import { Menu, LogOut, User as UserIcon, MessageCircle } from "lucide-react";
 import {
   Sheet,
   SheetContent,
@@ -15,10 +15,12 @@ import { toast } from "sonner";
 const navItems = [
   { to: "/comercios", label: "Comércios" },
   { to: "/servicos", label: "Serviços" },
+  { to: "/mercado", label: "Mercado" },
   { to: "/imoveis", label: "Imóveis" },
   { to: "/vagas", label: "Vagas" },
   { to: "/freelances", label: "Freelances" },
 ] as const;
+
 
 export function SiteHeader() {
   const [open, setOpen] = useState(false);
@@ -56,12 +58,19 @@ export function SiteHeader() {
           {user ? (
             <>
               <Link
+                to="/mensagens"
+                className="hidden sm:inline-flex items-center gap-1 px-3 md:px-4 py-2 text-sm font-semibold text-foreground/80 hover:text-foreground"
+              >
+                <MessageCircle className="size-4" /> Mensagens
+              </Link>
+              <Link
                 to="/conta"
                 className="hidden sm:inline-flex items-center gap-1 px-3 md:px-4 py-2 text-sm font-semibold text-foreground/80 hover:text-foreground"
               >
                 <UserIcon className="size-4" /> Minha conta
               </Link>
               <button
+
                 onClick={handleLogout}
                 className="hidden sm:inline-flex items-center gap-1 px-3 md:px-4 py-2 text-sm font-semibold text-foreground/80 hover:text-foreground"
               >
@@ -117,12 +126,20 @@ export function SiteHeader() {
                       Conectado como <strong>{user.email}</strong>
                     </div>
                     <Link
+                      to="/mensagens"
+                      onClick={() => setOpen(false)}
+                      className="w-full py-3 rounded-full border border-border font-semibold text-center"
+                    >
+                      Mensagens
+                    </Link>
+                    <Link
                       to="/conta"
                       onClick={() => setOpen(false)}
                       className="w-full py-3 rounded-full border border-border font-semibold text-center"
                     >
                       Minha conta
                     </Link>
+
                     <button
                       onClick={handleLogout}
                       className="w-full py-3 rounded-full border border-border font-semibold flex items-center justify-center gap-2"
