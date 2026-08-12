@@ -144,26 +144,32 @@ function PublicBusiness() {
 
   return (
     <Layout>
-      <div className="relative h-48 md:h-72 rounded-2xl overflow-hidden bg-muted">
-        {biz.cover_url && (
+      <div className="relative h-40 sm:h-56 md:h-72 rounded-2xl overflow-hidden bg-muted">
+        {biz.cover_url ? (
           <img src={biz.cover_url} alt={`Foto de ${biz.name}`} className="w-full h-full object-cover" />
+        ) : (
+          <div className="w-full h-full flex items-center justify-center text-muted-foreground">
+            <Store className="size-10" />
+          </div>
         )}
+        <div className="absolute inset-x-0 bottom-0 h-20 bg-gradient-to-t from-background to-transparent pointer-events-none" />
       </div>
 
-      <div className="-mt-10 px-2 md:px-6 flex items-end gap-4">
-        <div className="size-20 md:size-28 rounded-2xl border-4 border-background bg-surface overflow-hidden flex-shrink-0">
+      <div className="relative z-10 -mt-8 sm:-mt-10 flex flex-col sm:flex-row sm:items-end gap-3 sm:gap-4">
+        <div className="size-20 md:size-28 rounded-2xl border-4 border-background bg-card shadow-md overflow-hidden flex-shrink-0">
           {biz.logo_url ? (
-            <img src={biz.logo_url} alt="" className="w-full h-full object-cover" />
+            <img src={biz.logo_url} alt="" className="w-full h-full object-cover bg-card" />
           ) : (
             <div className="w-full h-full flex items-center justify-center text-muted-foreground">
               <Store className="size-7" />
             </div>
           )}
         </div>
-        <div className="pb-2 min-w-0 flex-1">
-          <h1 className="text-2xl md:text-3xl font-bold truncate">{biz.name}</h1>
+
+        <div className="min-w-0 flex-1 sm:pb-2">
+          <h1 className="text-2xl md:text-3xl font-bold leading-tight break-words">{biz.name}</h1>
           <p className="text-sm text-muted-foreground">{businessCategoryLabel(biz.category)}</p>
-          <div className="mt-1 flex flex-wrap items-center gap-3 text-xs">
+          <div className="mt-1.5 flex flex-wrap items-center gap-3 text-xs">
             {open !== null && (
               <span
                 className={`inline-flex items-center gap-1 font-semibold ${
@@ -182,12 +188,13 @@ function PublicBusiness() {
             )}
           </div>
         </div>
+
         {user && !isOwner && (
           <button
             type="button"
             onClick={toggleFavorite}
             aria-label={isFavorited ? "Remover dos salvos" : "Salvar comércio"}
-            className="mb-2 size-10 rounded-full border border-border bg-card flex items-center justify-center"
+            className="absolute right-0 top-0 sm:static sm:mb-2 size-10 rounded-full border border-border bg-card shadow-sm flex items-center justify-center"
           >
             <Heart
               className={`size-5 ${isFavorited ? "fill-cat-mercado text-cat-mercado" : "text-muted-foreground"}`}
@@ -195,6 +202,7 @@ function PublicBusiness() {
           </button>
         )}
       </div>
+
 
       <div className="mt-6 flex flex-wrap gap-3">
         {waNumber && (
