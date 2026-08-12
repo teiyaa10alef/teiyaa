@@ -623,32 +623,82 @@ export type Database = {
           caption: string | null
           created_at: string
           id: string
+          is_cover: boolean
           media_type: string
           media_url: string
           professional_id: string
           sort_order: number
+          title: string | null
         }
         Insert: {
           caption?: string | null
           created_at?: string
           id?: string
+          is_cover?: boolean
           media_type?: string
           media_url: string
           professional_id: string
           sort_order?: number
+          title?: string | null
         }
         Update: {
           caption?: string | null
           created_at?: string
           id?: string
+          is_cover?: boolean
           media_type?: string
           media_url?: string
           professional_id?: string
           sort_order?: number
+          title?: string | null
         }
         Relationships: [
           {
             foreignKeyName: "portfolio_items_professional_id_fkey"
+            columns: ["professional_id"]
+            isOneToOne: false
+            referencedRelation: "professional_profiles"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      professional_leads: {
+        Row: {
+          budget_cents: number | null
+          contact_whatsapp: string | null
+          created_at: string
+          description: string
+          id: string
+          professional_id: string
+          requester_id: string
+          status: string
+          updated_at: string
+        }
+        Insert: {
+          budget_cents?: number | null
+          contact_whatsapp?: string | null
+          created_at?: string
+          description: string
+          id?: string
+          professional_id: string
+          requester_id: string
+          status?: string
+          updated_at?: string
+        }
+        Update: {
+          budget_cents?: number | null
+          contact_whatsapp?: string | null
+          created_at?: string
+          description?: string
+          id?: string
+          professional_id?: string
+          requester_id?: string
+          status?: string
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "professional_leads_professional_id_fkey"
             columns: ["professional_id"]
             isOneToOne: false
             referencedRelation: "professional_profiles"
@@ -670,9 +720,12 @@ export type Database = {
           phone: string | null
           profession: string
           service_area_km: number | null
+          specialties: string[]
           updated_at: string
           user_id: string
+          view_count: number
           whatsapp: string | null
+          whatsapp_click_count: number
           years_experience: number | null
         }
         Insert: {
@@ -688,9 +741,12 @@ export type Database = {
           phone?: string | null
           profession: string
           service_area_km?: number | null
+          specialties?: string[]
           updated_at?: string
           user_id: string
+          view_count?: number
           whatsapp?: string | null
+          whatsapp_click_count?: number
           years_experience?: number | null
         }
         Update: {
@@ -706,9 +762,12 @@ export type Database = {
           phone?: string | null
           profession?: string
           service_area_km?: number | null
+          specialties?: string[]
           updated_at?: string
           user_id?: string
+          view_count?: number
           whatsapp?: string | null
+          whatsapp_click_count?: number
           years_experience?: number | null
         }
         Relationships: [
@@ -717,6 +776,44 @@ export type Database = {
             columns: ["community_id"]
             isOneToOne: false
             referencedRelation: "communities"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      professional_reviews: {
+        Row: {
+          comment: string | null
+          created_at: string
+          id: string
+          professional_id: string
+          rating: number
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          comment?: string | null
+          created_at?: string
+          id?: string
+          professional_id: string
+          rating: number
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          comment?: string | null
+          created_at?: string
+          id?: string
+          professional_id?: string
+          rating?: number
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "professional_reviews_professional_id_fkey"
+            columns: ["professional_id"]
+            isOneToOne: false
+            referencedRelation: "professional_profiles"
             referencedColumns: ["id"]
           },
         ]
@@ -839,6 +936,14 @@ export type Database = {
       }
       increment_business_whatsapp_click: {
         Args: { _business_id: string }
+        Returns: undefined
+      }
+      increment_professional_view: {
+        Args: { _professional_id: string }
+        Returns: undefined
+      }
+      increment_professional_whatsapp_click: {
+        Args: { _professional_id: string }
         Returns: undefined
       }
       is_conversation_participant: {
