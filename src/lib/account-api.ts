@@ -54,6 +54,8 @@ export type Business = {
   phone: string | null;
   instagram: string | null;
   is_published: boolean;
+  view_count?: number;
+  whatsapp_click_count?: number;
 };
 
 export type BusinessHour = {

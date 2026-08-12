@@ -5,7 +5,7 @@ import { SiteHeader } from "@/components/SiteHeader";
 import { SiteFooter } from "@/components/SiteFooter";
 import { useAuth } from "@/hooks/use-auth";
 import { toast } from "sonner";
-import { ArrowLeft, Trash2, Upload } from "lucide-react";
+import { ArrowLeft, Trash2, Upload, Eye, MessageCircle, Star, Tag } from "lucide-react";
 import {
   getBusiness, updateBusiness, deleteBusiness,
   listBusinessHours, upsertBusinessHour,
@@ -14,6 +14,14 @@ import {
   WEEKDAYS,
 } from "@/lib/account-api";
 import { communitiesQuery } from "@/lib/listings-api";
+import {
+  BUSINESS_CATEGORIES,
+  listBusinessPromotions,
+  addBusinessPromotion,
+  removeBusinessPromotion,
+  togglePromotionActive,
+  listBusinessReviews,
+} from "@/lib/business-api";
 import { uploadMedia } from "@/lib/upload";
 
 export const Route = createFileRoute("/conta/negocios/$businessId")({
@@ -51,6 +59,36 @@ function EditBusiness() {
     queryFn: () => listBusinessMedia(businessId),
     enabled: !!biz,
   });
+  const { data: promos = [] } = useQuery({
+    queryKey: ["biz-promos", businessId],
+    queryFn: () => listBusinessPromotions(businessId),
+    enabled: !!biz,
+  });
+  const { data: reviews = [] } = useQuery({
+    queryKey: ["biz-reviews", businessId],
+    queryFn: () => listBusinessReviews(businessId),
+    enabled: !!biz,
+  });
+  const [newPromo, setNewPromo] = useState({ title: "", description: "", discount_label: "", ends_at: "" });
+
+  const handleAddPromo = async () => {
+    if (!newPromo.title.trim()) return;
+    try {
+      await addBusinessPromotion({
+        business_id: businessId,
+        title: newPromo.title.trim().slice(0, 80),
+        description: newPromo.description.trim().slice(0, 300) || null,
+        discount_label: newPromo.discount_label.trim().slice(0, 20) || null,
+        ends_at: newPromo.ends_at ? new Date(newPromo.ends_at).toISOString() : null,
+        is_active: true,
+      });
+      setNewPromo({ title: "", description: "", discount_label: "", ends_at: "" });
+      qc.invalidateQueries({ queryKey: ["biz-promos", businessId] });
+      toast.success("Promoção criada!");
+    } catch (err) {
+      toast.error("Erro: " + (err as Error).message);
+    }
+  };
 
   const [form, setForm] = useState({
     name: "", category: "", description: "", address: "",
@@ -162,6 +200,16 @@ function EditBusiness() {
           )}
         </div>
 
+        <div className="mt-5 grid grid-cols-3 gap-3">
+          <Stat icon={<Eye className="size-4" />} label="Visualizações" value={biz.view_count ?? 0} />
+          <Stat icon={<MessageCircle className="size-4" />} label="Cliques WhatsApp" value={biz.whatsapp_click_count ?? 0} />
+          <Stat
+            icon={<Star className="size-4" />}
+            label={`${reviews.length} avaliações`}
+            value={reviews.length ? (reviews.reduce((a, r) => a + r.rating, 0) / reviews.length).toFixed(1) : "—"}
+          />
+        </div>
+
         <form onSubmit={handleSave} className="mt-6 space-y-5 p-6 rounded-2xl border border-border bg-surface">
           <h2 className="font-bold text-lg">Identidade</h2>
           <Field label="Nome *"><input className={inputCls} value={form.name} onChange={(e) => setForm({ ...form, name: e.target.value })} /></Field>
@@ -169,13 +217,9 @@ function EditBusiness() {
             <Field label="Categoria">
               <select className={inputCls} value={form.category} onChange={(e) => setForm({ ...form, category: e.target.value })}>
                 <option value="">—</option>
-                <option value="alimentacao">Alimentação</option>
-                <option value="beleza">Beleza e estética</option>
-                <option value="varejo">Varejo</option>
-                <option value="saude">Saúde</option>
-                <option value="moda">Moda</option>
-                <option value="servicos">Serviços</option>
-                <option value="outros">Outros</option>
+                {BUSINESS_CATEGORIES.map((c) => (
+                  <option key={c.value} value={c.value}>{c.label}</option>
+                ))}
               </select>
             </Field>
             <Field label="Bairro / comunidade">
@@ -262,6 +306,51 @@ function EditBusiness() {
           </div>
         </section>
 
+        {/* Promotions */}
+        <section className="mt-8 p-6 rounded-2xl border border-border bg-surface">
+          <h2 className="font-bold text-lg flex items-center gap-2"><Tag className="size-5 text-cat-freelance" /> Promoções</h2>
+          <p className="text-sm text-muted-foreground mt-1">Ofertas aparecem em destaque na sua página e no card do feed.</p>
+          <ul className="mt-4 space-y-2">
+            {promos.map((p) => (
+              <li key={p.id} className="flex items-center justify-between gap-3 p-3 rounded-lg bg-muted">
+                <div className="min-w-0">
+                  <p className="font-semibold truncate">{p.title} {p.discount_label ? `· ${p.discount_label}` : ""}</p>
+                  <p className="text-xs text-muted-foreground">
+                    {p.is_active ? "Ativa" : "Pausada"}
+                    {p.ends_at ? ` · até ${new Date(p.ends_at).toLocaleDateString("pt-BR")}` : ""}
+                  </p>
+                </div>
+                <div className="flex items-center gap-1">
+                  <button
+                    type="button"
+                    onClick={async () => { await togglePromotionActive(p.id, !p.is_active); qc.invalidateQueries({ queryKey: ["biz-promos", businessId] }); }}
+                    className="text-xs font-semibold px-3 py-1.5 rounded-full border border-border"
+                  >
+                    {p.is_active ? "Pausar" : "Ativar"}
+                  </button>
+                  <button
+                    type="button"
+                    onClick={async () => { await removeBusinessPromotion(p.id); qc.invalidateQueries({ queryKey: ["biz-promos", businessId] }); }}
+                    className="text-destructive p-2"
+                    aria-label="Excluir promoção"
+                  >
+                    <Trash2 className="size-4" />
+                  </button>
+                </div>
+              </li>
+            ))}
+          </ul>
+          <div className="mt-3 grid gap-2 sm:grid-cols-2">
+            <input className={inputCls} placeholder="Título (ex.: Combo do almoço)" maxLength={80} value={newPromo.title} onChange={(e) => setNewPromo({ ...newPromo, title: e.target.value })} />
+            <input className={inputCls} placeholder="Selo (ex.: -20%)" maxLength={20} value={newPromo.discount_label} onChange={(e) => setNewPromo({ ...newPromo, discount_label: e.target.value })} />
+            <input className={inputCls} placeholder="Descrição" maxLength={300} value={newPromo.description} onChange={(e) => setNewPromo({ ...newPromo, description: e.target.value })} />
+            <input type="date" className={inputCls} aria-label="Válido até" value={newPromo.ends_at} onChange={(e) => setNewPromo({ ...newPromo, ends_at: e.target.value })} />
+          </div>
+          <button type="button" onClick={handleAddPromo} className="mt-3 px-5 py-2.5 bg-brand text-primary-foreground rounded-full font-bold text-sm">
+            Criar promoção
+          </button>
+        </section>
+
         {/* Gallery */}
         <section className="mt-8 p-6 rounded-2xl border border-border bg-surface">
           <h2 className="font-bold text-lg">Galeria</h2>
@@ -304,6 +393,15 @@ function ImageUpload({ label, url, onPick }: { label: string; url: string; onPic
         )}
         <input type="file" accept="image/*" className="hidden" onChange={(e) => e.target.files?.[0] && onPick(e.target.files[0])} />
       </label>
+    </div>
+  );
+}
+
+function Stat({ icon, label, value }: { icon: React.ReactNode; label: string; value: string | number }) {
+  return (
+    <div className="p-3 rounded-xl border border-border bg-surface">
+      <div className="flex items-center gap-1.5 text-muted-foreground text-xs">{icon}<span className="truncate">{label}</span></div>
+      <p className="mt-1 text-xl font-bold">{value}</p>
     </div>
   );
 }

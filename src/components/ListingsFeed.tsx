@@ -5,6 +5,7 @@ import { listingsQuery, type Scope } from "@/lib/listings-api";
 import { CATEGORY_ORDER, type CategoryKey } from "@/lib/community";
 import { CATEGORY_ICONS, CATEGORY_SOFT, VISUAL_LABELS } from "@/lib/category-visuals";
 import { ListingCard } from "./ListingCard";
+import { BusinessFeed } from "./BusinessFeed";
 
 interface ListingsFeedProps {
   scope: Scope;
@@ -55,7 +56,13 @@ export function CategoryPrompt({ basePath }: { basePath: string }) {
 }
 
 export function ListingsFeed({ scope, category }: ListingsFeedProps) {
+  if (category === "comercio") return <BusinessFeed scope={scope} />;
+  return <GenericListingsFeed scope={scope} category={category} />;
+}
+
+function GenericListingsFeed({ scope, category }: Omit<ListingsFeedProps, "basePath">) {
   const { data: listings } = useSuspenseQuery(listingsQuery(scope, category));
+
 
   return (
     <div>
