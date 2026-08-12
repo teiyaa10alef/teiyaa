@@ -3,7 +3,15 @@ import { useEffect } from "react";
 import { SiteHeader } from "@/components/SiteHeader";
 import { SiteFooter } from "@/components/SiteFooter";
 import { useAuth } from "@/hooks/use-auth";
-import { Briefcase, Store, ChevronRight, ShoppingBag, MessageCircle } from "lucide-react";
+import {
+  Briefcase,
+  Store,
+  ChevronRight,
+  ShoppingBag,
+  MessageCircle,
+  Flame,
+  ClipboardList,
+} from "lucide-react";
 
 export const Route = createFileRoute("/conta/")({
   head: () => ({
