@@ -110,33 +110,35 @@ export function ScopeBar(props: ScopeBarProps) {
           </Link>
         </div>
 
-        {/* Category filter row */}
-        <div className="flex gap-2 overflow-x-auto border-t border-border py-2 -mx-4 px-4 md:mx-0 md:px-0 scrollbar-none">
-          {CATEGORY_ORDER.map((cat) => {
-            const Icon = CATEGORY_ICONS[cat];
-            const isActive = props.category === cat;
-            return (
-              <Link
-                key={cat}
-                to={props.basePath}
-                search={{ cat }}
-                className={`shrink-0 inline-flex items-center gap-1.5 px-3.5 py-1.5 rounded-full text-sm font-semibold border transition-colors ${
-                  isActive ? CATEGORY_SOLID[cat] : `${CATEGORY_SOFT[cat]} hover:brightness-95`
-                }`}
-              >
-                <Icon className="size-4" />
-                {VISUAL_LABELS[cat]}
-              </Link>
-            );
-          })}
-          <Link
-            to="/mercado"
-            className={`shrink-0 inline-flex items-center gap-1.5 px-3.5 py-1.5 rounded-full text-sm font-semibold border transition-colors hover:brightness-95 ${CATEGORY_SOFT.mercado}`}
-          >
-            <ShoppingBag className="size-4" />
-            Marketplace
-          </Link>
-        </div>
+        {/* Category filter row — only shown when a category is active */}
+        {props.category ? (
+          <div className="flex gap-2 overflow-x-auto border-t border-border py-2 -mx-4 px-4 md:mx-0 md:px-0 scrollbar-none">
+            {CATEGORY_ORDER.map((cat) => {
+              const Icon = CATEGORY_ICONS[cat];
+              const isActive = props.category === cat;
+              return (
+                <Link
+                  key={cat}
+                  to={props.basePath}
+                  search={{ cat }}
+                  className={`shrink-0 inline-flex items-center gap-1.5 px-3.5 py-1.5 rounded-full text-sm font-semibold border transition-colors ${
+                    isActive ? CATEGORY_SOLID[cat] : `${CATEGORY_SOFT[cat]} hover:brightness-95`
+                  }`}
+                >
+                  <Icon className="size-4" />
+                  {VISUAL_LABELS[cat]}
+                </Link>
+              );
+            })}
+            <Link
+              to="/mercado"
+              className={`shrink-0 inline-flex items-center gap-1.5 px-3.5 py-1.5 rounded-full text-sm font-semibold border transition-colors hover:brightness-95 ${CATEGORY_SOFT.mercado}`}
+            >
+              <ShoppingBag className="size-4" />
+              Marketplace
+            </Link>
+          </div>
+        ) : null}
       </div>
     </div>
   );
