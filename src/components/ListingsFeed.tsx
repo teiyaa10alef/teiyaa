@@ -60,6 +60,7 @@ export function CategoryPrompt({ basePath }: { basePath: string }) {
 export function ListingsFeed({ scope, category }: ListingsFeedProps) {
   if (category === "comercio") return <BusinessFeed scope={scope} />;
   if (category === "servico") return <ProfessionalFeed scope={scope} />;
+  if (category === "freelance") return <GigFeed scope={scope} />;
   return <GenericListingsFeed scope={scope} category={category} />;
 }
 

@@ -33,6 +33,7 @@ import { Route as ContaProfissionalRouteImport } from './routes/conta.profission
 import { Route as ContaNegociosRouteImport } from './routes/conta.negocios'
 import { Route as ContaMercadoRouteImport } from './routes/conta.mercado'
 import { Route as ContaFreelancesRouteImport } from './routes/conta.freelances'
+import { Route as ContaCandidaturasRouteImport } from './routes/conta.candidaturas'
 import { Route as CidadeCitySlugRouteImport } from './routes/cidade.$citySlug'
 import { Route as CCommunitySlugRouteImport } from './routes/c.$communitySlug'
 import { Route as ContaNegociosIndexRouteImport } from './routes/conta.negocios.index'
@@ -163,6 +164,11 @@ const ContaFreelancesRoute = ContaFreelancesRouteImport.update({
   path: '/freelances',
   getParentRoute: () => ContaRoute,
 } as any)
+const ContaCandidaturasRoute = ContaCandidaturasRouteImport.update({
+  id: '/candidaturas',
+  path: '/candidaturas',
+  getParentRoute: () => ContaRoute,
+} as any)
 const CidadeCitySlugRoute = CidadeCitySlugRouteImport.update({
   id: '/cidade/$citySlug',
   path: '/cidade/$citySlug',
@@ -223,6 +229,7 @@ export interface FileRoutesByFullPath {
   '/vagas': typeof VagasRoute
   '/c/$communitySlug': typeof CCommunitySlugRoute
   '/cidade/$citySlug': typeof CidadeCitySlugRoute
+  '/conta/candidaturas': typeof ContaCandidaturasRoute
   '/conta/freelances': typeof ContaFreelancesRouteWithChildren
   '/conta/mercado': typeof ContaMercadoRoute
   '/conta/negocios': typeof ContaNegociosRouteWithChildren
@@ -257,6 +264,7 @@ export interface FileRoutesByTo {
   '/vagas': typeof VagasRoute
   '/c/$communitySlug': typeof CCommunitySlugRoute
   '/cidade/$citySlug': typeof CidadeCitySlugRoute
+  '/conta/candidaturas': typeof ContaCandidaturasRoute
   '/conta/mercado': typeof ContaMercadoRoute
   '/conta/profissional': typeof ContaProfissionalRoute
   '/estado/$stateSlug': typeof EstadoStateSlugRoute
@@ -291,6 +299,7 @@ export interface FileRoutesById {
   '/vagas': typeof VagasRoute
   '/c/$communitySlug': typeof CCommunitySlugRoute
   '/cidade/$citySlug': typeof CidadeCitySlugRoute
+  '/conta/candidaturas': typeof ContaCandidaturasRoute
   '/conta/freelances': typeof ContaFreelancesRouteWithChildren
   '/conta/mercado': typeof ContaMercadoRoute
   '/conta/negocios': typeof ContaNegociosRouteWithChildren
@@ -328,6 +337,7 @@ export interface FileRouteTypes {
     | '/vagas'
     | '/c/$communitySlug'
     | '/cidade/$citySlug'
+    | '/conta/candidaturas'
     | '/conta/freelances'
     | '/conta/mercado'
     | '/conta/negocios'
@@ -362,6 +372,7 @@ export interface FileRouteTypes {
     | '/vagas'
     | '/c/$communitySlug'
     | '/cidade/$citySlug'
+    | '/conta/candidaturas'
     | '/conta/mercado'
     | '/conta/profissional'
     | '/estado/$stateSlug'
@@ -395,6 +406,7 @@ export interface FileRouteTypes {
     | '/vagas'
     | '/c/$communitySlug'
     | '/cidade/$citySlug'
+    | '/conta/candidaturas'
     | '/conta/freelances'
     | '/conta/mercado'
     | '/conta/negocios'
@@ -615,6 +627,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof ContaFreelancesRouteImport
       parentRoute: typeof ContaRoute
     }
+    '/conta/candidaturas': {
+      id: '/conta/candidaturas'
+      path: '/candidaturas'
+      fullPath: '/conta/candidaturas'
+      preLoaderRoute: typeof ContaCandidaturasRouteImport
+      parentRoute: typeof ContaRoute
+    }
     '/cidade/$citySlug': {
       id: '/cidade/$citySlug'
       path: '/cidade/$citySlug'
@@ -712,6 +731,7 @@ const ContaNegociosRouteWithChildren = ContaNegociosRoute._addFileChildren(
 )
 
 interface ContaRouteChildren {
+  ContaCandidaturasRoute: typeof ContaCandidaturasRoute
   ContaFreelancesRoute: typeof ContaFreelancesRouteWithChildren
   ContaMercadoRoute: typeof ContaMercadoRoute
   ContaNegociosRoute: typeof ContaNegociosRouteWithChildren
@@ -720,6 +740,7 @@ interface ContaRouteChildren {
 }
 
 const ContaRouteChildren: ContaRouteChildren = {
+  ContaCandidaturasRoute: ContaCandidaturasRoute,
   ContaFreelancesRoute: ContaFreelancesRouteWithChildren,
   ContaMercadoRoute: ContaMercadoRoute,
   ContaNegociosRoute: ContaNegociosRouteWithChildren,
