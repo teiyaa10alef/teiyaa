@@ -104,6 +104,7 @@ export const businessesByScopeQuery = (scope: Scope) =>
         .order("updated_at", { ascending: false });
       if (error) throw error;
       const businesses = (data ?? []) as (Business & {
+        created_at: string;
         view_count: number;
         whatsapp_click_count: number;
       })[];
