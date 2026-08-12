@@ -33,6 +33,8 @@ export function SiteHeader() {
   const navigate = useNavigate();
   const storedCat = useStoredCategory();
   const [homeSlug, setHomeSlug] = useState<string | null>(null);
+  const { data: unreadMsgs = 0 } = useQuery(unreadMessagesQuery(user?.id));
+
 
   useEffect(() => {
     setHomeSlug(getStoredCommunitySlug());
