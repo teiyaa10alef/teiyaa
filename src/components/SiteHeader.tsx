@@ -1,5 +1,5 @@
 import { Link, useNavigate } from "@tanstack/react-router";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { Menu, LogOut, User as UserIcon, MessageCircle } from "lucide-react";
 import {
   Sheet,
@@ -9,6 +9,7 @@ import {
   SheetHeader,
 } from "@/components/ui/sheet";
 import { useAuth } from "@/hooks/use-auth";
+import { getStoredCommunitySlug, useStoredCategory } from "@/lib/community";
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
 
@@ -26,6 +27,12 @@ export function SiteHeader() {
   const [open, setOpen] = useState(false);
   const { user } = useAuth();
   const navigate = useNavigate();
+  const storedCat = useStoredCategory();
+  const [homeSlug, setHomeSlug] = useState<string | null>(null);
+
+  useEffect(() => {
+    setHomeSlug(getStoredCommunitySlug());
+  }, []);
 
   const handleLogout = async () => {
     await supabase.auth.signOut();
@@ -38,9 +45,20 @@ export function SiteHeader() {
     <nav className="sticky top-0 z-50 bg-surface/80 backdrop-blur-md border-b border-border">
       <div className="max-w-7xl mx-auto px-4 md:px-6 h-16 md:h-20 flex items-center justify-between">
         <div className="flex items-center gap-8">
-          <Link to="/" className="text-2xl md:text-3xl font-bold tracking-tighter text-brand">
-            teiyaa
-          </Link>
+          {homeSlug ? (
+            <Link
+              to="/c/$communitySlug"
+              params={{ communitySlug: homeSlug }}
+              search={storedCat ? { cat: storedCat } : {}}
+              className="text-2xl md:text-3xl font-bold tracking-tighter text-brand"
+            >
+              teiyaa
+            </Link>
+          ) : (
+            <Link to="/" className="text-2xl md:text-3xl font-bold tracking-tighter text-brand">
+              teiyaa
+            </Link>
+          )}
           <div className="hidden md:flex items-center gap-6 text-sm font-medium text-muted-foreground">
             {navItems.map((item) => (
               <Link
