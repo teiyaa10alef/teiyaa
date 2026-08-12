@@ -161,8 +161,16 @@ export function SiteHeader() {
                       onClick={() => setOpen(false)}
                       className="w-full py-3 rounded-full border border-border font-semibold text-center"
                     >
-                      Mensagens
+                      Mensagens{unreadMsgs > 0 ? ` (${unreadMsgs > 99 ? "99+" : unreadMsgs})` : ""}
                     </Link>
+                    <Link
+                      to="/conta/notificacoes"
+                      onClick={() => setOpen(false)}
+                      className="w-full py-3 rounded-full border border-border font-semibold text-center"
+                    >
+                      Notificações
+                    </Link>
+
                     <Link
                       to="/conta"
                       onClick={() => setOpen(false)}
