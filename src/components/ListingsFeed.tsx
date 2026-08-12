@@ -6,6 +6,8 @@ import { CATEGORY_ORDER, type CategoryKey } from "@/lib/community";
 import { CATEGORY_ICONS, CATEGORY_SOFT, VISUAL_LABELS } from "@/lib/category-visuals";
 import { ListingCard } from "./ListingCard";
 import { BusinessFeed } from "./BusinessFeed";
+import { ProfessionalFeed } from "./ProfessionalFeed";
+
 
 interface ListingsFeedProps {
   scope: Scope;
