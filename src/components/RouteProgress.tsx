@@ -4,6 +4,9 @@ import { useEffect, useState } from "react";
 export function RouteProgress() {
   const isLoading = useRouterState({ select: (s) => s.status === "pending" });
   const [visible, setVisible] = useState(false);
+  const [mounted, setMounted] = useState(false);
+
+  useEffect(() => setMounted(true), []);
 
   useEffect(() => {
     if (isLoading) {
@@ -14,7 +17,8 @@ export function RouteProgress() {
     return () => clearTimeout(t);
   }, [isLoading]);
 
-  if (!visible && !isLoading) return null;
+  if (!mounted || (!visible && !isLoading)) return null;
+
 
   return (
     <div className="route-progress" data-done={!isLoading ? "true" : undefined}>
