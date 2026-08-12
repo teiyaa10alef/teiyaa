@@ -1,3 +1,4 @@
+import { DetailSkeleton } from "@/components/PageSkeletons";
 import { useEffect, useState } from "react";
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
@@ -45,6 +46,7 @@ export const Route = createFileRoute("/profissionais/perfil/$userId")({
       { name: "twitter:card", content: "summary_large_image" },
     ],
   }),
+  pendingComponent: DetailSkeleton,
   component: PublicProfessional,
 });
 

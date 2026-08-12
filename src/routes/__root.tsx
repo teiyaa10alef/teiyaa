@@ -4,11 +4,13 @@ import {
   Link,
   createRootRouteWithContext,
   useRouter,
+  useRouterState,
   HeadContent,
   Scripts,
 } from "@tanstack/react-router";
 
 import { Toaster } from "@/components/ui/sonner";
+import { RouteProgress } from "@/components/RouteProgress";
 
 import appCss from "../styles.css?url";
 
@@ -127,9 +129,16 @@ function RootShell({ children }: { children: React.ReactNode }) {
 function RootComponent() {
   const { queryClient } = Route.useRouteContext();
 
+  const routeKey = useRouterState({
+    select: (s) => s.location.pathname + s.location.searchStr,
+  });
+
   return (
     <QueryClientProvider client={queryClient}>
-      <Outlet />
+      <RouteProgress />
+      <div key={routeKey} className="page-enter">
+        <Outlet />
+      </div>
       <Toaster position="top-center" richColors />
     </QueryClientProvider>
   );
