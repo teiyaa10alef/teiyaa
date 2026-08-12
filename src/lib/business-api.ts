@@ -44,6 +44,7 @@ export type BusinessPromotion = {
 };
 
 export type BusinessCardData = Business & {
+  created_at: string;
   view_count: number;
   whatsapp_click_count: number;
   rating_avg: number | null;
