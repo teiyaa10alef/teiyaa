@@ -1,4 +1,5 @@
 import { createFileRoute, notFound } from "@tanstack/react-router";
+import { useCategoryMemory } from "@/lib/use-category-memory";
 import { useEffect } from "react";
 import { z } from "zod";
 import { zodValidator } from "@tanstack/zod-adapter";
@@ -74,6 +75,7 @@ export const Route = createFileRoute("/c/$communitySlug")({
 function CommunityPage() {
   const { community, city, state } = Route.useLoaderData();
   const { cat } = Route.useSearch();
+  useCategoryMemory(cat);
 
   useEffect(() => {
     setStoredCommunitySlug(community.slug);

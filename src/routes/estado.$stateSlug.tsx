@@ -1,4 +1,5 @@
 import { createFileRoute, notFound } from "@tanstack/react-router";
+import { useCategoryMemory } from "@/lib/use-category-memory";
 import { z } from "zod";
 import { zodValidator } from "@tanstack/zod-adapter";
 import { SiteHeader } from "@/components/SiteHeader";
@@ -52,6 +53,7 @@ export const Route = createFileRoute("/estado/$stateSlug")({
 function StatePage() {
   const { state, city } = Route.useLoaderData();
   const { cat } = Route.useSearch();
+  useCategoryMemory(cat);
 
   return (
     <div className="min-h-screen bg-background text-foreground">
