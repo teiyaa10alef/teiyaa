@@ -21,6 +21,7 @@ import { Route as AnunciarRouteImport } from './routes/anunciar'
 import { Route as IndexRouteImport } from './routes/index'
 import { Route as MercadoIndexRouteImport } from './routes/mercado.index'
 import { Route as MensagensIndexRouteImport } from './routes/mensagens.index'
+import { Route as ContaIndexRouteImport } from './routes/conta.index'
 import { Route as NegociosSlugRouteImport } from './routes/negocios.$slug'
 import { Route as MercadoNovoRouteImport } from './routes/mercado.novo'
 import { Route as MercadoItemIdRouteImport } from './routes/mercado.$itemId'
@@ -31,6 +32,7 @@ import { Route as ContaNegociosRouteImport } from './routes/conta.negocios'
 import { Route as ContaMercadoRouteImport } from './routes/conta.mercado'
 import { Route as CidadeCitySlugRouteImport } from './routes/cidade.$citySlug'
 import { Route as CCommunitySlugRouteImport } from './routes/c.$communitySlug'
+import { Route as ContaNegociosIndexRouteImport } from './routes/conta.negocios.index'
 import { Route as ProfissionaisPerfilUserIdRouteImport } from './routes/profissionais.perfil.$userId'
 import { Route as ContaNegociosNovoRouteImport } from './routes/conta.negocios.novo'
 import { Route as ContaNegociosBusinessIdRouteImport } from './routes/conta.negocios.$businessId'
@@ -95,6 +97,11 @@ const MensagensIndexRoute = MensagensIndexRouteImport.update({
   path: '/mensagens/',
   getParentRoute: () => rootRouteImport,
 } as any)
+const ContaIndexRoute = ContaIndexRouteImport.update({
+  id: '/',
+  path: '/',
+  getParentRoute: () => ContaRoute,
+} as any)
 const NegociosSlugRoute = NegociosSlugRouteImport.update({
   id: '/negocios/$slug',
   path: '/negocios/$slug',
@@ -145,6 +152,11 @@ const CCommunitySlugRoute = CCommunitySlugRouteImport.update({
   path: '/c/$communitySlug',
   getParentRoute: () => rootRouteImport,
 } as any)
+const ContaNegociosIndexRoute = ContaNegociosIndexRouteImport.update({
+  id: '/',
+  path: '/',
+  getParentRoute: () => ContaNegociosRoute,
+} as any)
 const ProfissionaisPerfilUserIdRoute =
   ProfissionaisPerfilUserIdRouteImport.update({
     id: '/profissionais/perfil/$userId',
@@ -183,17 +195,18 @@ export interface FileRoutesByFullPath {
   '/mercado/$itemId': typeof MercadoItemIdRoute
   '/mercado/novo': typeof MercadoNovoRoute
   '/negocios/$slug': typeof NegociosSlugRoute
+  '/conta/': typeof ContaIndexRoute
   '/mensagens/': typeof MensagensIndexRoute
   '/mercado/': typeof MercadoIndexRoute
   '/conta/negocios/$businessId': typeof ContaNegociosBusinessIdRoute
   '/conta/negocios/novo': typeof ContaNegociosNovoRoute
   '/profissionais/perfil/$userId': typeof ProfissionaisPerfilUserIdRoute
+  '/conta/negocios/': typeof ContaNegociosIndexRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/anunciar': typeof AnunciarRoute
   '/comercios': typeof ComerciosRoute
-  '/conta': typeof ContaRouteWithChildren
   '/freelances': typeof FreelancesRoute
   '/imoveis': typeof ImoveisRoute
   '/login': typeof LoginRoute
@@ -203,18 +216,19 @@ export interface FileRoutesByTo {
   '/c/$communitySlug': typeof CCommunitySlugRoute
   '/cidade/$citySlug': typeof CidadeCitySlugRoute
   '/conta/mercado': typeof ContaMercadoRoute
-  '/conta/negocios': typeof ContaNegociosRouteWithChildren
   '/conta/profissional': typeof ContaProfissionalRoute
   '/estado/$stateSlug': typeof EstadoStateSlugRoute
   '/mensagens/$conversationId': typeof MensagensConversationIdRoute
   '/mercado/$itemId': typeof MercadoItemIdRoute
   '/mercado/novo': typeof MercadoNovoRoute
   '/negocios/$slug': typeof NegociosSlugRoute
+  '/conta': typeof ContaIndexRoute
   '/mensagens': typeof MensagensIndexRoute
   '/mercado': typeof MercadoIndexRoute
   '/conta/negocios/$businessId': typeof ContaNegociosBusinessIdRoute
   '/conta/negocios/novo': typeof ContaNegociosNovoRoute
   '/profissionais/perfil/$userId': typeof ProfissionaisPerfilUserIdRoute
+  '/conta/negocios': typeof ContaNegociosIndexRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
@@ -238,11 +252,13 @@ export interface FileRoutesById {
   '/mercado/$itemId': typeof MercadoItemIdRoute
   '/mercado/novo': typeof MercadoNovoRoute
   '/negocios/$slug': typeof NegociosSlugRoute
+  '/conta/': typeof ContaIndexRoute
   '/mensagens/': typeof MensagensIndexRoute
   '/mercado/': typeof MercadoIndexRoute
   '/conta/negocios/$businessId': typeof ContaNegociosBusinessIdRoute
   '/conta/negocios/novo': typeof ContaNegociosNovoRoute
   '/profissionais/perfil/$userId': typeof ProfissionaisPerfilUserIdRoute
+  '/conta/negocios/': typeof ContaNegociosIndexRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
@@ -267,17 +283,18 @@ export interface FileRouteTypes {
     | '/mercado/$itemId'
     | '/mercado/novo'
     | '/negocios/$slug'
+    | '/conta/'
     | '/mensagens/'
     | '/mercado/'
     | '/conta/negocios/$businessId'
     | '/conta/negocios/novo'
     | '/profissionais/perfil/$userId'
+    | '/conta/negocios/'
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/'
     | '/anunciar'
     | '/comercios'
-    | '/conta'
     | '/freelances'
     | '/imoveis'
     | '/login'
@@ -287,18 +304,19 @@ export interface FileRouteTypes {
     | '/c/$communitySlug'
     | '/cidade/$citySlug'
     | '/conta/mercado'
-    | '/conta/negocios'
     | '/conta/profissional'
     | '/estado/$stateSlug'
     | '/mensagens/$conversationId'
     | '/mercado/$itemId'
     | '/mercado/novo'
     | '/negocios/$slug'
+    | '/conta'
     | '/mensagens'
     | '/mercado'
     | '/conta/negocios/$businessId'
     | '/conta/negocios/novo'
     | '/profissionais/perfil/$userId'
+    | '/conta/negocios'
   id:
     | '__root__'
     | '/'
@@ -321,11 +339,13 @@ export interface FileRouteTypes {
     | '/mercado/$itemId'
     | '/mercado/novo'
     | '/negocios/$slug'
+    | '/conta/'
     | '/mensagens/'
     | '/mercado/'
     | '/conta/negocios/$businessId'
     | '/conta/negocios/novo'
     | '/profissionais/perfil/$userId'
+    | '/conta/negocios/'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
@@ -437,6 +457,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof MensagensIndexRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/conta/': {
+      id: '/conta/'
+      path: '/'
+      fullPath: '/conta/'
+      preLoaderRoute: typeof ContaIndexRouteImport
+      parentRoute: typeof ContaRoute
+    }
     '/negocios/$slug': {
       id: '/negocios/$slug'
       path: '/negocios/$slug'
@@ -507,6 +534,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof CCommunitySlugRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/conta/negocios/': {
+      id: '/conta/negocios/'
+      path: '/'
+      fullPath: '/conta/negocios/'
+      preLoaderRoute: typeof ContaNegociosIndexRouteImport
+      parentRoute: typeof ContaNegociosRoute
+    }
     '/profissionais/perfil/$userId': {
       id: '/profissionais/perfil/$userId'
       path: '/profissionais/perfil/$userId'
@@ -534,11 +568,13 @@ declare module '@tanstack/react-router' {
 interface ContaNegociosRouteChildren {
   ContaNegociosBusinessIdRoute: typeof ContaNegociosBusinessIdRoute
   ContaNegociosNovoRoute: typeof ContaNegociosNovoRoute
+  ContaNegociosIndexRoute: typeof ContaNegociosIndexRoute
 }
 
 const ContaNegociosRouteChildren: ContaNegociosRouteChildren = {
   ContaNegociosBusinessIdRoute: ContaNegociosBusinessIdRoute,
   ContaNegociosNovoRoute: ContaNegociosNovoRoute,
+  ContaNegociosIndexRoute: ContaNegociosIndexRoute,
 }
 
 const ContaNegociosRouteWithChildren = ContaNegociosRoute._addFileChildren(
@@ -549,12 +585,14 @@ interface ContaRouteChildren {
   ContaMercadoRoute: typeof ContaMercadoRoute
   ContaNegociosRoute: typeof ContaNegociosRouteWithChildren
   ContaProfissionalRoute: typeof ContaProfissionalRoute
+  ContaIndexRoute: typeof ContaIndexRoute
 }
 
 const ContaRouteChildren: ContaRouteChildren = {
   ContaMercadoRoute: ContaMercadoRoute,
   ContaNegociosRoute: ContaNegociosRouteWithChildren,
   ContaProfissionalRoute: ContaProfissionalRoute,
+  ContaIndexRoute: ContaIndexRoute,
 }
 
 const ContaRouteWithChildren = ContaRoute._addFileChildren(ContaRouteChildren)
