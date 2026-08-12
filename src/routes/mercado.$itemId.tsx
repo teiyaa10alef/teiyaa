@@ -1,3 +1,4 @@
+import { DetailSkeleton } from "@/components/PageSkeletons";
 import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
 import { useEffect, useState } from "react";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
@@ -34,6 +35,7 @@ export const Route = createFileRoute("/mercado/$itemId")({
       { name: "twitter:card", content: "summary_large_image" },
     ],
   }),
+  pendingComponent: DetailSkeleton,
   component: ItemPage,
 });
 
