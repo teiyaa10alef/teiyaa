@@ -126,12 +126,20 @@ export function SiteHeader() {
                       Conectado como <strong>{user.email}</strong>
                     </div>
                     <Link
+                      to="/mensagens"
+                      onClick={() => setOpen(false)}
+                      className="w-full py-3 rounded-full border border-border font-semibold text-center"
+                    >
+                      Mensagens
+                    </Link>
+                    <Link
                       to="/conta"
                       onClick={() => setOpen(false)}
                       className="w-full py-3 rounded-full border border-border font-semibold text-center"
                     >
                       Minha conta
                     </Link>
+
                     <button
                       onClick={handleLogout}
                       className="w-full py-3 rounded-full border border-border font-semibold flex items-center justify-center gap-2"

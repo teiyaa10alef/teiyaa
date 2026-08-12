@@ -73,7 +73,44 @@ function ContaHub() {
               Meus negócios <ChevronRight className="size-4" />
             </span>
           </Link>
+
+          <Link
+            to="/conta/mercado"
+            className="group p-6 rounded-2xl border border-border bg-surface hover:border-brand transition-colors flex flex-col gap-3"
+          >
+            <div className="size-12 rounded-xl bg-brand-soft text-brand flex items-center justify-center">
+              <ShoppingBag className="size-6" />
+            </div>
+            <div>
+              <h2 className="text-lg font-bold">Meus anúncios do mercado</h2>
+              <p className="text-sm text-muted-foreground">
+                Venda itens novos e usados para vizinhos e responda propostas.
+              </p>
+            </div>
+            <span className="mt-auto inline-flex items-center gap-1 text-brand font-semibold text-sm">
+              Gerenciar itens <ChevronRight className="size-4" />
+            </span>
+          </Link>
+
+          <Link
+            to="/mensagens"
+            className="group p-6 rounded-2xl border border-border bg-surface hover:border-brand transition-colors flex flex-col gap-3"
+          >
+            <div className="size-12 rounded-xl bg-brand-soft text-brand flex items-center justify-center">
+              <MessageCircle className="size-6" />
+            </div>
+            <div>
+              <h2 className="text-lg font-bold">Mensagens</h2>
+              <p className="text-sm text-muted-foreground">
+                Converse com compradores e vendedores do seu bairro.
+              </p>
+            </div>
+            <span className="mt-auto inline-flex items-center gap-1 text-brand font-semibold text-sm">
+              Abrir conversas <ChevronRight className="size-4" />
+            </span>
+          </Link>
         </div>
+
       </main>
       <SiteFooter />
     </div>
