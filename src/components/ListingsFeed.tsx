@@ -59,11 +59,19 @@ export function CategoryPrompt({ basePath }: { basePath: string }) {
 }
 
 export function ListingsFeed({ scope, category }: ListingsFeedProps) {
-  if (category === "comercio") return <BusinessFeed scope={scope} />;
-  if (category === "servico") return <ProfessionalFeed scope={scope} />;
-  if (category === "freelance") return <GigFeed scope={scope} />;
-  return <GenericListingsFeed scope={scope} category={category} />;
+  let content: React.ReactNode;
+  if (category === "comercio") content = <BusinessFeed scope={scope} />;
+  else if (category === "servico") content = <ProfessionalFeed scope={scope} />;
+  else if (category === "freelance") content = <GigFeed scope={scope} />;
+  else content = <GenericListingsFeed scope={scope} category={category} />;
+
+  return (
+    <Suspense key={category ?? "all"} fallback={<FeedSkeleton />}>
+      {content}
+    </Suspense>
+  );
 }
+
 
 
 function GenericListingsFeed({ scope, category }: Omit<ListingsFeedProps, "basePath">) {
