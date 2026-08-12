@@ -10,40 +10,40 @@ interface ListingsFeedProps {
   basePath: string; // e.g. "/c/paraisopolis"
 }
 
-export function ListingsFeed({ scope, category, basePath }: ListingsFeedProps) {
-  const { data: listings } = useSuspenseQuery(listingsQuery(scope, category));
-
+export function CategoryPrompt({ basePath }: { basePath: string }) {
   return (
-    <div>
-      {/* Category filter chips */}
-      <div className="flex gap-2 overflow-x-auto pb-2 mb-6 -mx-4 px-4 md:mx-0 md:px-0">
-        <Link
-          to={basePath}
-          search={{}}
-          className={`shrink-0 px-4 py-2 rounded-full text-sm font-semibold border transition-colors ${
-            !category
-              ? "bg-foreground text-background border-foreground"
-              : "bg-card border-border hover:border-brand/40"
-          }`}
-        >
-          Tudo
-        </Link>
+    <div className="py-8">
+      <h2 className="text-lg md:text-xl font-bold mb-1">O que você procura?</h2>
+      <p className="text-sm text-muted-foreground mb-5">
+        Escolha uma área para ver os anúncios da sua região.
+      </p>
+      <div className="grid grid-cols-2 sm:grid-cols-3 gap-3">
         {CATEGORY_ORDER.map((cat) => (
           <Link
             key={cat}
             to={basePath}
             search={{ cat }}
-            className={`shrink-0 px-4 py-2 rounded-full text-sm font-semibold border transition-colors ${
-              category === cat
-                ? "bg-foreground text-background border-foreground"
-                : "bg-card border-border hover:border-brand/40"
-            }`}
+            className="px-4 py-4 rounded-2xl border border-border bg-card font-semibold text-sm hover:border-brand transition-colors"
           >
             {CATEGORY_LABELS[cat]}
           </Link>
         ))}
+        <Link
+          to="/mercado"
+          className="px-4 py-4 rounded-2xl border border-border bg-card font-semibold text-sm hover:border-brand transition-colors"
+        >
+          Marketplace
+        </Link>
       </div>
+    </div>
+  );
+}
 
+export function ListingsFeed({ scope, category }: ListingsFeedProps) {
+  const { data: listings } = useSuspenseQuery(listingsQuery(scope, category));
+
+  return (
+    <div>
       {listings.length === 0 ? (
         <div className="text-center py-16 bg-card border border-dashed border-border rounded-3xl">
           <div className="text-4xl mb-3">📭</div>
