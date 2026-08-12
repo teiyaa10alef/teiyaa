@@ -11,6 +11,8 @@ import {
   MessageCircle,
   Flame,
   ClipboardList,
+  Bell,
+
 } from "lucide-react";
 
 export const Route = createFileRoute("/conta/")({
@@ -73,7 +75,15 @@ const ITEMS = [
     hint: "Conversas com vizinhos",
     tone: "brand",
   },
+  {
+    to: "/conta/notificacoes",
+    icon: Bell,
+    label: "Notificações",
+    hint: "Propostas, candidaturas e avaliações",
+    tone: "brand",
+  },
 ] as const;
+
 
 function ContaHub() {
   const { user, loading } = useAuth();
