@@ -93,6 +93,42 @@ function ContaHub() {
           </Link>
 
           <Link
+            to="/conta/freelances"
+            className="group p-6 rounded-2xl border border-border bg-surface hover:border-brand transition-colors flex flex-col gap-3"
+          >
+            <div className="size-12 rounded-xl bg-cat-freelance-soft text-cat-freelance flex items-center justify-center">
+              <Flame className="size-6" />
+            </div>
+            <div>
+              <h2 className="text-lg font-bold">Meus bicos</h2>
+              <p className="text-sm text-muted-foreground">
+                Publique freelances, compare candidatos e escolha quem vai te ajudar.
+              </p>
+            </div>
+            <span className="mt-auto inline-flex items-center gap-1 text-brand font-semibold text-sm">
+              Gerenciar bicos <ChevronRight className="size-4" />
+            </span>
+          </Link>
+
+          <Link
+            to="/conta/candidaturas"
+            className="group p-6 rounded-2xl border border-border bg-surface hover:border-brand transition-colors flex flex-col gap-3"
+          >
+            <div className="size-12 rounded-xl bg-cat-freelance-soft text-cat-freelance flex items-center justify-center">
+              <ClipboardList className="size-6" />
+            </div>
+            <div>
+              <h2 className="text-lg font-bold">Minhas candidaturas</h2>
+              <p className="text-sm text-muted-foreground">
+                Acompanhe os bicos em que você se candidatou e o status de cada um.
+              </p>
+            </div>
+            <span className="mt-auto inline-flex items-center gap-1 text-brand font-semibold text-sm">
+              Ver candidaturas <ChevronRight className="size-4" />
+            </span>
+          </Link>
+
+          <Link
             to="/mensagens"
             className="group p-6 rounded-2xl border border-border bg-surface hover:border-brand transition-colors flex flex-col gap-3"
           >
@@ -102,13 +138,14 @@ function ContaHub() {
             <div>
               <h2 className="text-lg font-bold">Mensagens</h2>
               <p className="text-sm text-muted-foreground">
-                Converse com compradores e vendedores do seu bairro.
+                Converse com vizinhos sobre itens do mercado e bicos.
               </p>
             </div>
             <span className="mt-auto inline-flex items-center gap-1 text-brand font-semibold text-sm">
               Abrir conversas <ChevronRight className="size-4" />
             </span>
           </Link>
+
         </div>
 
       </main>
