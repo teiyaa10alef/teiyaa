@@ -115,6 +115,8 @@ function GigDetailPage() {
     }
   };
 
+  const chatAllowed = canApplicantChat(myApp?.status);
+
   const handleChat = async () => {
     if (!user || !gig) return;
     try {
@@ -123,10 +125,11 @@ function GigDetailPage() {
         ownerId: gig.owner_id,
         applicantId: user.id,
         applicationId: myApp?.id ?? null,
+        asApplicantStatus: myApp?.status ?? null,
       });
       navigate({ to: "/mensagens/bico/$conversationId", params: { conversationId: id } });
-    } catch {
-      toast.error("Não consegui abrir a conversa");
+    } catch (err) {
+      toast.error((err as Error).message || "Não consegui abrir a conversa");
     }
   };
 
