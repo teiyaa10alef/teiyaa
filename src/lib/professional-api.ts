@@ -269,6 +269,14 @@ export async function createProfessionalLead(input: {
   budget_cents: number | null;
   contact_whatsapp: string | null;
 }) {
+  const { data: prof } = await db
+    .from("professional_profiles")
+    .select("user_id")
+    .eq("id", input.professional_id)
+    .maybeSingle();
+  if (prof?.user_id === input.requester_id) {
+    throw new Error("Você não pode pedir orçamento para você mesmo");
+  }
   const { error } = await db.from("professional_leads").insert(input);
   if (error) throw error;
 }
