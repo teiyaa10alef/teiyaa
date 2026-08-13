@@ -140,15 +140,19 @@ export const professionalsByScopeQuery = (scope: Scope) =>
             .from("professional_services")
             .select("professional_id, price_from_cents")
             .in("professional_id", ids),
-          db.from("profiles").select("user_id, display_name").in("user_id", userIds),
+          db.from("profiles").select("user_id, display_name, avatar_url").in("user_id", userIds),
         ]);
 
       const nameMap = new Map(
-        ((profiles ?? []) as { user_id: string; display_name: string | null }[]).map((p) => [
-          p.user_id,
-          p.display_name,
-        ]),
+        (
+          (profiles ?? []) as {
+            user_id: string;
+            display_name: string | null;
+            avatar_url: string | null;
+          }[]
+        ).map((p) => [p.user_id, p]),
       );
+
 
       return pros.map((p) => {
         const rs = ((reviews ?? []) as { professional_id: string; rating: number }[]).filter(
