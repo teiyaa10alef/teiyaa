@@ -177,14 +177,16 @@ function ProfissionalAdmin() {
   const checklist = useMemo(
     () => [
       { label: "Profissão e categoria", done: !!form.profession && !!form.category },
-      { label: "Foto de perfil", done: !!form.avatar_url },
+      { label: "Foto, nome e sobrenome na conta", done: identityOk },
       { label: "Descrição sobre você", done: (form.about ?? "").length > 40 },
+      { label: "Anos de experiência", done: !!form.years_experience },
+      { label: "Habilidades (especialidades)", done: form.specialties.length > 0 },
       { label: "WhatsApp para contato", done: !!form.whatsapp },
       { label: "Pelo menos 1 serviço", done: services.length > 0 },
       { label: "3 fotos no portfólio", done: portfolio.length >= 3 },
       { label: "Perfil publicado", done: !!profile?.is_published },
     ],
-    [form, services.length, portfolio.length, profile?.is_published],
+    [form, identityOk, services.length, portfolio.length, profile?.is_published],
   );
   const completion = Math.round(
     (checklist.filter((c) => c.done).length / checklist.length) * 100,
@@ -197,7 +199,12 @@ function ProfissionalAdmin() {
       toast.error("Informe sua profissão");
       return;
     }
+    if (f.is_published && !identityOk) {
+      toast.error("Para publicar, adicione foto, nome e sobrenome em Meu perfil.");
+      return;
+    }
     setSaving(true);
+
     try {
       await upsertProfessionalProfile(user.id, {
         profession: f.profession.trim(),
