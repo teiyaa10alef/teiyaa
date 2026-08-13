@@ -13,6 +13,9 @@ export type AppNotification = {
   created_at: string;
 };
 
+/** Tipos que pertencem à caixa de mensagens, não ao sino de notificações. */
+const MESSAGE_TYPES = ["market_message", "gig_message", "market_conversation"];
+
 export const notificationsQuery = (userId: string | undefined) =>
   queryOptions({
     queryKey: ["notifications", userId],
@@ -21,12 +24,14 @@ export const notificationsQuery = (userId: string | undefined) =>
       const { data, error } = await supabase
         .from("notifications")
         .select("*")
+        .not("type", "in", `(${MESSAGE_TYPES.join(",")})`)
         .order("created_at", { ascending: false })
         .limit(50);
       if (error) throw error;
       return (data ?? []) as AppNotification[];
     },
   });
+
 
 export const unreadMessagesQuery = (userId: string | undefined) =>
   queryOptions({
