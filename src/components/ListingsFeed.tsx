@@ -11,6 +11,7 @@ import { ListingCard } from "./ListingCard";
 import { BusinessFeed } from "./BusinessFeed";
 import { ProfessionalFeed } from "./ProfessionalFeed";
 import { GigFeed } from "./GigFeed";
+import { PropertyFeed } from "./PropertyFeed";
 
 
 interface ListingsFeedProps {
@@ -66,6 +67,7 @@ export function ListingsFeed({ scope, category }: ListingsFeedProps) {
   if (category === "comercio") content = <BusinessFeed scope={scope} />;
   else if (category === "servico") content = <ProfessionalFeed scope={scope} />;
   else if (category === "freelance") content = <GigFeed scope={scope} />;
+  else if (category === "imovel") content = <PropertyFeed scope={scope} />;
   else content = <GenericListingsFeed scope={scope} category={category} />;
 
   return (
