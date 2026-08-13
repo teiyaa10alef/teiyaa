@@ -1,6 +1,8 @@
 import { Link } from "@tanstack/react-router";
 import { MessageCircle, MapPin, Images } from "lucide-react";
 import { RatingStars } from "./RatingStars";
+import { UserAvatar } from "./UserAvatar";
+
 import {
   formatPrice,
   professionLabel,
