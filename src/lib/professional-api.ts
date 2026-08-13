@@ -72,6 +72,8 @@ export type ProfessionalCardData = ProfessionalProfile & {
   portfolio_count: number;
   price_from_cents: number | null;
   display_name: string | null;
+  owner_avatar_url?: string | null;
+
 };
 
 async function communityIdsForScope(scope: Scope): Promise<string[]> {
