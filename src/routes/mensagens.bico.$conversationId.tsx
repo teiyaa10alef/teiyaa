@@ -97,6 +97,29 @@ function GigChatPage() {
     }
   };
 
+  const selfConversation = !!convo && convo.owner_id === convo.applicant_id;
+
+  if (selfConversation) {
+    return (
+      <div className="min-h-screen bg-background text-foreground flex flex-col">
+        <SiteHeader />
+        <main className="flex-1 w-full max-w-3xl mx-auto px-4 md:px-6 py-16 text-center">
+          <p className="text-lg font-bold">Conversa indisponível</p>
+          <p className="text-sm text-muted-foreground mt-2">
+            Você não pode conversar com você mesmo.
+          </p>
+          <Link
+            to="/mensagens"
+            className="inline-flex mt-6 px-5 py-2.5 rounded-full bg-brand text-primary-foreground font-bold text-sm"
+          >
+            Voltar às mensagens
+          </Link>
+        </main>
+        <SiteFooter />
+      </div>
+    );
+  }
+
   return (
     <div className="min-h-screen bg-background text-foreground flex flex-col">
       <SiteHeader />
