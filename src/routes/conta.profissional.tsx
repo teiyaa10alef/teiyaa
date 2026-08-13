@@ -516,10 +516,30 @@ function ProfissionalAdmin() {
                 </Field>
 
                 <h2 className="font-bold text-lg pt-4">Foto e capa</h2>
-                <div className="grid grid-cols-2 gap-4">
-                  <ImageUpload label="Foto de perfil" url={form.avatar_url} onPick={(f) => handleImageUpload("avatar_url", f)} />
+                <div className="grid sm:grid-cols-2 gap-4">
+                  <div>
+                    <p className="text-sm font-semibold text-foreground/80 mb-1">
+                      Foto de perfil (da sua conta)
+                    </p>
+                    <div className="flex items-center gap-3 p-3 rounded-xl border border-border bg-card">
+                      <div className="size-14 rounded-xl bg-muted overflow-hidden flex-shrink-0">
+                        {account?.avatar_url && (
+                          <img src={account.avatar_url} alt="Sua foto" className="w-full h-full object-cover" />
+                        )}
+                      </div>
+                      <div className="min-w-0">
+                        <p className="text-sm font-semibold truncate">
+                          {account?.display_name ?? "Sem nome"}
+                        </p>
+                        <Link to="/conta/perfil" className="text-xs text-brand font-semibold">
+                          {account?.avatar_url ? "Alterar em Meu perfil →" : "Adicionar foto →"}
+                        </Link>
+                      </div>
+                    </div>
+                  </div>
                   <ImageUpload label="Capa" url={form.cover_url} onPick={(f) => handleImageUpload("cover_url", f)} />
                 </div>
+
 
                 <button disabled={saving} type="submit" className="w-full py-3 bg-brand text-primary-foreground rounded-full font-bold disabled:opacity-60">
                   {saving ? "Salvando…" : "Salvar perfil"}
