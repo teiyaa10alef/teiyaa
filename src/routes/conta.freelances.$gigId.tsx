@@ -214,15 +214,12 @@ function GigApplicationsPage() {
           {apps.map((app) => (
             <li key={app.id} className="p-4 rounded-2xl border border-border bg-card">
               <div className="flex items-start gap-3">
-                <div className="size-12 rounded-full overflow-hidden bg-muted flex items-center justify-center shrink-0">
-                  {app.profile?.avatar_url ? (
-                    <img src={app.profile.avatar_url} alt="" className="w-full h-full object-cover" />
-                  ) : (
-                    <span className="font-bold">
-                      {(app.profile?.display_name ?? "V").charAt(0)}
-                    </span>
-                  )}
-                </div>
+                <UserAvatar
+                  src={app.profile?.avatar_url}
+                  name={app.profile?.display_name}
+                  className="size-12"
+                />
+
                 <div className="min-w-0 flex-1">
                   <div className="flex items-center gap-2 flex-wrap">
                     <p className="font-bold truncate">{app.profile?.display_name ?? "Vizinho"}</p>
