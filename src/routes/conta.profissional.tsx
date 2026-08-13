@@ -407,6 +407,22 @@ function ProfissionalAdmin() {
                   </ul>
                 </div>
 
+                {!identityOk && (
+                  <div className="p-5 rounded-2xl border border-brand/40 bg-brand/5">
+                    <p className="font-bold">Falta a sua identificação</p>
+                    <p className="text-sm text-muted-foreground mt-1">
+                      Para publicar o perfil profissional é obrigatório ter foto, nome e sobrenome na
+                      sua conta. Eles aparecem no topo do seu perfil público.
+                    </p>
+                    <Link
+                      to="/conta/perfil"
+                      className="mt-3 inline-block px-5 py-2.5 rounded-full bg-brand text-primary-foreground font-bold text-sm"
+                    >
+                      Completar meu perfil
+                    </Link>
+                  </div>
+                )}
+
                 <div className="p-5 rounded-2xl border border-border bg-surface flex items-center justify-between gap-3">
                   <div>
                     <p className="font-bold">{form.is_published ? "Perfil publicado" : "Perfil oculto"}</p>
@@ -417,7 +433,7 @@ function ProfissionalAdmin() {
                     </p>
                   </div>
                   <button
-                    disabled={saving}
+                    disabled={saving || (!form.is_published && !identityOk)}
                     onClick={() => saveProfile({ is_published: !form.is_published })}
                     className={`px-5 py-2.5 rounded-full font-bold text-sm disabled:opacity-60 ${
                       form.is_published
@@ -428,6 +444,7 @@ function ProfissionalAdmin() {
                     {form.is_published ? "Despublicar" : "Publicar"}
                   </button>
                 </div>
+
               </section>
             )}
 
