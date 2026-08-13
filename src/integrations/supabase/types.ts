@@ -1344,6 +1344,10 @@ export type Database = {
       [_ in never]: never
     }
     Functions: {
+      can_gig_applicant_chat: {
+        Args: { _gig_id: string; _user_id: string }
+        Returns: boolean
+      }
       increment_business_view: {
         Args: { _business_id: string }
         Returns: undefined

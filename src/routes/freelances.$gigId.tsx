@@ -23,6 +23,7 @@ import { UserAvatar } from "@/components/UserAvatar";
 import {
   applyToGig,
   APPLICATION_STATUS_LABELS,
+  canApplicantChat,
   fetchReputation,
   formatBudget,
   formatGigDate,
@@ -115,6 +116,8 @@ function GigDetailPage() {
     }
   };
 
+  const chatAllowed = canApplicantChat(myApp?.status);
+
   const handleChat = async () => {
     if (!user || !gig) return;
     try {
@@ -123,10 +126,11 @@ function GigDetailPage() {
         ownerId: gig.owner_id,
         applicantId: user.id,
         applicationId: myApp?.id ?? null,
+        asApplicantStatus: myApp?.status ?? null,
       });
       navigate({ to: "/mensagens/bico/$conversationId", params: { conversationId: id } });
-    } catch {
-      toast.error("Não consegui abrir a conversa");
+    } catch (err) {
+      toast.error((err as Error).message || "Não consegui abrir a conversa");
     }
   };
 
@@ -282,14 +286,21 @@ function GigDetailPage() {
                   currency: "BRL",
                 })}`}
             </p>
+            {!chatAllowed && (
+              <p className="mt-3 text-sm rounded-xl border border-dashed border-border bg-card px-4 py-3 text-muted-foreground">
+                Você poderá conversar com o anunciante assim que for pré-selecionado ou escolhido.
+              </p>
+            )}
             <div className="mt-4 flex flex-wrap gap-2">
-              <button
-                type="button"
-                onClick={handleChat}
-                className="px-5 py-2.5 rounded-full bg-brand text-primary-foreground font-bold text-sm inline-flex items-center gap-2"
-              >
-                <MessageCircle className="size-4" /> Conversar
-              </button>
+              {chatAllowed && (
+                <button
+                  type="button"
+                  onClick={handleChat}
+                  className="px-5 py-2.5 rounded-full bg-brand text-primary-foreground font-bold text-sm inline-flex items-center gap-2"
+                >
+                  <MessageCircle className="size-4" /> Conversar
+                </button>
+              )}
               <button
                 type="button"
                 onClick={handleWithdraw}
