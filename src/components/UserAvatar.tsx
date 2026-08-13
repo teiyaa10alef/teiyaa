@@ -47,7 +47,9 @@ export function UserAvatar({
           className="w-full h-full object-cover"
         />
       ) : (
-        <span className={cn("font-bold", textClassName)}>{initials(name)}</span>
+        <span className={cn("font-bold uppercase tracking-tight leading-none", textClassName)}>
+          {initials(name)}
+        </span>
       )}
     </div>
   );
