@@ -93,7 +93,15 @@ function ProfissionalAdmin() {
     enabled: !!user,
   });
 
+  const { data: account } = useQuery({
+    queryKey: ["my-profile", user?.id],
+    queryFn: () => getMyProfile(user!.id),
+    enabled: !!user,
+  });
+  const identityOk = isProfileIdentityComplete(account);
+
   const { data: communities = [] } = useQuery(communitiesQuery);
+
   const { data: services = [] } = useQuery({
     queryKey: ["pro-services", profile?.id],
     queryFn: () => listProfessionalServices(profile!.id),
