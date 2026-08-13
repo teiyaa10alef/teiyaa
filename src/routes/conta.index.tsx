@@ -12,6 +12,7 @@ import {
   Flame,
   ClipboardList,
   Bell,
+  Home,
 
 } from "lucide-react";
 
@@ -52,6 +53,13 @@ const ITEMS = [
     icon: ShoppingBag,
     label: "Meus anúncios",
     hint: "Itens à venda e propostas",
+    tone: "brand",
+  },
+  {
+    to: "/conta/imoveis",
+    icon: Home,
+    label: "Meus imóveis",
+    hint: "Casas e quartos para alugar ou vender",
     tone: "brand",
   },
   {
