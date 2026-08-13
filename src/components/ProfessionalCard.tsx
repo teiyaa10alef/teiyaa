@@ -11,6 +11,7 @@ import {
 export function ProfessionalCard({ pro }: { pro: ProfessionalCardData }) {
   const wa = pro.whatsapp?.replace(/\D/g, "");
   const price = formatPrice(pro.price_from_cents);
+  const photo = pro.owner_avatar_url ?? pro.avatar_url;
 
   return (
     <article className="rounded-2xl border border-border bg-surface overflow-hidden flex flex-col">
@@ -20,14 +21,15 @@ export function ProfessionalCard({ pro }: { pro: ProfessionalCardData }) {
         className="flex gap-3 p-4"
       >
         <div className="size-16 rounded-xl bg-muted overflow-hidden flex-shrink-0 border border-border">
-          {pro.avatar_url ? (
-            <img src={pro.avatar_url} alt={pro.profession} loading="lazy" className="w-full h-full object-cover" />
+          {photo ? (
+            <img src={photo} alt={pro.display_name ?? pro.profession} loading="lazy" className="w-full h-full object-cover" />
           ) : (
             <div className="w-full h-full flex items-center justify-center text-lg font-bold text-muted-foreground">
               {(pro.display_name ?? pro.profession).charAt(0).toUpperCase()}
             </div>
           )}
         </div>
+
         <div className="min-w-0 flex-1">
           <h3 className="font-bold leading-tight truncate">{pro.display_name ?? professionLabel(pro.category)}</h3>
           <p className="text-sm text-cat-profissional font-semibold truncate">

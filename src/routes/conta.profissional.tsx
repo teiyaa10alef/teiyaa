@@ -27,7 +27,10 @@ import {
   removeProfessionalService,
   addPortfolioItem,
   removePortfolioItem,
+  getMyProfile,
+  isProfileIdentityComplete,
 } from "@/lib/account-api";
+
 import {
   PROFESSIONS,
   listPortfolio,
@@ -90,7 +93,15 @@ function ProfissionalAdmin() {
     enabled: !!user,
   });
 
+  const { data: account } = useQuery({
+    queryKey: ["my-profile", user?.id],
+    queryFn: () => getMyProfile(user!.id),
+    enabled: !!user,
+  });
+  const identityOk = isProfileIdentityComplete(account);
+
   const { data: communities = [] } = useQuery(communitiesQuery);
+
   const { data: services = [] } = useQuery({
     queryKey: ["pro-services", profile?.id],
     queryFn: () => listProfessionalServices(profile!.id),
@@ -166,14 +177,16 @@ function ProfissionalAdmin() {
   const checklist = useMemo(
     () => [
       { label: "Profissão e categoria", done: !!form.profession && !!form.category },
-      { label: "Foto de perfil", done: !!form.avatar_url },
+      { label: "Foto, nome e sobrenome na conta", done: identityOk },
       { label: "Descrição sobre você", done: (form.about ?? "").length > 40 },
+      { label: "Anos de experiência", done: !!form.years_experience },
+      { label: "Habilidades (especialidades)", done: form.specialties.length > 0 },
       { label: "WhatsApp para contato", done: !!form.whatsapp },
       { label: "Pelo menos 1 serviço", done: services.length > 0 },
       { label: "3 fotos no portfólio", done: portfolio.length >= 3 },
       { label: "Perfil publicado", done: !!profile?.is_published },
     ],
-    [form, services.length, portfolio.length, profile?.is_published],
+    [form, identityOk, services.length, portfolio.length, profile?.is_published],
   );
   const completion = Math.round(
     (checklist.filter((c) => c.done).length / checklist.length) * 100,
@@ -186,7 +199,12 @@ function ProfissionalAdmin() {
       toast.error("Informe sua profissão");
       return;
     }
+    if (f.is_published && !identityOk) {
+      toast.error("Para publicar, adicione foto, nome e sobrenome em Meu perfil.");
+      return;
+    }
     setSaving(true);
+
     try {
       await upsertProfessionalProfile(user.id, {
         profession: f.profession.trim(),
@@ -389,6 +407,22 @@ function ProfissionalAdmin() {
                   </ul>
                 </div>
 
+                {!identityOk && (
+                  <div className="p-5 rounded-2xl border border-brand/40 bg-brand/5">
+                    <p className="font-bold">Falta a sua identificação</p>
+                    <p className="text-sm text-muted-foreground mt-1">
+                      Para publicar o perfil profissional é obrigatório ter foto, nome e sobrenome na
+                      sua conta. Eles aparecem no topo do seu perfil público.
+                    </p>
+                    <Link
+                      to="/conta/perfil"
+                      className="mt-3 inline-block px-5 py-2.5 rounded-full bg-brand text-primary-foreground font-bold text-sm"
+                    >
+                      Completar meu perfil
+                    </Link>
+                  </div>
+                )}
+
                 <div className="p-5 rounded-2xl border border-border bg-surface flex items-center justify-between gap-3">
                   <div>
                     <p className="font-bold">{form.is_published ? "Perfil publicado" : "Perfil oculto"}</p>
@@ -399,7 +433,7 @@ function ProfissionalAdmin() {
                     </p>
                   </div>
                   <button
-                    disabled={saving}
+                    disabled={saving || (!form.is_published && !identityOk)}
                     onClick={() => saveProfile({ is_published: !form.is_published })}
                     className={`px-5 py-2.5 rounded-full font-bold text-sm disabled:opacity-60 ${
                       form.is_published
@@ -410,6 +444,7 @@ function ProfissionalAdmin() {
                     {form.is_published ? "Despublicar" : "Publicar"}
                   </button>
                 </div>
+
               </section>
             )}
 
@@ -481,10 +516,30 @@ function ProfissionalAdmin() {
                 </Field>
 
                 <h2 className="font-bold text-lg pt-4">Foto e capa</h2>
-                <div className="grid grid-cols-2 gap-4">
-                  <ImageUpload label="Foto de perfil" url={form.avatar_url} onPick={(f) => handleImageUpload("avatar_url", f)} />
+                <div className="grid sm:grid-cols-2 gap-4">
+                  <div>
+                    <p className="text-sm font-semibold text-foreground/80 mb-1">
+                      Foto de perfil (da sua conta)
+                    </p>
+                    <div className="flex items-center gap-3 p-3 rounded-xl border border-border bg-card">
+                      <div className="size-14 rounded-xl bg-muted overflow-hidden flex-shrink-0">
+                        {account?.avatar_url && (
+                          <img src={account.avatar_url} alt="Sua foto" className="w-full h-full object-cover" />
+                        )}
+                      </div>
+                      <div className="min-w-0">
+                        <p className="text-sm font-semibold truncate">
+                          {account?.display_name ?? "Sem nome"}
+                        </p>
+                        <Link to="/conta/perfil" className="text-xs text-brand font-semibold">
+                          {account?.avatar_url ? "Alterar em Meu perfil →" : "Adicionar foto →"}
+                        </Link>
+                      </div>
+                    </div>
+                  </div>
                   <ImageUpload label="Capa" url={form.cover_url} onPick={(f) => handleImageUpload("cover_url", f)} />
                 </div>
+
 
                 <button disabled={saving} type="submit" className="w-full py-3 bg-brand text-primary-foreground rounded-full font-bold disabled:opacity-60">
                   {saving ? "Salvando…" : "Salvar perfil"}

@@ -13,6 +13,8 @@ import {
   ClipboardList,
   Bell,
   Home,
+  UserRound,
+
 
 } from "lucide-react";
 
@@ -35,12 +37,20 @@ export const Route = createFileRoute("/conta/")({
 
 const ITEMS = [
   {
+    to: "/conta/perfil",
+    icon: UserRound,
+    label: "Meu perfil",
+    hint: "Foto, nome e contatos",
+    tone: "brand",
+  },
+  {
     to: "/conta/profissional",
     icon: Briefcase,
     label: "Perfil profissional",
     hint: "Profissão, serviços e portfólio",
     tone: "brand",
   },
+
   {
     to: "/conta/negocios",
     icon: Store,

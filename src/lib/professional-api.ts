@@ -72,6 +72,8 @@ export type ProfessionalCardData = ProfessionalProfile & {
   portfolio_count: number;
   price_from_cents: number | null;
   display_name: string | null;
+  owner_avatar_url?: string | null;
+
 };
 
 async function communityIdsForScope(scope: Scope): Promise<string[]> {
@@ -138,15 +140,19 @@ export const professionalsByScopeQuery = (scope: Scope) =>
             .from("professional_services")
             .select("professional_id, price_from_cents")
             .in("professional_id", ids),
-          db.from("profiles").select("user_id, display_name").in("user_id", userIds),
+          db.from("profiles").select("user_id, display_name, avatar_url").in("user_id", userIds),
         ]);
 
       const nameMap = new Map(
-        ((profiles ?? []) as { user_id: string; display_name: string | null }[]).map((p) => [
-          p.user_id,
-          p.display_name,
-        ]),
+        (
+          (profiles ?? []) as {
+            user_id: string;
+            display_name: string | null;
+            avatar_url: string | null;
+          }[]
+        ).map((p) => [p.user_id, p]),
       );
+
 
       return pros.map((p) => {
         const rs = ((reviews ?? []) as { professional_id: string; rating: number }[]).filter(
@@ -167,7 +173,9 @@ export const professionalsByScopeQuery = (scope: Scope) =>
           portfolio_preview: items.slice(0, 3),
           portfolio_count: items.length,
           price_from_cents: prices.length > 0 ? Math.min(...prices) : null,
-          display_name: nameMap.get(p.user_id) ?? null,
+          display_name: nameMap.get(p.user_id)?.display_name ?? null,
+          owner_avatar_url: nameMap.get(p.user_id)?.avatar_url ?? null,
+
         };
       });
     },
@@ -208,6 +216,8 @@ export async function getPublicProfessionalFull(userId: string) {
     rating_avg:
       rating_count > 0 ? reviews.reduce((a, r) => a + r.rating, 0) / rating_count : null,
     ownerName: (owner?.display_name as string | null) ?? null,
+    ownerAvatar: (owner?.avatar_url as string | null) ?? null,
+
   };
 }
 

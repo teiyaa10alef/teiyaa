@@ -79,10 +79,12 @@ function PublicProfessional() {
       </Layout>
     );
 
-  const { profile, services, portfolio, reviews, rating_avg, rating_count, ownerName } = data;
+  const { profile, services, portfolio, reviews, rating_avg, rating_count, ownerName, ownerAvatar } =
+    data;
   const waNumber = profile.whatsapp?.replace(/\D/g, "");
   const isOwner = user?.id === profile.user_id;
   const myReview = reviews.find((r) => r.user_id === user?.id) ?? null;
+  const photo = ownerAvatar ?? profile.avatar_url;
 
   return (
     <Layout>
@@ -94,14 +96,19 @@ function PublicProfessional() {
       </div>
       <div className="mt-4 flex flex-col sm:flex-row sm:items-start gap-4">
         <div className="size-20 md:size-24 rounded-2xl border border-border bg-card overflow-hidden flex-shrink-0">
-          {profile.avatar_url ? (
-            <img src={profile.avatar_url} alt="" className="w-full h-full object-cover" />
+          {photo ? (
+            <img
+              src={photo}
+              alt={ownerName ? `Foto de ${ownerName}` : "Foto do profissional"}
+              className="w-full h-full object-cover"
+            />
           ) : (
             <div className="w-full h-full flex items-center justify-center text-2xl font-bold text-muted-foreground">
               {(ownerName ?? profile.profession).charAt(0).toUpperCase()}
             </div>
           )}
         </div>
+
         <div className="min-w-0 flex-1">
           <h1 className="text-2xl md:text-3xl font-bold leading-tight">
             {ownerName ?? profile.profession}
@@ -280,7 +287,25 @@ function PublicProfessional() {
           ))}
         </ul>
       </section>
+
+      {waNumber && !isOwner && (
+        <>
+          <div className="h-20 sm:hidden" aria-hidden />
+          <div className="sm:hidden fixed bottom-0 inset-x-0 z-40 border-t border-border bg-background/95 backdrop-blur px-4 py-3">
+            <a
+              href={`https://wa.me/55${waNumber}`}
+              target="_blank"
+              rel="noreferrer"
+              onClick={() => void trackProfessionalWhatsapp(profile.id)}
+              className="flex items-center justify-center gap-2 w-full py-3 bg-brand text-primary-foreground rounded-full font-bold"
+            >
+              <MessageCircle className="size-4" /> Chamar no WhatsApp
+            </a>
+          </div>
+        </>
+      )}
     </Layout>
+
   );
 }
 
