@@ -19,6 +19,7 @@ import { Route as AnunciarRouteImport } from './routes/anunciar'
 import { Route as IndexRouteImport } from './routes/index'
 import { Route as MercadoIndexRouteImport } from './routes/mercado.index'
 import { Route as MensagensIndexRouteImport } from './routes/mensagens.index'
+import { Route as ImoveisIndexRouteImport } from './routes/imoveis.index'
 import { Route as FreelancesIndexRouteImport } from './routes/freelances.index'
 import { Route as ContaIndexRouteImport } from './routes/conta.index'
 import { Route as NegociosSlugRouteImport } from './routes/negocios.$slug'
@@ -92,6 +93,11 @@ const MercadoIndexRoute = MercadoIndexRouteImport.update({
 const MensagensIndexRoute = MensagensIndexRouteImport.update({
   id: '/mensagens/',
   path: '/mensagens/',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ImoveisIndexRoute = ImoveisIndexRouteImport.update({
+  id: '/imoveis/',
+  path: '/imoveis/',
   getParentRoute: () => rootRouteImport,
 } as any)
 const FreelancesIndexRoute = FreelancesIndexRouteImport.update({
@@ -243,6 +249,7 @@ export interface FileRoutesByFullPath {
   '/negocios/$slug': typeof NegociosSlugRoute
   '/conta/': typeof ContaIndexRoute
   '/freelances/': typeof FreelancesIndexRoute
+  '/imoveis/': typeof ImoveisIndexRoute
   '/mensagens/': typeof MensagensIndexRoute
   '/mercado/': typeof MercadoIndexRoute
   '/conta/freelances/$gigId': typeof ContaFreelancesGigIdRoute
@@ -276,6 +283,7 @@ export interface FileRoutesByTo {
   '/negocios/$slug': typeof NegociosSlugRoute
   '/conta': typeof ContaIndexRoute
   '/freelances': typeof FreelancesIndexRoute
+  '/imoveis': typeof ImoveisIndexRoute
   '/mensagens': typeof MensagensIndexRoute
   '/mercado': typeof MercadoIndexRoute
   '/conta/freelances/$gigId': typeof ContaFreelancesGigIdRoute
@@ -313,6 +321,7 @@ export interface FileRoutesById {
   '/negocios/$slug': typeof NegociosSlugRoute
   '/conta/': typeof ContaIndexRoute
   '/freelances/': typeof FreelancesIndexRoute
+  '/imoveis/': typeof ImoveisIndexRoute
   '/mensagens/': typeof MensagensIndexRoute
   '/mercado/': typeof MercadoIndexRoute
   '/conta/freelances/$gigId': typeof ContaFreelancesGigIdRoute
@@ -351,6 +360,7 @@ export interface FileRouteTypes {
     | '/negocios/$slug'
     | '/conta/'
     | '/freelances/'
+    | '/imoveis/'
     | '/mensagens/'
     | '/mercado/'
     | '/conta/freelances/$gigId'
@@ -384,6 +394,7 @@ export interface FileRouteTypes {
     | '/negocios/$slug'
     | '/conta'
     | '/freelances'
+    | '/imoveis'
     | '/mensagens'
     | '/mercado'
     | '/conta/freelances/$gigId'
@@ -420,6 +431,7 @@ export interface FileRouteTypes {
     | '/negocios/$slug'
     | '/conta/'
     | '/freelances/'
+    | '/imoveis/'
     | '/mensagens/'
     | '/mercado/'
     | '/conta/freelances/$gigId'
@@ -450,6 +462,7 @@ export interface RootRouteChildren {
   MercadoNovoRoute: typeof MercadoNovoRoute
   NegociosSlugRoute: typeof NegociosSlugRoute
   FreelancesIndexRoute: typeof FreelancesIndexRoute
+  ImoveisIndexRoute: typeof ImoveisIndexRoute
   MensagensIndexRoute: typeof MensagensIndexRoute
   MercadoIndexRoute: typeof MercadoIndexRoute
   MensagensBicoConversationIdRoute: typeof MensagensBicoConversationIdRoute
@@ -526,6 +539,13 @@ declare module '@tanstack/react-router' {
       path: '/mensagens'
       fullPath: '/mensagens/'
       preLoaderRoute: typeof MensagensIndexRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/imoveis/': {
+      id: '/imoveis/'
+      path: '/imoveis'
+      fullPath: '/imoveis/'
+      preLoaderRoute: typeof ImoveisIndexRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/freelances/': {
@@ -770,6 +790,7 @@ const rootRouteChildren: RootRouteChildren = {
   MercadoNovoRoute: MercadoNovoRoute,
   NegociosSlugRoute: NegociosSlugRoute,
   FreelancesIndexRoute: FreelancesIndexRoute,
+  ImoveisIndexRoute: ImoveisIndexRoute,
   MensagensIndexRoute: MensagensIndexRoute,
   MercadoIndexRoute: MercadoIndexRoute,
   MensagensBicoConversationIdRoute: MensagensBicoConversationIdRoute,
