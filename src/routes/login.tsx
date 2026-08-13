@@ -337,7 +337,7 @@ function LoginPage() {
                       Foto de perfil (opcional)
                       <input
                         type="file"
-                        accept="image/*"
+                        accept="image/jpeg,image/png,image/webp"
                         onChange={(e) => setPhoto(e.target.files?.[0] ?? null)}
                         className="mt-1 w-full text-sm file:mr-3 file:py-2 file:px-4 file:rounded-full file:border-0 file:bg-muted file:text-foreground"
                       />

@@ -329,7 +329,7 @@ function NovoImovelPage() {
               <Field label="Fotos do imóvel (até 8)">
                 <input
                   type="file"
-                  accept="image/*"
+                  accept="image/jpeg,image/png,image/webp"
                   multiple
                   onChange={(e) => handleFiles(e.target.files)}
                   className="text-sm"

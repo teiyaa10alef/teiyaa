@@ -666,7 +666,7 @@ function ProfissionalAdmin() {
                   <label className="min-h-40 rounded-xl border-2 border-dashed border-border flex flex-col items-center justify-center text-muted-foreground cursor-pointer hover:bg-muted">
                     <Upload className="size-6" />
                     <span className="text-xs mt-2">Adicionar fotos/vídeos</span>
-                    <input type="file" multiple accept="image/*,video/*" className="hidden" onChange={(e) => handlePortfolioUpload(e.target.files)} />
+                    <input type="file" multiple accept="image/jpeg,image/png,image/webp,video/*" className="hidden" onChange={(e) => handlePortfolioUpload(e.target.files)} />
                   </label>
                 </div>
               </section>
@@ -867,7 +867,7 @@ function ImageUpload({ label, url, onPick }: { label: string; url: string; onPic
             <span className="text-xs mt-1">Enviar</span>
           </div>
         )}
-        <input type="file" accept="image/*" className="hidden" onChange={(e) => e.target.files?.[0] && onPick(e.target.files[0])} />
+        <input type="file" accept="image/jpeg,image/png,image/webp" className="hidden" onChange={(e) => e.target.files?.[0] && onPick(e.target.files[0])} />
       </label>
     </div>
   );
