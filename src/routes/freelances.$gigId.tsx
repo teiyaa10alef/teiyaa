@@ -236,13 +236,8 @@ function GigDetailPage() {
       )}
 
       <section className="mt-6 p-4 rounded-2xl border border-border bg-surface flex items-center gap-3">
-        <div className="size-12 rounded-full overflow-hidden bg-muted flex items-center justify-center">
-          {owner?.avatar_url ? (
-            <img src={owner.avatar_url} alt="" className="w-full h-full object-cover" />
-          ) : (
-            <span className="font-bold">{(owner?.display_name ?? "V").charAt(0)}</span>
-          )}
-        </div>
+        <UserAvatar src={owner?.avatar_url} name={owner?.display_name} className="size-12" />
+
         <div className="min-w-0">
           <p className="font-bold truncate">{owner?.display_name ?? "Vizinho"}</p>
           <div className="text-xs text-muted-foreground flex items-center gap-1.5">
