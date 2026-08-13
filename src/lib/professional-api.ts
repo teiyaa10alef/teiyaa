@@ -173,7 +173,9 @@ export const professionalsByScopeQuery = (scope: Scope) =>
           portfolio_preview: items.slice(0, 3),
           portfolio_count: items.length,
           price_from_cents: prices.length > 0 ? Math.min(...prices) : null,
-          display_name: nameMap.get(p.user_id) ?? null,
+          display_name: nameMap.get(p.user_id)?.display_name ?? null,
+          owner_avatar_url: nameMap.get(p.user_id)?.avatar_url ?? null,
+
         };
       });
     },
