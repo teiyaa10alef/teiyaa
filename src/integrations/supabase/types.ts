@@ -1188,6 +1188,133 @@ export type Database = {
         }
         Relationships: []
       }
+      properties: {
+        Row: {
+          accepts_pets: boolean
+          address: string | null
+          address_hint: string | null
+          area_m2: number | null
+          bathrooms: number
+          bedrooms: number
+          community_id: string | null
+          condo_cents: number | null
+          created_at: string
+          description: string
+          id: string
+          images: Json
+          iptu_cents: number | null
+          is_furnished: boolean
+          is_published: boolean
+          kind: Database["public"]["Enums"]["property_kind"]
+          owner_id: string
+          parking_spots: number
+          phone: string | null
+          price_cents: number | null
+          purpose: Database["public"]["Enums"]["property_purpose"]
+          status: Database["public"]["Enums"]["property_status"]
+          title: string
+          updated_at: string
+          view_count: number
+          whatsapp: string | null
+          whatsapp_click_count: number
+        }
+        Insert: {
+          accepts_pets?: boolean
+          address?: string | null
+          address_hint?: string | null
+          area_m2?: number | null
+          bathrooms?: number
+          bedrooms?: number
+          community_id?: string | null
+          condo_cents?: number | null
+          created_at?: string
+          description?: string
+          id?: string
+          images?: Json
+          iptu_cents?: number | null
+          is_furnished?: boolean
+          is_published?: boolean
+          kind?: Database["public"]["Enums"]["property_kind"]
+          owner_id: string
+          parking_spots?: number
+          phone?: string | null
+          price_cents?: number | null
+          purpose?: Database["public"]["Enums"]["property_purpose"]
+          status?: Database["public"]["Enums"]["property_status"]
+          title: string
+          updated_at?: string
+          view_count?: number
+          whatsapp?: string | null
+          whatsapp_click_count?: number
+        }
+        Update: {
+          accepts_pets?: boolean
+          address?: string | null
+          address_hint?: string | null
+          area_m2?: number | null
+          bathrooms?: number
+          bedrooms?: number
+          community_id?: string | null
+          condo_cents?: number | null
+          created_at?: string
+          description?: string
+          id?: string
+          images?: Json
+          iptu_cents?: number | null
+          is_furnished?: boolean
+          is_published?: boolean
+          kind?: Database["public"]["Enums"]["property_kind"]
+          owner_id?: string
+          parking_spots?: number
+          phone?: string | null
+          price_cents?: number | null
+          purpose?: Database["public"]["Enums"]["property_purpose"]
+          status?: Database["public"]["Enums"]["property_status"]
+          title?: string
+          updated_at?: string
+          view_count?: number
+          whatsapp?: string | null
+          whatsapp_click_count?: number
+        }
+        Relationships: [
+          {
+            foreignKeyName: "properties_community_id_fkey"
+            columns: ["community_id"]
+            isOneToOne: false
+            referencedRelation: "communities"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      property_favorites: {
+        Row: {
+          created_at: string
+          id: string
+          property_id: string
+          user_id: string
+        }
+        Insert: {
+          created_at?: string
+          id?: string
+          property_id: string
+          user_id: string
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          property_id?: string
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "property_favorites_property_id_fkey"
+            columns: ["property_id"]
+            isOneToOne: false
+            referencedRelation: "properties"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       states: {
         Row: {
           code: string
@@ -1234,6 +1361,14 @@ export type Database = {
         Args: { _professional_id: string }
         Returns: undefined
       }
+      increment_property_view: {
+        Args: { _property_id: string }
+        Returns: undefined
+      }
+      increment_property_whatsapp_click: {
+        Args: { _property_id: string }
+        Returns: undefined
+      }
       is_conversation_participant: {
         Args: { _conversation_id: string; _user_id: string }
         Returns: boolean
@@ -1273,6 +1408,15 @@ export type Database = {
       market_condition: "novo" | "seminovo" | "usado"
       market_status: "active" | "reserved" | "sold" | "paused"
       offer_status: "pending" | "accepted" | "rejected"
+      property_kind:
+        | "casa"
+        | "apartamento"
+        | "kitnet"
+        | "quarto"
+        | "terreno"
+        | "comercial"
+      property_purpose: "aluguel" | "venda"
+      property_status: "active" | "reserved" | "rented" | "sold" | "paused"
     }
     CompositeTypes: {
       [_ in never]: never
@@ -1415,6 +1559,16 @@ export const Constants = {
       market_condition: ["novo", "seminovo", "usado"],
       market_status: ["active", "reserved", "sold", "paused"],
       offer_status: ["pending", "accepted", "rejected"],
+      property_kind: [
+        "casa",
+        "apartamento",
+        "kitnet",
+        "quarto",
+        "terreno",
+        "comercial",
+      ],
+      property_purpose: ["aluguel", "venda"],
+      property_status: ["active", "reserved", "rented", "sold", "paused"],
     },
   },
 } as const
