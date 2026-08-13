@@ -467,14 +467,30 @@ export async function completeGig(gigId: string) {
   if (error) throw error;
 }
 
+export const CHAT_ENABLED_APPLICATION_STATUSES: GigApplicationStatus[] = [
+  "shortlisted",
+  "accepted",
+];
+
+export function canApplicantChat(status?: GigApplicationStatus | null) {
+  return !!status && CHAT_ENABLED_APPLICATION_STATUSES.includes(status);
+}
+
 export async function startGigConversation(params: {
   gigId: string;
   ownerId: string;
   applicantId: string;
   applicationId?: string | null;
+  /** Quando quem abre é o candidato, exigimos pré-seleção/aceite */
+  asApplicantStatus?: GigApplicationStatus | null;
 }): Promise<string> {
   if (params.ownerId === params.applicantId) {
     throw new Error("Você não pode conversar com você mesmo");
+  }
+  if (params.asApplicantStatus !== undefined && !canApplicantChat(params.asApplicantStatus)) {
+    throw new Error(
+      "Você poderá conversar com o anunciante assim que for pré-selecionado ou escolhido",
+    );
   }
   const { data: existing } = await db
     .from("gig_conversations")
