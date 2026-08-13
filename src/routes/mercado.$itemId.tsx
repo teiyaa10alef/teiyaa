@@ -197,13 +197,8 @@ function ItemPage() {
           )}
 
           <div className="mt-6 flex items-center gap-3 p-4 rounded-2xl border border-border bg-surface">
-            <div className="size-11 rounded-full bg-brand-soft overflow-hidden flex items-center justify-center text-brand font-bold">
-              {seller?.avatar_url ? (
-                <img src={seller.avatar_url} alt="" className="w-full h-full object-cover" />
-              ) : (
-                (seller?.display_name ?? "V").slice(0, 1).toUpperCase()
-              )}
-            </div>
+            <UserAvatar src={seller?.avatar_url} name={seller?.display_name} className="size-11" />
+
             <div>
               <p className="font-bold leading-tight">{seller?.display_name ?? "Vizinho"}</p>
               <p className="text-xs text-muted-foreground">Vendedor</p>
