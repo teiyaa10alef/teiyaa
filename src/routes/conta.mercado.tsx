@@ -18,9 +18,9 @@ import { Plus } from "lucide-react";
 export const Route = createFileRoute("/conta/mercado")({
   head: () => ({
     meta: [
-      { title: "Meus anúncios do mercado — teiyaa" },
+      { title: "Meus anúncios do marketplace — teiyaa" },
       { name: "description", content: "Gerencie seus itens à venda e as propostas recebidas." },
-      { property: "og:title", content: "Meus anúncios do mercado — teiyaa" },
+      { property: "og:title", content: "Meus anúncios do marketplace — teiyaa" },
       { property: "og:description", content: "Administre seus itens e propostas no teiyaa." },
       { property: "og:type", content: "website" },
       { name: "twitter:card", content: "summary" },

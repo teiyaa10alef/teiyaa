@@ -24,12 +24,12 @@ import { MessageCircle, Tag } from "lucide-react";
 export const Route = createFileRoute("/mercado/$itemId")({
   head: () => ({
     meta: [
-      { title: "Item no mercado do bairro — teiyaa" },
+      { title: "Item no marketplace do bairro — teiyaa" },
       {
         name: "description",
         content: "Veja detalhes do item, faça uma proposta e converse com o vendedor pelo chat.",
       },
-      { property: "og:title", content: "Item no mercado do bairro — teiyaa" },
+      { property: "og:title", content: "Item no marketplace do bairro — teiyaa" },
       { property: "og:description", content: "Negocie direto com o vizinho que está vendendo." },
       { property: "og:type", content: "product" },
       { name: "twitter:card", content: "summary_large_image" },

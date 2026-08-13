@@ -11,13 +11,13 @@ import { Search, Plus } from "lucide-react";
 export const Route = createFileRoute("/mercado/")({
   head: () => ({
     meta: [
-      { title: "Mercado do bairro — teiyaa" },
+      { title: "Marketplace do bairro — teiyaa" },
       {
         name: "description",
         content:
           "Compre e venda itens novos e usados com vizinhos do seu bairro. Faça propostas e converse direto pelo chat do teiyaa.",
       },
-      { property: "og:title", content: "Mercado do bairro — teiyaa" },
+      { property: "og:title", content: "Marketplace do bairro — teiyaa" },
       {
         property: "og:description",
         content: "Itens novos e usados anunciados por moradores da sua comunidade.",
@@ -50,7 +50,7 @@ function MercadoPage() {
             <span className="inline-block px-3 py-1 bg-brand-soft text-brand text-xs font-bold uppercase tracking-widest rounded-full">
               Entre vizinhos
             </span>
-            <h1 className="mt-4 text-3xl md:text-5xl font-bold leading-tight">Mercado do bairro</h1>
+            <h1 className="mt-4 text-3xl md:text-5xl font-bold leading-tight">Marketplace do bairro</h1>
             <p className="mt-2 text-muted-foreground max-w-xl">
               Itens novos e usados de moradores. Faça uma proposta e combine tudo pelo chat.
             </p>
@@ -115,7 +115,7 @@ function MercadoPage() {
             <div className="text-4xl mb-3">🛒</div>
             <h2 className="font-bold text-lg mb-2">Nada por aqui ainda</h2>
             <p className="text-muted-foreground text-sm max-w-sm mx-auto mb-6">
-              Seja o primeiro a anunciar algo no mercado do seu bairro.
+              Seja o primeiro a anunciar algo no marketplace do seu bairro.
             </p>
             <Link
               to="/mercado/novo"
