@@ -14,6 +14,8 @@ import {
   Send,
 } from "lucide-react";
 import { SiteHeader } from "@/components/SiteHeader";
+import { UserAvatar } from "@/components/UserAvatar";
+
 import { SiteFooter } from "@/components/SiteFooter";
 import { RatingStars } from "@/components/RatingStars";
 import { PortfolioGallery } from "@/components/PortfolioGallery";
@@ -270,11 +272,13 @@ function PublicProfessional() {
           {reviews.map((r) => (
             <li key={r.id} className="p-4 rounded-xl border border-border bg-surface">
               <div className="flex items-center gap-2">
-                <div className="size-8 rounded-full bg-muted overflow-hidden flex-shrink-0">
-                  {r.author?.avatar_url && (
-                    <img src={r.author.avatar_url} alt="" className="w-full h-full object-cover" />
-                  )}
-                </div>
+                <UserAvatar
+                  src={r.author?.avatar_url}
+                  name={r.author?.display_name}
+                  className="size-8"
+                  textClassName="text-xs"
+                />
+
                 <div className="min-w-0">
                   <p className="text-sm font-semibold truncate">
                     {r.author?.display_name ?? "Morador"}

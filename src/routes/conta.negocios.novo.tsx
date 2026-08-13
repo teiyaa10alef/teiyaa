@@ -416,7 +416,7 @@ function UploadBox({
           {busy ? "Enviando…" : url ? <><Check className="size-4" /> Trocar</> : "Escolher imagem"}
           <input
             type="file"
-            accept="image/*"
+            accept="image/jpeg,image/png,image/webp"
             className="hidden"
             onChange={(e) => {
               const f = e.target.files?.[0];

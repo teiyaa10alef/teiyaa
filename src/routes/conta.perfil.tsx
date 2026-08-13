@@ -150,7 +150,7 @@ function MeuPerfil() {
               {form.avatar_url ? "Trocar foto" : "Enviar foto"}
               <input
                 type="file"
-                accept="image/*"
+                accept="image/jpeg,image/png,image/webp"
                 className="hidden"
                 onChange={(e) => e.target.files?.[0] && pickAvatar(e.target.files[0])}
               />

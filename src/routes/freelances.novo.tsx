@@ -201,7 +201,7 @@ function NovoBicoPage() {
               <Field label="Fotos (opcional)">
                 <input
                   type="file"
-                  accept="image/*"
+                  accept="image/jpeg,image/png,image/webp"
                   multiple
                   onChange={(e) => handleFiles(e.target.files)}
                   className="text-sm"

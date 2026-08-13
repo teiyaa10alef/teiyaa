@@ -216,7 +216,7 @@ function NovoItemPage() {
             <label className="block text-sm font-semibold mb-2">Fotos (até 6)</label>
             <input
               type="file"
-              accept="image/*"
+              accept="image/jpeg,image/png,image/webp"
               multiple
               onChange={(e) => handleFiles(e.target.files)}
               className="block w-full text-sm text-muted-foreground file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:bg-brand-soft file:text-brand file:font-semibold"
