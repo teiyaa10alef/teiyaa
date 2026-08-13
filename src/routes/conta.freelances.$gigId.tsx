@@ -15,6 +15,8 @@ import {
 import { SiteHeader } from "@/components/SiteHeader";
 import { SiteFooter } from "@/components/SiteFooter";
 import { RatingStars } from "@/components/RatingStars";
+import { UserAvatar } from "@/components/UserAvatar";
+
 import { useAuth } from "@/hooks/use-auth";
 import {
   acceptApplication,
