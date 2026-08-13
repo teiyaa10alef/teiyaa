@@ -216,9 +216,10 @@ export const conversationsQuery = (userId: string | undefined) =>
       const convos = (data ?? []) as unknown as (MarketConversation & {
         item: Pick<MarketItem, "id" | "title" | "images" | "price_cents" | "status" | "seller_id"> | null;
       })[];
-      const others = convos.map((c) => (c.buyer_id === userId ? c.seller_id : c.buyer_id));
+      const visible = convos.filter((c) => c.buyer_id !== c.seller_id);
+      const others = visible.map((c) => (c.buyer_id === userId ? c.seller_id : c.buyer_id));
       const profiles = await fetchProfiles(others);
-      return convos.map((c) => ({
+      return visible.map((c) => ({
         ...c,
         other: profiles[c.buyer_id === userId ? c.seller_id : c.buyer_id] ?? null,
       }));
@@ -262,6 +263,9 @@ export async function startConversation(item: {
   id: string;
   seller_id: string;
 }, buyerId: string): Promise<string> {
+  if (item.seller_id === buyerId) {
+    throw new Error("Você não pode conversar com você mesmo");
+  }
   const { data: existing } = await supabase
     .from("market_conversations")
     .select("id")
@@ -301,6 +305,9 @@ export async function createOffer(params: {
   amountCents: number;
   message?: string;
 }) {
+  if (params.buyerId === params.sellerId) {
+    throw new Error("Você não pode fazer proposta no seu próprio anúncio");
+  }
   const { error } = await supabase.from("market_offers").insert({
     item_id: params.itemId,
     buyer_id: params.buyerId,

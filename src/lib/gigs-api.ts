@@ -345,7 +345,9 @@ export const gigConversationsQuery = (userId: string | undefined) =>
         .select("*, gig:gigs(id, title, images, budget_cents, budget_type, status)")
         .order("last_message_at", { ascending: false });
       if (error) throw error;
-      const convos = (data ?? []) as (GigConversation & { gig: Gig | null })[];
+      const convos = ((data ?? []) as (GigConversation & { gig: Gig | null })[]).filter(
+        (c) => c.owner_id !== c.applicant_id,
+      );
       const others = convos.map((c) => (c.owner_id === userId ? c.applicant_id : c.owner_id));
       const profiles = await fetchProfiles(others);
       return convos.map((c) => ({
@@ -418,6 +420,10 @@ export async function applyToGig(params: {
   proposedCents: number | null;
   availableAt: string | null;
 }) {
+  const { data: gigRow } = await db.from("gigs").select("owner_id").eq("id", params.gigId).maybeSingle();
+  if (gigRow?.owner_id === params.applicantId) {
+    throw new Error("Você não pode se candidatar ao seu próprio bico");
+  }
   const { error } = await db.from("gig_applications").insert({
     gig_id: params.gigId,
     applicant_id: params.applicantId,
@@ -467,6 +473,9 @@ export async function startGigConversation(params: {
   applicantId: string;
   applicationId?: string | null;
 }): Promise<string> {
+  if (params.ownerId === params.applicantId) {
+    throw new Error("Você não pode conversar com você mesmo");
+  }
   const { data: existing } = await db
     .from("gig_conversations")
     .select("id")
