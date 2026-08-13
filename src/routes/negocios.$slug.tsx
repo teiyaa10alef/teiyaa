@@ -499,11 +499,13 @@ function ReviewsSection({
         {reviews.map((r) => (
           <li key={r.id} className="p-4 rounded-xl border border-border bg-card">
             <div className="flex items-center gap-3">
-              <div className="size-9 rounded-full bg-muted overflow-hidden">
-                {r.author?.avatar_url && (
-                  <img src={r.author.avatar_url} alt="" className="w-full h-full object-cover" />
-                )}
-              </div>
+              <UserAvatar
+                src={r.author?.avatar_url}
+                name={r.author?.display_name}
+                className="size-9"
+                textClassName="text-xs"
+              />
+
               <div className="min-w-0">
                 <p className="font-semibold text-sm truncate">{r.author?.display_name ?? "Vizinho"}</p>
                 <div className="flex items-center gap-0.5">
