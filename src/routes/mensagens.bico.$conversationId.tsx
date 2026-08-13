@@ -9,10 +9,12 @@ import { useAuth } from "@/hooks/use-auth";
 import { supabase } from "@/integrations/supabase/client";
 import { fetchProfiles, type PublicProfile } from "@/lib/market-api";
 import {
+  canApplicantChat,
   formatBudget,
   gigConversationQuery,
   gigMessagesQuery,
   markGigMessagesRead,
+  myApplicationForGigQuery,
   sendGigMessage,
 } from "@/lib/gigs-api";
 
