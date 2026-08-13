@@ -26,6 +26,7 @@ import { Route as NegociosSlugRouteImport } from './routes/negocios.$slug'
 import { Route as MercadoNovoRouteImport } from './routes/mercado.novo'
 import { Route as MercadoItemIdRouteImport } from './routes/mercado.$itemId'
 import { Route as MensagensConversationIdRouteImport } from './routes/mensagens.$conversationId'
+import { Route as ImoveisPropertyIdRouteImport } from './routes/imoveis.$propertyId'
 import { Route as FreelancesNovoRouteImport } from './routes/freelances.novo'
 import { Route as FreelancesGigIdRouteImport } from './routes/freelances.$gigId'
 import { Route as EstadoStateSlugRouteImport } from './routes/estado.$stateSlug'
@@ -128,6 +129,11 @@ const MercadoItemIdRoute = MercadoItemIdRouteImport.update({
 const MensagensConversationIdRoute = MensagensConversationIdRouteImport.update({
   id: '/mensagens/$conversationId',
   path: '/mensagens/$conversationId',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ImoveisPropertyIdRoute = ImoveisPropertyIdRouteImport.update({
+  id: '/imoveis/$propertyId',
+  path: '/imoveis/$propertyId',
   getParentRoute: () => rootRouteImport,
 } as any)
 const FreelancesNovoRoute = FreelancesNovoRouteImport.update({
@@ -243,6 +249,7 @@ export interface FileRoutesByFullPath {
   '/estado/$stateSlug': typeof EstadoStateSlugRoute
   '/freelances/$gigId': typeof FreelancesGigIdRoute
   '/freelances/novo': typeof FreelancesNovoRoute
+  '/imoveis/$propertyId': typeof ImoveisPropertyIdRoute
   '/mensagens/$conversationId': typeof MensagensConversationIdRoute
   '/mercado/$itemId': typeof MercadoItemIdRoute
   '/mercado/novo': typeof MercadoNovoRoute
@@ -277,6 +284,7 @@ export interface FileRoutesByTo {
   '/estado/$stateSlug': typeof EstadoStateSlugRoute
   '/freelances/$gigId': typeof FreelancesGigIdRoute
   '/freelances/novo': typeof FreelancesNovoRoute
+  '/imoveis/$propertyId': typeof ImoveisPropertyIdRoute
   '/mensagens/$conversationId': typeof MensagensConversationIdRoute
   '/mercado/$itemId': typeof MercadoItemIdRoute
   '/mercado/novo': typeof MercadoNovoRoute
@@ -315,6 +323,7 @@ export interface FileRoutesById {
   '/estado/$stateSlug': typeof EstadoStateSlugRoute
   '/freelances/$gigId': typeof FreelancesGigIdRoute
   '/freelances/novo': typeof FreelancesNovoRoute
+  '/imoveis/$propertyId': typeof ImoveisPropertyIdRoute
   '/mensagens/$conversationId': typeof MensagensConversationIdRoute
   '/mercado/$itemId': typeof MercadoItemIdRoute
   '/mercado/novo': typeof MercadoNovoRoute
@@ -354,6 +363,7 @@ export interface FileRouteTypes {
     | '/estado/$stateSlug'
     | '/freelances/$gigId'
     | '/freelances/novo'
+    | '/imoveis/$propertyId'
     | '/mensagens/$conversationId'
     | '/mercado/$itemId'
     | '/mercado/novo'
@@ -388,6 +398,7 @@ export interface FileRouteTypes {
     | '/estado/$stateSlug'
     | '/freelances/$gigId'
     | '/freelances/novo'
+    | '/imoveis/$propertyId'
     | '/mensagens/$conversationId'
     | '/mercado/$itemId'
     | '/mercado/novo'
@@ -425,6 +436,7 @@ export interface FileRouteTypes {
     | '/estado/$stateSlug'
     | '/freelances/$gigId'
     | '/freelances/novo'
+    | '/imoveis/$propertyId'
     | '/mensagens/$conversationId'
     | '/mercado/$itemId'
     | '/mercado/novo'
@@ -457,6 +469,7 @@ export interface RootRouteChildren {
   EstadoStateSlugRoute: typeof EstadoStateSlugRoute
   FreelancesGigIdRoute: typeof FreelancesGigIdRoute
   FreelancesNovoRoute: typeof FreelancesNovoRoute
+  ImoveisPropertyIdRoute: typeof ImoveisPropertyIdRoute
   MensagensConversationIdRoute: typeof MensagensConversationIdRoute
   MercadoItemIdRoute: typeof MercadoItemIdRoute
   MercadoNovoRoute: typeof MercadoNovoRoute
@@ -588,6 +601,13 @@ declare module '@tanstack/react-router' {
       path: '/mensagens/$conversationId'
       fullPath: '/mensagens/$conversationId'
       preLoaderRoute: typeof MensagensConversationIdRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/imoveis/$propertyId': {
+      id: '/imoveis/$propertyId'
+      path: '/imoveis/$propertyId'
+      fullPath: '/imoveis/$propertyId'
+      preLoaderRoute: typeof ImoveisPropertyIdRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/freelances/novo': {
@@ -785,6 +805,7 @@ const rootRouteChildren: RootRouteChildren = {
   EstadoStateSlugRoute: EstadoStateSlugRoute,
   FreelancesGigIdRoute: FreelancesGigIdRoute,
   FreelancesNovoRoute: FreelancesNovoRoute,
+  ImoveisPropertyIdRoute: ImoveisPropertyIdRoute,
   MensagensConversationIdRoute: MensagensConversationIdRoute,
   MercadoItemIdRoute: MercadoItemIdRoute,
   MercadoNovoRoute: MercadoNovoRoute,
