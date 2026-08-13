@@ -216,6 +216,8 @@ export async function getPublicProfessionalFull(userId: string) {
     rating_avg:
       rating_count > 0 ? reviews.reduce((a, r) => a + r.rating, 0) / rating_count : null,
     ownerName: (owner?.display_name as string | null) ?? null,
+    ownerAvatar: (owner?.avatar_url as string | null) ?? null,
+
   };
 }
 
