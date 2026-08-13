@@ -14,6 +14,8 @@ import {
   Send,
 } from "lucide-react";
 import { SiteHeader } from "@/components/SiteHeader";
+import { UserAvatar } from "@/components/UserAvatar";
+
 import { SiteFooter } from "@/components/SiteFooter";
 import { RatingStars } from "@/components/RatingStars";
 import { PortfolioGallery } from "@/components/PortfolioGallery";
