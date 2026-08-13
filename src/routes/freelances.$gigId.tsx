@@ -23,6 +23,7 @@ import { UserAvatar } from "@/components/UserAvatar";
 import {
   applyToGig,
   APPLICATION_STATUS_LABELS,
+  canApplicantChat,
   fetchReputation,
   formatBudget,
   formatGigDate,
