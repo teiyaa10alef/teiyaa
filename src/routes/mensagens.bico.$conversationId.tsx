@@ -194,22 +194,28 @@ function GigChatPage() {
           <div ref={bottomRef} />
         </div>
 
-        <form onSubmit={handleSend} className="sticky bottom-0 bg-background py-3 flex gap-2">
-          <input
-            value={text}
-            onChange={(e) => setText(e.target.value)}
-            placeholder="Escreva uma mensagem…"
-            className="flex-1 h-12 px-4 rounded-full bg-card border border-border focus:border-brand outline-none"
-          />
-          <button
-            type="submit"
-            disabled={sending || !text.trim()}
-            aria-label="Enviar"
-            className="size-12 rounded-full bg-brand text-primary-foreground flex items-center justify-center disabled:opacity-50"
-          >
-            <Send className="size-5" />
-          </button>
-        </form>
+        {canWrite ? (
+          <form onSubmit={handleSend} className="sticky bottom-0 bg-background py-3 flex gap-2">
+            <input
+              value={text}
+              onChange={(e) => setText(e.target.value)}
+              placeholder="Escreva uma mensagem…"
+              className="flex-1 h-12 px-4 rounded-full bg-card border border-border focus:border-brand outline-none"
+            />
+            <button
+              type="submit"
+              disabled={sending || !text.trim()}
+              aria-label="Enviar"
+              className="size-12 rounded-full bg-brand text-primary-foreground flex items-center justify-center disabled:opacity-50"
+            >
+              <Send className="size-5" />
+            </button>
+          </form>
+        ) : (
+          <p className="sticky bottom-0 bg-background py-3 text-center text-sm text-muted-foreground">
+            Você poderá conversar com o anunciante assim que for pré-selecionado ou escolhido.
+          </p>
+        )}
       </main>
       <SiteFooter />
     </div>
