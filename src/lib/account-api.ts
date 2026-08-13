@@ -88,7 +88,47 @@ export type BusinessMedia = {
 // Cast helper to keep TS happy when types.ts hasn't regenerated yet
 const db = supabase as any;
 
+// ===== Account profile (identidade do morador) =====
+export type UserProfile = {
+  id: string;
+  user_id: string;
+  display_name: string | null;
+  avatar_url: string | null;
+  bio: string | null;
+  phone: string | null;
+  whatsapp: string | null;
+};
+
+export async function getMyProfile(userId: string): Promise<UserProfile | null> {
+  const { data, error } = await db
+    .from("profiles")
+    .select("*")
+    .eq("user_id", userId)
+    .maybeSingle();
+  if (error) throw error;
+  return data;
+}
+
+export async function updateMyProfile(userId: string, payload: Partial<UserProfile>) {
+  const { error } = await db
+    .from("profiles")
+    .upsert({ ...payload, user_id: userId }, { onConflict: "user_id" });
+  if (error) throw error;
+}
+
+export function splitName(full: string | null | undefined): { first: string; last: string } {
+  const parts = (full ?? "").trim().split(/\s+/).filter(Boolean);
+  return { first: parts[0] ?? "", last: parts.slice(1).join(" ") };
+}
+
+export function isProfileIdentityComplete(p: UserProfile | null | undefined): boolean {
+  if (!p) return false;
+  const { first, last } = splitName(p.display_name);
+  return !!p.avatar_url && !!first && !!last;
+}
+
 // ===== Professional =====
+
 export async function getMyProfessionalProfile(userId: string): Promise<ProfessionalProfile | null> {
   const { data, error } = await db
     .from("professional_profiles")
