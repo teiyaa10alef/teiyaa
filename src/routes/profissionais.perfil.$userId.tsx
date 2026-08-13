@@ -287,7 +287,25 @@ function PublicProfessional() {
           ))}
         </ul>
       </section>
+
+      {waNumber && !isOwner && (
+        <>
+          <div className="h-20 sm:hidden" aria-hidden />
+          <div className="sm:hidden fixed bottom-0 inset-x-0 z-40 border-t border-border bg-background/95 backdrop-blur px-4 py-3">
+            <a
+              href={`https://wa.me/55${waNumber}`}
+              target="_blank"
+              rel="noreferrer"
+              onClick={() => void trackProfessionalWhatsapp(profile.id)}
+              className="flex items-center justify-center gap-2 w-full py-3 bg-brand text-primary-foreground rounded-full font-bold"
+            >
+              <MessageCircle className="size-4" /> Chamar no WhatsApp
+            </a>
+          </div>
+        </>
+      )}
     </Layout>
+
   );
 }
 
