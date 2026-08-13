@@ -13,7 +13,6 @@ import { Route as VagasRouteImport } from './routes/vagas'
 import { Route as SitemapDotxmlRouteImport } from './routes/sitemap[.]xml'
 import { Route as ServicosRouteImport } from './routes/servicos'
 import { Route as LoginRouteImport } from './routes/login'
-import { Route as ImoveisRouteImport } from './routes/imoveis'
 import { Route as ContaRouteImport } from './routes/conta'
 import { Route as ComerciosRouteImport } from './routes/comercios'
 import { Route as AnunciarRouteImport } from './routes/anunciar'
@@ -63,11 +62,6 @@ const ServicosRoute = ServicosRouteImport.update({
 const LoginRoute = LoginRouteImport.update({
   id: '/login',
   path: '/login',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const ImoveisRoute = ImoveisRouteImport.update({
-  id: '/imoveis',
-  path: '/imoveis',
   getParentRoute: () => rootRouteImport,
 } as any)
 const ContaRoute = ContaRouteImport.update({
@@ -228,7 +222,6 @@ export interface FileRoutesByFullPath {
   '/anunciar': typeof AnunciarRoute
   '/comercios': typeof ComerciosRoute
   '/conta': typeof ContaRouteWithChildren
-  '/imoveis': typeof ImoveisRoute
   '/login': typeof LoginRoute
   '/servicos': typeof ServicosRoute
   '/sitemap.xml': typeof SitemapDotxmlRoute
@@ -264,7 +257,6 @@ export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/anunciar': typeof AnunciarRoute
   '/comercios': typeof ComerciosRoute
-  '/imoveis': typeof ImoveisRoute
   '/login': typeof LoginRoute
   '/servicos': typeof ServicosRoute
   '/sitemap.xml': typeof SitemapDotxmlRoute
@@ -300,7 +292,6 @@ export interface FileRoutesById {
   '/anunciar': typeof AnunciarRoute
   '/comercios': typeof ComerciosRoute
   '/conta': typeof ContaRouteWithChildren
-  '/imoveis': typeof ImoveisRoute
   '/login': typeof LoginRoute
   '/servicos': typeof ServicosRoute
   '/sitemap.xml': typeof SitemapDotxmlRoute
@@ -339,7 +330,6 @@ export interface FileRouteTypes {
     | '/anunciar'
     | '/comercios'
     | '/conta'
-    | '/imoveis'
     | '/login'
     | '/servicos'
     | '/sitemap.xml'
@@ -375,7 +365,6 @@ export interface FileRouteTypes {
     | '/'
     | '/anunciar'
     | '/comercios'
-    | '/imoveis'
     | '/login'
     | '/servicos'
     | '/sitemap.xml'
@@ -410,7 +399,6 @@ export interface FileRouteTypes {
     | '/anunciar'
     | '/comercios'
     | '/conta'
-    | '/imoveis'
     | '/login'
     | '/servicos'
     | '/sitemap.xml'
@@ -448,7 +436,6 @@ export interface RootRouteChildren {
   AnunciarRoute: typeof AnunciarRoute
   ComerciosRoute: typeof ComerciosRoute
   ContaRoute: typeof ContaRouteWithChildren
-  ImoveisRoute: typeof ImoveisRoute
   LoginRoute: typeof LoginRoute
   ServicosRoute: typeof ServicosRoute
   SitemapDotxmlRoute: typeof SitemapDotxmlRoute
@@ -497,13 +484,6 @@ declare module '@tanstack/react-router' {
       path: '/login'
       fullPath: '/login'
       preLoaderRoute: typeof LoginRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/imoveis': {
-      id: '/imoveis'
-      path: '/imoveis'
-      fullPath: '/imoveis'
-      preLoaderRoute: typeof ImoveisRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/conta': {
@@ -776,7 +756,6 @@ const rootRouteChildren: RootRouteChildren = {
   AnunciarRoute: AnunciarRoute,
   ComerciosRoute: ComerciosRoute,
   ContaRoute: ContaRouteWithChildren,
-  ImoveisRoute: ImoveisRoute,
   LoginRoute: LoginRoute,
   ServicosRoute: ServicosRoute,
   SitemapDotxmlRoute: SitemapDotxmlRoute,
