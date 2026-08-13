@@ -42,6 +42,12 @@ function GigChatPage() {
   const qc = useQueryClient();
   const { data: convo } = useQuery(gigConversationQuery(conversationId));
   const { data: messages = [] } = useQuery(gigMessagesQuery(conversationId));
+  const isApplicant = !!convo && !!user && convo.applicant_id === user.id;
+  const { data: myApp } = useQuery({
+    ...myApplicationForGigQuery(convo?.gig_id ?? "", user?.id),
+    enabled: isApplicant,
+  });
+  const canWrite = !isApplicant || canApplicantChat(myApp?.status);
   const [other, setOther] = useState<PublicProfile | null>(null);
   const [text, setText] = useState("");
   const [sending, setSending] = useState(false);
