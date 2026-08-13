@@ -3,6 +3,8 @@ import { createFileRoute, Link } from "@tanstack/react-router";
 import { useEffect, useState } from "react";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { SiteHeader } from "@/components/SiteHeader";
+import { UserAvatar } from "@/components/UserAvatar";
+
 import { SiteFooter } from "@/components/SiteFooter";
 import { useAuth } from "@/hooks/use-auth";
 import { toast } from "sonner";
