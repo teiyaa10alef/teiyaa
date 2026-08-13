@@ -61,7 +61,7 @@ function MensagensPage() {
       value: formatBRL(c.item?.price_cents ?? null),
       image: c.item?.images?.[0] ?? null,
       emoji: "📦",
-      tag: "Mercado",
+      tag: "Marketplace",
       sortAt: c.last_message_at,
     }));
     const gigs: Row[] = gigConvos.map((c) => ({

@@ -28,7 +28,7 @@ const categoryHighlights = [
   { icon: Home, label: "Imóveis", desc: "Aluguel e venda perto de você" },
   { icon: Truck, label: "Freelances", desc: "Bicos rápidos na comunidade" },
   { icon: Briefcase, label: "Vagas", desc: "Empregos reais no bairro" },
-  { icon: ShoppingBag, label: "Mercado", desc: "Itens usados e novos entre moradores" },
+  { icon: ShoppingBag, label: "Marketplace", desc: "Itens usados e novos entre moradores" },
 ];
 
 function OnboardingHome() {

@@ -20,7 +20,7 @@ import { unreadMessagesQuery } from "@/lib/notifications-api";
 const navItems = [
   { to: "/comercios", label: "Comércios" },
   { to: "/servicos", label: "Profissionais" },
-  { to: "/mercado", label: "Mercado" },
+  { to: "/mercado", label: "Marketplace" },
   { to: "/imoveis", label: "Imóveis" },
   { to: "/vagas", label: "Vagas" },
   { to: "/freelances", label: "Freelances" },
