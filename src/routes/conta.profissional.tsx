@@ -27,7 +27,10 @@ import {
   removeProfessionalService,
   addPortfolioItem,
   removePortfolioItem,
+  getMyProfile,
+  isProfileIdentityComplete,
 } from "@/lib/account-api";
+
 import {
   PROFESSIONS,
   listPortfolio,
