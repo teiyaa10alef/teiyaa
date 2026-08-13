@@ -18,6 +18,8 @@ import { SiteHeader } from "@/components/SiteHeader";
 import { SiteFooter } from "@/components/SiteFooter";
 import { useAuth } from "@/hooks/use-auth";
 import { RatingStars } from "@/components/RatingStars";
+import { UserAvatar } from "@/components/UserAvatar";
+
 import {
   applyToGig,
   APPLICATION_STATUS_LABELS,
