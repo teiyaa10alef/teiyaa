@@ -134,16 +134,37 @@ export type Job = {
   description: string;
   area: string;
   company_name: string | null;
+  company_logo_url: string | null;
+  company_size: string | null;
+  company_site: string | null;
+  company_about: string | null;
   contract_type: JobContractType;
   work_mode: JobWorkMode;
+  experience_level: JobExperienceLevel;
+  education_level: JobEducationLevel;
+  openings: number;
+  is_pcd: boolean;
+  weekly_hours: number | null;
+  schedule: string | null;
+  shift_start: string | null;
+  shift_end: string | null;
+  starts_on: string | null;
   salary_cents: number | null;
+  salary_min_cents: number | null;
+  salary_max_cents: number | null;
   salary_period: string;
   is_salary_negotiable: boolean;
+  has_commission: boolean;
   requirements: string[];
   benefits: string[];
   address_hint: string | null;
   contact_whatsapp: string | null;
   contact_phone: string | null;
+  expires_on: string | null;
+  requires_cv: boolean;
+  requires_cover_letter: boolean;
+  screening_questions: ScreeningQuestion[];
+  closed_reason: string | null;
   status: JobStatus;
   applications_count: number;
   view_count: number;
@@ -157,6 +178,11 @@ export type JobApplication = {
   job_id: string;
   applicant_id: string;
   message: string | null;
+  cover_letter: string | null;
+  cv_path: string | null;
+  answers: ScreeningAnswer[];
+  owner_notes: string | null;
+  seen_at: string | null;
   status: JobApplicationStatus;
   created_at: string;
   updated_at: string;
@@ -185,16 +211,52 @@ export type JobMessage = {
   created_at: string;
 };
 
-export function formatSalary(job: Pick<Job, "salary_cents" | "salary_period">) {
-  if (job.salary_cents == null) return "A combinar";
-  const value = (job.salary_cents / 100).toLocaleString("pt-BR", {
-    style: "currency",
-    currency: "BRL",
-  });
-  if (job.salary_period === "hour") return `${value}/hora`;
-  if (job.salary_period === "day") return `${value}/dia`;
-  return `${value}/mês`;
+function brl(cents: number) {
+  return (cents / 100).toLocaleString("pt-BR", { style: "currency", currency: "BRL" });
 }
+
+function periodSuffix(period: string) {
+  if (period === "hour") return "/hora";
+  if (period === "day") return "/dia";
+  return "/mês";
+}
+
+export function formatSalary(
+  job: Pick<Job, "salary_cents" | "salary_period"> &
+    Partial<Pick<Job, "salary_min_cents" | "salary_max_cents">>,
+) {
+  const suffix = periodSuffix(job.salary_period);
+  const min = job.salary_min_cents ?? null;
+  const max = job.salary_max_cents ?? null;
+  if (min != null && max != null) return `${brl(min)} a ${brl(max)}${suffix}`;
+  if (min != null) return `A partir de ${brl(min)}${suffix}`;
+  if (job.salary_cents != null) return `${brl(job.salary_cents)}${suffix}`;
+  return "A combinar";
+}
+
+/** Menor valor conhecido do salário, em centavos — usado nos filtros do feed. */
+export function jobSalaryFloor(job: Job): number | null {
+  return job.salary_min_cents ?? job.salary_cents ?? null;
+}
+
+export function isJobExpired(job: Pick<Job, "expires_on">) {
+  if (!job.expires_on) return false;
+  const today = new Date().toISOString().slice(0, 10);
+  return job.expires_on < today;
+}
+
+export function formatJobDate(iso: string | null) {
+  if (!iso) return null;
+  const [y, m, d] = iso.slice(0, 10).split("-");
+  return `${d}/${m}/${y}`;
+}
+
+export function formatShift(job: Pick<Job, "shift_start" | "shift_end">) {
+  if (!job.shift_start && !job.shift_end) return null;
+  const trim = (t: string | null) => (t ? t.slice(0, 5) : "—");
+  return `${trim(job.shift_start)} às ${trim(job.shift_end)}`;
+}
+
 
 export function timeAgo(iso: string) {
   const diff = Date.now() - new Date(iso).getTime();
