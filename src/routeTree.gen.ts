@@ -49,6 +49,7 @@ import { Route as ContaVagasIndexRouteImport } from './routes/conta.vagas.index'
 import { Route as ContaNegociosIndexRouteImport } from './routes/conta.negocios.index'
 import { Route as ContaFreelancesIndexRouteImport } from './routes/conta.freelances.index'
 import { Route as ProfissionaisPerfilUserIdRouteImport } from './routes/profissionais.perfil.$userId'
+import { Route as MensagensVagaConversationIdRouteImport } from './routes/mensagens.vaga.$conversationId'
 import { Route as MensagensBicoConversationIdRouteImport } from './routes/mensagens.bico.$conversationId'
 import { Route as ContaVagasJobIdRouteImport } from './routes/conta.vagas.$jobId'
 import { Route as ContaNegociosNovoRouteImport } from './routes/conta.negocios.novo'
@@ -256,6 +257,12 @@ const ProfissionaisPerfilUserIdRoute =
     path: '/profissionais/perfil/$userId',
     getParentRoute: () => rootRouteImport,
   } as any)
+const MensagensVagaConversationIdRoute =
+  MensagensVagaConversationIdRouteImport.update({
+    id: '/mensagens/vaga/$conversationId',
+    path: '/mensagens/vaga/$conversationId',
+    getParentRoute: () => rootRouteImport,
+  } as any)
 const MensagensBicoConversationIdRoute =
   MensagensBicoConversationIdRouteImport.update({
     id: '/mensagens/bico/$conversationId',
@@ -325,6 +332,7 @@ export interface FileRoutesByFullPath {
   '/conta/negocios/novo': typeof ContaNegociosNovoRoute
   '/conta/vagas/$jobId': typeof ContaVagasJobIdRoute
   '/mensagens/bico/$conversationId': typeof MensagensBicoConversationIdRoute
+  '/mensagens/vaga/$conversationId': typeof MensagensVagaConversationIdRoute
   '/profissionais/perfil/$userId': typeof ProfissionaisPerfilUserIdRoute
   '/conta/freelances/': typeof ContaFreelancesIndexRoute
   '/conta/negocios/': typeof ContaNegociosIndexRoute
@@ -367,6 +375,7 @@ export interface FileRoutesByTo {
   '/conta/negocios/novo': typeof ContaNegociosNovoRoute
   '/conta/vagas/$jobId': typeof ContaVagasJobIdRoute
   '/mensagens/bico/$conversationId': typeof MensagensBicoConversationIdRoute
+  '/mensagens/vaga/$conversationId': typeof MensagensVagaConversationIdRoute
   '/profissionais/perfil/$userId': typeof ProfissionaisPerfilUserIdRoute
   '/conta/freelances': typeof ContaFreelancesIndexRoute
   '/conta/negocios': typeof ContaNegociosIndexRoute
@@ -415,6 +424,7 @@ export interface FileRoutesById {
   '/conta/negocios/novo': typeof ContaNegociosNovoRoute
   '/conta/vagas/$jobId': typeof ContaVagasJobIdRoute
   '/mensagens/bico/$conversationId': typeof MensagensBicoConversationIdRoute
+  '/mensagens/vaga/$conversationId': typeof MensagensVagaConversationIdRoute
   '/profissionais/perfil/$userId': typeof ProfissionaisPerfilUserIdRoute
   '/conta/freelances/': typeof ContaFreelancesIndexRoute
   '/conta/negocios/': typeof ContaNegociosIndexRoute
@@ -464,6 +474,7 @@ export interface FileRouteTypes {
     | '/conta/negocios/novo'
     | '/conta/vagas/$jobId'
     | '/mensagens/bico/$conversationId'
+    | '/mensagens/vaga/$conversationId'
     | '/profissionais/perfil/$userId'
     | '/conta/freelances/'
     | '/conta/negocios/'
@@ -506,6 +517,7 @@ export interface FileRouteTypes {
     | '/conta/negocios/novo'
     | '/conta/vagas/$jobId'
     | '/mensagens/bico/$conversationId'
+    | '/mensagens/vaga/$conversationId'
     | '/profissionais/perfil/$userId'
     | '/conta/freelances'
     | '/conta/negocios'
@@ -553,6 +565,7 @@ export interface FileRouteTypes {
     | '/conta/negocios/novo'
     | '/conta/vagas/$jobId'
     | '/mensagens/bico/$conversationId'
+    | '/mensagens/vaga/$conversationId'
     | '/profissionais/perfil/$userId'
     | '/conta/freelances/'
     | '/conta/negocios/'
@@ -584,6 +597,7 @@ export interface RootRouteChildren {
   MensagensIndexRoute: typeof MensagensIndexRoute
   MercadoIndexRoute: typeof MercadoIndexRoute
   MensagensBicoConversationIdRoute: typeof MensagensBicoConversationIdRoute
+  MensagensVagaConversationIdRoute: typeof MensagensVagaConversationIdRoute
   ProfissionaisPerfilUserIdRoute: typeof ProfissionaisPerfilUserIdRoute
 }
 
@@ -869,6 +883,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof ProfissionaisPerfilUserIdRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/mensagens/vaga/$conversationId': {
+      id: '/mensagens/vaga/$conversationId'
+      path: '/mensagens/vaga/$conversationId'
+      fullPath: '/mensagens/vaga/$conversationId'
+      preLoaderRoute: typeof MensagensVagaConversationIdRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/mensagens/bico/$conversationId': {
       id: '/mensagens/bico/$conversationId'
       path: '/mensagens/bico/$conversationId'
@@ -1018,6 +1039,7 @@ const rootRouteChildren: RootRouteChildren = {
   MensagensIndexRoute: MensagensIndexRoute,
   MercadoIndexRoute: MercadoIndexRoute,
   MensagensBicoConversationIdRoute: MensagensBicoConversationIdRoute,
+  MensagensVagaConversationIdRoute: MensagensVagaConversationIdRoute,
   ProfissionaisPerfilUserIdRoute: ProfissionaisPerfilUserIdRoute,
 }
 export const routeTree = rootRouteImport
