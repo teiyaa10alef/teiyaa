@@ -68,7 +68,55 @@ export const JOB_BENEFITS = [
   "Plano de saúde",
   "Comissão",
   "Alimentação no local",
+  "Plano odontológico",
+  "Auxílio creche",
+  "Uniforme",
 ];
+
+export type JobExperienceLevel = "sem_experiencia" | "junior" | "pleno" | "senior";
+
+export const JOB_EXPERIENCE_LABELS: Record<JobExperienceLevel, string> = {
+  sem_experiencia: "Sem experiência",
+  junior: "Júnior / iniciante",
+  pleno: "Pleno",
+  senior: "Sênior / especialista",
+};
+
+export type JobEducationLevel =
+  | "indiferente"
+  | "fundamental"
+  | "medio"
+  | "tecnico"
+  | "superior";
+
+export const JOB_EDUCATION_LABELS: Record<JobEducationLevel, string> = {
+  indiferente: "Indiferente",
+  fundamental: "Ensino fundamental",
+  medio: "Ensino médio",
+  tecnico: "Curso técnico",
+  superior: "Ensino superior",
+};
+
+export const JOB_COMPANY_SIZES = [
+  { value: "autonomo", label: "Autônomo / MEI" },
+  { value: "pequena", label: "Pequena (até 20)" },
+  { value: "media", label: "Média (21 a 100)" },
+  { value: "grande", label: "Grande (100+)" },
+] as const;
+
+export const JOB_SCHEDULES = [
+  "Comercial (seg a sex)",
+  "6x1",
+  "5x2",
+  "12x36",
+  "Escala de fim de semana",
+  "Turno da noite",
+  "Horário flexível",
+];
+
+export type ScreeningQuestion = { id: string; question: string };
+export type ScreeningAnswer = { id: string; question: string; answer: string };
+
 
 export function jobAreaLabel(value: string | null | undefined) {
   return JOB_AREAS.find((a) => a.value === value)?.label ?? "Outros";
