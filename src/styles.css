@@ -246,3 +246,14 @@
   .page-enter { animation: none; }
   .route-progress-bar { animation: none; opacity: 0.6; }
 }
+
+@utility input {
+  width: 100%;
+  border-radius: calc(var(--radius) - 2px);
+  border: 1px solid var(--border);
+  background-color: var(--card);
+  padding: 0.625rem 0.875rem;
+  font-size: 0.875rem;
+  outline: none;
+  &:focus { border-color: var(--brand); }
+}
