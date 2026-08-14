@@ -309,7 +309,8 @@ export const jobsByScopeQuery = (scope: Scope) =>
         .order("created_at", { ascending: false })
         .limit(60);
       if (error) throw error;
-      return (data ?? []) as Job[];
+      return ((data ?? []) as Job[]).filter((j) => !isJobExpired(j));
+
     },
   });
 
