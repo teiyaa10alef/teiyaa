@@ -229,7 +229,12 @@ function VagaDetailPage() {
           <span className="px-2 py-0.5 rounded-full border border-border text-muted-foreground font-semibold">
             {JOB_WORK_MODE_LABELS[job.work_mode]}
           </span>
-          {job.status !== "open" && (
+          {job.is_pcd && (
+            <span className="px-2 py-0.5 rounded-full border border-cat-vaga/25 bg-cat-vaga-soft text-cat-vaga font-semibold">
+              Vaga para PcD
+            </span>
+          )}
+          {(job.status !== "open" || expired) && (
             <span className="px-2 py-0.5 rounded-full border border-border text-muted-foreground font-semibold">
               Vaga encerrada
             </span>
@@ -238,11 +243,25 @@ function VagaDetailPage() {
 
         <h1 className="mt-3 text-2xl md:text-3xl font-bold tracking-tight">{job.title}</h1>
         {job.company_name && (
-          <p className="mt-1 font-semibold text-muted-foreground inline-flex items-center gap-1.5">
-            <Briefcase className="size-4" /> {job.company_name}
-          </p>
+          <div className="mt-2 flex items-center gap-2">
+            {job.company_logo_url && (
+              <img
+                src={job.company_logo_url}
+                alt={`Logo de ${job.company_name}`}
+                className="size-10 rounded-xl object-cover border border-border"
+                loading="lazy"
+              />
+            )}
+            <p className="font-semibold text-muted-foreground inline-flex items-center gap-1.5">
+              <Briefcase className="size-4" /> {job.company_name}
+            </p>
+          </div>
         )}
         <p className="mt-3 text-2xl font-bold text-cat-vaga">{formatSalary(job)}</p>
+        {job.has_commission && (
+          <p className="text-xs font-semibold text-muted-foreground">+ comissão</p>
+        )}
+
 
         <div className="mt-3 flex flex-wrap gap-4 text-xs text-muted-foreground">
           {job.community?.name && (
