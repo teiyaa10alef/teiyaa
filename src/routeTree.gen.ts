@@ -17,6 +17,7 @@ import { Route as ContaRouteImport } from './routes/conta'
 import { Route as ComerciosRouteImport } from './routes/comercios'
 import { Route as AnunciarRouteImport } from './routes/anunciar'
 import { Route as IndexRouteImport } from './routes/index'
+import { Route as VagasIndexRouteImport } from './routes/vagas.index'
 import { Route as MercadoIndexRouteImport } from './routes/mercado.index'
 import { Route as MensagensIndexRouteImport } from './routes/mensagens.index'
 import { Route as ImoveisIndexRouteImport } from './routes/imoveis.index'
@@ -88,6 +89,11 @@ const IndexRoute = IndexRouteImport.update({
   id: '/',
   path: '/',
   getParentRoute: () => rootRouteImport,
+} as any)
+const VagasIndexRoute = VagasIndexRouteImport.update({
+  id: '/',
+  path: '/',
+  getParentRoute: () => VagasRoute,
 } as any)
 const MercadoIndexRoute = MercadoIndexRouteImport.update({
   id: '/mercado/',
@@ -255,7 +261,7 @@ export interface FileRoutesByFullPath {
   '/login': typeof LoginRoute
   '/servicos': typeof ServicosRoute
   '/sitemap.xml': typeof SitemapDotxmlRoute
-  '/vagas': typeof VagasRoute
+  '/vagas': typeof VagasRouteWithChildren
   '/c/$communitySlug': typeof CCommunitySlugRoute
   '/cidade/$citySlug': typeof CidadeCitySlugRoute
   '/conta/candidaturas': typeof ContaCandidaturasRoute
@@ -280,6 +286,7 @@ export interface FileRoutesByFullPath {
   '/imoveis/': typeof ImoveisIndexRoute
   '/mensagens/': typeof MensagensIndexRoute
   '/mercado/': typeof MercadoIndexRoute
+  '/vagas/': typeof VagasIndexRoute
   '/conta/freelances/$gigId': typeof ContaFreelancesGigIdRoute
   '/conta/negocios/$businessId': typeof ContaNegociosBusinessIdRoute
   '/conta/negocios/novo': typeof ContaNegociosNovoRoute
@@ -295,7 +302,6 @@ export interface FileRoutesByTo {
   '/login': typeof LoginRoute
   '/servicos': typeof ServicosRoute
   '/sitemap.xml': typeof SitemapDotxmlRoute
-  '/vagas': typeof VagasRoute
   '/c/$communitySlug': typeof CCommunitySlugRoute
   '/cidade/$citySlug': typeof CidadeCitySlugRoute
   '/conta/candidaturas': typeof ContaCandidaturasRoute
@@ -318,6 +324,7 @@ export interface FileRoutesByTo {
   '/imoveis': typeof ImoveisIndexRoute
   '/mensagens': typeof MensagensIndexRoute
   '/mercado': typeof MercadoIndexRoute
+  '/vagas': typeof VagasIndexRoute
   '/conta/freelances/$gigId': typeof ContaFreelancesGigIdRoute
   '/conta/negocios/$businessId': typeof ContaNegociosBusinessIdRoute
   '/conta/negocios/novo': typeof ContaNegociosNovoRoute
@@ -335,7 +342,7 @@ export interface FileRoutesById {
   '/login': typeof LoginRoute
   '/servicos': typeof ServicosRoute
   '/sitemap.xml': typeof SitemapDotxmlRoute
-  '/vagas': typeof VagasRoute
+  '/vagas': typeof VagasRouteWithChildren
   '/c/$communitySlug': typeof CCommunitySlugRoute
   '/cidade/$citySlug': typeof CidadeCitySlugRoute
   '/conta/candidaturas': typeof ContaCandidaturasRoute
@@ -360,6 +367,7 @@ export interface FileRoutesById {
   '/imoveis/': typeof ImoveisIndexRoute
   '/mensagens/': typeof MensagensIndexRoute
   '/mercado/': typeof MercadoIndexRoute
+  '/vagas/': typeof VagasIndexRoute
   '/conta/freelances/$gigId': typeof ContaFreelancesGigIdRoute
   '/conta/negocios/$businessId': typeof ContaNegociosBusinessIdRoute
   '/conta/negocios/novo': typeof ContaNegociosNovoRoute
@@ -403,6 +411,7 @@ export interface FileRouteTypes {
     | '/imoveis/'
     | '/mensagens/'
     | '/mercado/'
+    | '/vagas/'
     | '/conta/freelances/$gigId'
     | '/conta/negocios/$businessId'
     | '/conta/negocios/novo'
@@ -418,7 +427,6 @@ export interface FileRouteTypes {
     | '/login'
     | '/servicos'
     | '/sitemap.xml'
-    | '/vagas'
     | '/c/$communitySlug'
     | '/cidade/$citySlug'
     | '/conta/candidaturas'
@@ -441,6 +449,7 @@ export interface FileRouteTypes {
     | '/imoveis'
     | '/mensagens'
     | '/mercado'
+    | '/vagas'
     | '/conta/freelances/$gigId'
     | '/conta/negocios/$businessId'
     | '/conta/negocios/novo'
@@ -482,6 +491,7 @@ export interface FileRouteTypes {
     | '/imoveis/'
     | '/mensagens/'
     | '/mercado/'
+    | '/vagas/'
     | '/conta/freelances/$gigId'
     | '/conta/negocios/$businessId'
     | '/conta/negocios/novo'
@@ -499,7 +509,7 @@ export interface RootRouteChildren {
   LoginRoute: typeof LoginRoute
   ServicosRoute: typeof ServicosRoute
   SitemapDotxmlRoute: typeof SitemapDotxmlRoute
-  VagasRoute: typeof VagasRoute
+  VagasRoute: typeof VagasRouteWithChildren
   CCommunitySlugRoute: typeof CCommunitySlugRoute
   CidadeCitySlugRoute: typeof CidadeCitySlugRoute
   EstadoStateSlugRoute: typeof EstadoStateSlugRoute
@@ -576,6 +586,13 @@ declare module '@tanstack/react-router' {
       fullPath: '/'
       preLoaderRoute: typeof IndexRouteImport
       parentRoute: typeof rootRouteImport
+    }
+    '/vagas/': {
+      id: '/vagas/'
+      path: '/'
+      fullPath: '/vagas/'
+      preLoaderRoute: typeof VagasIndexRouteImport
+      parentRoute: typeof VagasRoute
     }
     '/mercado/': {
       id: '/mercado/'
@@ -853,6 +870,16 @@ const ContaRouteChildren: ContaRouteChildren = {
 
 const ContaRouteWithChildren = ContaRoute._addFileChildren(ContaRouteChildren)
 
+interface VagasRouteChildren {
+  VagasIndexRoute: typeof VagasIndexRoute
+}
+
+const VagasRouteChildren: VagasRouteChildren = {
+  VagasIndexRoute: VagasIndexRoute,
+}
+
+const VagasRouteWithChildren = VagasRoute._addFileChildren(VagasRouteChildren)
+
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
   AnunciarRoute: AnunciarRoute,
@@ -861,7 +888,7 @@ const rootRouteChildren: RootRouteChildren = {
   LoginRoute: LoginRoute,
   ServicosRoute: ServicosRoute,
   SitemapDotxmlRoute: SitemapDotxmlRoute,
-  VagasRoute: VagasRoute,
+  VagasRoute: VagasRouteWithChildren,
   CCommunitySlugRoute: CCommunitySlugRoute,
   CidadeCitySlugRoute: CidadeCitySlugRoute,
   EstadoStateSlugRoute: EstadoStateSlugRoute,
