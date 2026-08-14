@@ -474,6 +474,9 @@ export async function applyToJob(params: {
   jobId: string;
   applicantId: string;
   message: string;
+  coverLetter?: string | null;
+  cvPath?: string | null;
+  answers?: ScreeningAnswer[];
 }) {
   const { data: jobRow } = await db
     .from("jobs")
@@ -487,6 +490,9 @@ export async function applyToJob(params: {
     job_id: params.jobId,
     applicant_id: params.applicantId,
     message: params.message || null,
+    cover_letter: params.coverLetter || null,
+    cv_path: params.cvPath || null,
+    answers: params.answers ?? [],
   });
   if (error) throw error;
 }
@@ -500,6 +506,31 @@ export async function setJobApplicationStatus(id: string, status: JobApplication
   const { error } = await db.from("job_applications").update({ status }).eq("id", id);
   if (error) throw error;
 }
+
+export async function markJobApplicationSeen(id: string) {
+  await db
+    .from("job_applications")
+    .update({ seen_at: new Date().toISOString(), status: "seen" })
+    .eq("id", id)
+    .eq("status", "sent");
+}
+
+export async function saveJobApplicationNotes(id: string, notes: string) {
+  const { error } = await db
+    .from("job_applications")
+    .update({ owner_notes: notes || null })
+    .eq("id", id);
+  if (error) throw error;
+}
+
+export async function closeJob(id: string, reason: "preenchida" | "cancelada") {
+  const { error } = await db
+    .from("jobs")
+    .update({ status: "closed", closed_reason: reason })
+    .eq("id", id);
+  if (error) throw error;
+}
+
 
 export const JOB_CHAT_ENABLED_STATUSES: JobApplicationStatus[] = ["shortlisted", "accepted"];
 
