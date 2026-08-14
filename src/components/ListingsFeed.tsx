@@ -12,6 +12,7 @@ import { BusinessFeed } from "./BusinessFeed";
 import { ProfessionalFeed } from "./ProfessionalFeed";
 import { GigFeed } from "./GigFeed";
 import { PropertyFeed } from "./PropertyFeed";
+import { JobFeed } from "./JobFeed";
 
 
 interface ListingsFeedProps {
