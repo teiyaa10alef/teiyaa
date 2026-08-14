@@ -50,6 +50,7 @@ import { Route as ContaNegociosIndexRouteImport } from './routes/conta.negocios.
 import { Route as ContaFreelancesIndexRouteImport } from './routes/conta.freelances.index'
 import { Route as ProfissionaisPerfilUserIdRouteImport } from './routes/profissionais.perfil.$userId'
 import { Route as MensagensBicoConversationIdRouteImport } from './routes/mensagens.bico.$conversationId'
+import { Route as ContaVagasJobIdRouteImport } from './routes/conta.vagas.$jobId'
 import { Route as ContaNegociosNovoRouteImport } from './routes/conta.negocios.novo'
 import { Route as ContaNegociosBusinessIdRouteImport } from './routes/conta.negocios.$businessId'
 import { Route as ContaFreelancesGigIdRouteImport } from './routes/conta.freelances.$gigId'
@@ -261,6 +262,11 @@ const MensagensBicoConversationIdRoute =
     path: '/mensagens/bico/$conversationId',
     getParentRoute: () => rootRouteImport,
   } as any)
+const ContaVagasJobIdRoute = ContaVagasJobIdRouteImport.update({
+  id: '/$jobId',
+  path: '/$jobId',
+  getParentRoute: () => ContaVagasRoute,
+} as any)
 const ContaNegociosNovoRoute = ContaNegociosNovoRouteImport.update({
   id: '/novo',
   path: '/novo',
@@ -317,6 +323,7 @@ export interface FileRoutesByFullPath {
   '/conta/freelances/$gigId': typeof ContaFreelancesGigIdRoute
   '/conta/negocios/$businessId': typeof ContaNegociosBusinessIdRoute
   '/conta/negocios/novo': typeof ContaNegociosNovoRoute
+  '/conta/vagas/$jobId': typeof ContaVagasJobIdRoute
   '/mensagens/bico/$conversationId': typeof MensagensBicoConversationIdRoute
   '/profissionais/perfil/$userId': typeof ProfissionaisPerfilUserIdRoute
   '/conta/freelances/': typeof ContaFreelancesIndexRoute
@@ -358,6 +365,7 @@ export interface FileRoutesByTo {
   '/conta/freelances/$gigId': typeof ContaFreelancesGigIdRoute
   '/conta/negocios/$businessId': typeof ContaNegociosBusinessIdRoute
   '/conta/negocios/novo': typeof ContaNegociosNovoRoute
+  '/conta/vagas/$jobId': typeof ContaVagasJobIdRoute
   '/mensagens/bico/$conversationId': typeof MensagensBicoConversationIdRoute
   '/profissionais/perfil/$userId': typeof ProfissionaisPerfilUserIdRoute
   '/conta/freelances': typeof ContaFreelancesIndexRoute
@@ -405,6 +413,7 @@ export interface FileRoutesById {
   '/conta/freelances/$gigId': typeof ContaFreelancesGigIdRoute
   '/conta/negocios/$businessId': typeof ContaNegociosBusinessIdRoute
   '/conta/negocios/novo': typeof ContaNegociosNovoRoute
+  '/conta/vagas/$jobId': typeof ContaVagasJobIdRoute
   '/mensagens/bico/$conversationId': typeof MensagensBicoConversationIdRoute
   '/profissionais/perfil/$userId': typeof ProfissionaisPerfilUserIdRoute
   '/conta/freelances/': typeof ContaFreelancesIndexRoute
@@ -453,6 +462,7 @@ export interface FileRouteTypes {
     | '/conta/freelances/$gigId'
     | '/conta/negocios/$businessId'
     | '/conta/negocios/novo'
+    | '/conta/vagas/$jobId'
     | '/mensagens/bico/$conversationId'
     | '/profissionais/perfil/$userId'
     | '/conta/freelances/'
@@ -494,6 +504,7 @@ export interface FileRouteTypes {
     | '/conta/freelances/$gigId'
     | '/conta/negocios/$businessId'
     | '/conta/negocios/novo'
+    | '/conta/vagas/$jobId'
     | '/mensagens/bico/$conversationId'
     | '/profissionais/perfil/$userId'
     | '/conta/freelances'
@@ -540,6 +551,7 @@ export interface FileRouteTypes {
     | '/conta/freelances/$gigId'
     | '/conta/negocios/$businessId'
     | '/conta/negocios/novo'
+    | '/conta/vagas/$jobId'
     | '/mensagens/bico/$conversationId'
     | '/profissionais/perfil/$userId'
     | '/conta/freelances/'
@@ -864,6 +876,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof MensagensBicoConversationIdRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/conta/vagas/$jobId': {
+      id: '/conta/vagas/$jobId'
+      path: '/$jobId'
+      fullPath: '/conta/vagas/$jobId'
+      preLoaderRoute: typeof ContaVagasJobIdRouteImport
+      parentRoute: typeof ContaVagasRoute
+    }
     '/conta/negocios/novo': {
       id: '/conta/negocios/novo'
       path: '/novo'
@@ -919,10 +938,12 @@ const ContaNegociosRouteWithChildren = ContaNegociosRoute._addFileChildren(
 )
 
 interface ContaVagasRouteChildren {
+  ContaVagasJobIdRoute: typeof ContaVagasJobIdRoute
   ContaVagasIndexRoute: typeof ContaVagasIndexRoute
 }
 
 const ContaVagasRouteChildren: ContaVagasRouteChildren = {
+  ContaVagasJobIdRoute: ContaVagasJobIdRoute,
   ContaVagasIndexRoute: ContaVagasIndexRoute,
 }
 
