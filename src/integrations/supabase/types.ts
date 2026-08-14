@@ -640,6 +640,207 @@ export type Database = {
           },
         ]
       }
+      job_applications: {
+        Row: {
+          applicant_id: string
+          created_at: string
+          id: string
+          job_id: string
+          message: string | null
+          status: Database["public"]["Enums"]["job_application_status"]
+          updated_at: string
+        }
+        Insert: {
+          applicant_id: string
+          created_at?: string
+          id?: string
+          job_id: string
+          message?: string | null
+          status?: Database["public"]["Enums"]["job_application_status"]
+          updated_at?: string
+        }
+        Update: {
+          applicant_id?: string
+          created_at?: string
+          id?: string
+          job_id?: string
+          message?: string | null
+          status?: Database["public"]["Enums"]["job_application_status"]
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "job_applications_job_id_fkey"
+            columns: ["job_id"]
+            isOneToOne: false
+            referencedRelation: "jobs"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      job_conversations: {
+        Row: {
+          applicant_id: string
+          application_id: string | null
+          created_at: string
+          id: string
+          job_id: string
+          last_message_at: string
+          owner_id: string
+        }
+        Insert: {
+          applicant_id: string
+          application_id?: string | null
+          created_at?: string
+          id?: string
+          job_id: string
+          last_message_at?: string
+          owner_id: string
+        }
+        Update: {
+          applicant_id?: string
+          application_id?: string | null
+          created_at?: string
+          id?: string
+          job_id?: string
+          last_message_at?: string
+          owner_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "job_conversations_application_id_fkey"
+            columns: ["application_id"]
+            isOneToOne: false
+            referencedRelation: "job_applications"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "job_conversations_job_id_fkey"
+            columns: ["job_id"]
+            isOneToOne: false
+            referencedRelation: "jobs"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      job_messages: {
+        Row: {
+          body: string
+          conversation_id: string
+          created_at: string
+          id: string
+          read_at: string | null
+          sender_id: string
+        }
+        Insert: {
+          body: string
+          conversation_id: string
+          created_at?: string
+          id?: string
+          read_at?: string | null
+          sender_id: string
+        }
+        Update: {
+          body?: string
+          conversation_id?: string
+          created_at?: string
+          id?: string
+          read_at?: string | null
+          sender_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "job_messages_conversation_id_fkey"
+            columns: ["conversation_id"]
+            isOneToOne: false
+            referencedRelation: "job_conversations"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      jobs: {
+        Row: {
+          address_hint: string | null
+          applications_count: number
+          area: string
+          benefits: string[]
+          community_id: string | null
+          company_name: string | null
+          contact_phone: string | null
+          contact_whatsapp: string | null
+          contract_type: Database["public"]["Enums"]["job_contract_type"]
+          created_at: string
+          description: string
+          id: string
+          is_salary_negotiable: boolean
+          owner_id: string
+          requirements: string[]
+          salary_cents: number | null
+          salary_period: string
+          status: Database["public"]["Enums"]["job_status"]
+          title: string
+          updated_at: string
+          view_count: number
+          work_mode: Database["public"]["Enums"]["job_work_mode"]
+        }
+        Insert: {
+          address_hint?: string | null
+          applications_count?: number
+          area?: string
+          benefits?: string[]
+          community_id?: string | null
+          company_name?: string | null
+          contact_phone?: string | null
+          contact_whatsapp?: string | null
+          contract_type?: Database["public"]["Enums"]["job_contract_type"]
+          created_at?: string
+          description: string
+          id?: string
+          is_salary_negotiable?: boolean
+          owner_id: string
+          requirements?: string[]
+          salary_cents?: number | null
+          salary_period?: string
+          status?: Database["public"]["Enums"]["job_status"]
+          title: string
+          updated_at?: string
+          view_count?: number
+          work_mode?: Database["public"]["Enums"]["job_work_mode"]
+        }
+        Update: {
+          address_hint?: string | null
+          applications_count?: number
+          area?: string
+          benefits?: string[]
+          community_id?: string | null
+          company_name?: string | null
+          contact_phone?: string | null
+          contact_whatsapp?: string | null
+          contract_type?: Database["public"]["Enums"]["job_contract_type"]
+          created_at?: string
+          description?: string
+          id?: string
+          is_salary_negotiable?: boolean
+          owner_id?: string
+          requirements?: string[]
+          salary_cents?: number | null
+          salary_period?: string
+          status?: Database["public"]["Enums"]["job_status"]
+          title?: string
+          updated_at?: string
+          view_count?: number
+          work_mode?: Database["public"]["Enums"]["job_work_mode"]
+        }
+        Relationships: [
+          {
+            foreignKeyName: "jobs_community_id_fkey"
+            columns: ["community_id"]
+            isOneToOne: false
+            referencedRelation: "communities"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       listings: {
         Row: {
           category: Database["public"]["Enums"]["listing_category"]
@@ -1348,6 +1549,10 @@ export type Database = {
         Args: { _gig_id: string; _user_id: string }
         Returns: boolean
       }
+      can_job_applicant_chat: {
+        Args: { _job_id: string; _user_id: string }
+        Returns: boolean
+      }
       increment_business_view: {
         Args: { _business_id: string }
         Returns: undefined
@@ -1357,6 +1562,7 @@ export type Database = {
         Returns: undefined
       }
       increment_gig_view: { Args: { _gig_id: string }; Returns: undefined }
+      increment_job_view: { Args: { _job_id: string }; Returns: undefined }
       increment_professional_view: {
         Args: { _professional_id: string }
         Returns: undefined
@@ -1385,6 +1591,14 @@ export type Database = {
         Args: { _gig_id: string; _user_id: string }
         Returns: boolean
       }
+      is_job_conversation_participant: {
+        Args: { _conversation_id: string; _user_id: string }
+        Returns: boolean
+      }
+      is_job_owner: {
+        Args: { _job_id: string; _user_id: string }
+        Returns: boolean
+      }
       push_notification: {
         Args: {
           _body: string
@@ -1407,6 +1621,22 @@ export type Database = {
         | "withdrawn"
       gig_budget_type: "fixed" | "hourly" | "negotiable"
       gig_status: "open" | "in_progress" | "completed" | "cancelled"
+      job_application_status:
+        | "sent"
+        | "seen"
+        | "shortlisted"
+        | "accepted"
+        | "rejected"
+        | "withdrawn"
+      job_contract_type:
+        | "clt"
+        | "pj"
+        | "temporario"
+        | "meio_periodo"
+        | "estagio"
+        | "autonomo"
+      job_status: "open" | "paused" | "closed"
+      job_work_mode: "presencial" | "hibrido" | "remoto"
       listing_category: "comercio" | "servico" | "imovel" | "freelance" | "vaga"
       listing_status: "active" | "paused" | "archived"
       market_condition: "novo" | "seminovo" | "usado"
@@ -1558,6 +1788,24 @@ export const Constants = {
       ],
       gig_budget_type: ["fixed", "hourly", "negotiable"],
       gig_status: ["open", "in_progress", "completed", "cancelled"],
+      job_application_status: [
+        "sent",
+        "seen",
+        "shortlisted",
+        "accepted",
+        "rejected",
+        "withdrawn",
+      ],
+      job_contract_type: [
+        "clt",
+        "pj",
+        "temporario",
+        "meio_periodo",
+        "estagio",
+        "autonomo",
+      ],
+      job_status: ["open", "paused", "closed"],
+      job_work_mode: ["presencial", "hibrido", "remoto"],
       listing_category: ["comercio", "servico", "imovel", "freelance", "vaga"],
       listing_status: ["active", "paused", "archived"],
       market_condition: ["novo", "seminovo", "usado"],
