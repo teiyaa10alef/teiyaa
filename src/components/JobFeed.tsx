@@ -99,8 +99,9 @@ export function JobFeed({ scope }: { scope: Scope }) {
               ))}
             </select>
           </label>
-
+          <label className="relative">
             <SlidersHorizontal className="absolute left-3 top-1/2 -translate-y-1/2 size-4 text-muted-foreground pointer-events-none" />
+
             <select
               value={sort}
               onChange={(e) => setSort(e.target.value as SortKey)}
