@@ -316,6 +316,69 @@ export type Database = {
           },
         ]
       }
+      candidate_profiles: {
+        Row: {
+          availability: string
+          bio: string | null
+          created_at: string
+          cv_name: string | null
+          cv_path: string | null
+          cv_updated_at: string | null
+          education: Json
+          experiences: Json
+          has_cnh: boolean
+          has_vehicle: boolean
+          headline: string | null
+          id: string
+          phone: string | null
+          shifts: string[]
+          skills: string[]
+          updated_at: string
+          user_id: string
+          whatsapp: string | null
+        }
+        Insert: {
+          availability?: string
+          bio?: string | null
+          created_at?: string
+          cv_name?: string | null
+          cv_path?: string | null
+          cv_updated_at?: string | null
+          education?: Json
+          experiences?: Json
+          has_cnh?: boolean
+          has_vehicle?: boolean
+          headline?: string | null
+          id?: string
+          phone?: string | null
+          shifts?: string[]
+          skills?: string[]
+          updated_at?: string
+          user_id: string
+          whatsapp?: string | null
+        }
+        Update: {
+          availability?: string
+          bio?: string | null
+          created_at?: string
+          cv_name?: string | null
+          cv_path?: string | null
+          cv_updated_at?: string | null
+          education?: Json
+          experiences?: Json
+          has_cnh?: boolean
+          has_vehicle?: boolean
+          headline?: string | null
+          id?: string
+          phone?: string | null
+          shifts?: string[]
+          skills?: string[]
+          updated_at?: string
+          user_id?: string
+          whatsapp?: string | null
+        }
+        Relationships: []
+      }
       cities: {
         Row: {
           created_at: string
@@ -642,29 +705,44 @@ export type Database = {
       }
       job_applications: {
         Row: {
+          answers: Json
           applicant_id: string
+          cover_letter: string | null
           created_at: string
+          cv_path: string | null
           id: string
           job_id: string
           message: string | null
+          owner_notes: string | null
+          seen_at: string | null
           status: Database["public"]["Enums"]["job_application_status"]
           updated_at: string
         }
         Insert: {
+          answers?: Json
           applicant_id: string
+          cover_letter?: string | null
           created_at?: string
+          cv_path?: string | null
           id?: string
           job_id: string
           message?: string | null
+          owner_notes?: string | null
+          seen_at?: string | null
           status?: Database["public"]["Enums"]["job_application_status"]
           updated_at?: string
         }
         Update: {
+          answers?: Json
           applicant_id?: string
+          cover_letter?: string | null
           created_at?: string
+          cv_path?: string | null
           id?: string
           job_id?: string
           message?: string | null
+          owner_notes?: string | null
+          seen_at?: string | null
           status?: Database["public"]["Enums"]["job_application_status"]
           updated_at?: string
         }
@@ -764,23 +842,44 @@ export type Database = {
           applications_count: number
           area: string
           benefits: string[]
+          closed_reason: string | null
           community_id: string | null
+          company_about: string | null
+          company_logo_url: string | null
           company_name: string | null
+          company_site: string | null
+          company_size: string | null
           contact_phone: string | null
           contact_whatsapp: string | null
           contract_type: Database["public"]["Enums"]["job_contract_type"]
           created_at: string
           description: string
+          education_level: string
+          experience_level: string
+          expires_on: string | null
+          has_commission: boolean
           id: string
+          is_pcd: boolean
           is_salary_negotiable: boolean
+          openings: number
           owner_id: string
           requirements: string[]
+          requires_cover_letter: boolean
+          requires_cv: boolean
           salary_cents: number | null
+          salary_max_cents: number | null
+          salary_min_cents: number | null
           salary_period: string
+          schedule: string | null
+          screening_questions: Json
+          shift_end: string | null
+          shift_start: string | null
+          starts_on: string | null
           status: Database["public"]["Enums"]["job_status"]
           title: string
           updated_at: string
           view_count: number
+          weekly_hours: number | null
           work_mode: Database["public"]["Enums"]["job_work_mode"]
         }
         Insert: {
@@ -788,23 +887,44 @@ export type Database = {
           applications_count?: number
           area?: string
           benefits?: string[]
+          closed_reason?: string | null
           community_id?: string | null
+          company_about?: string | null
+          company_logo_url?: string | null
           company_name?: string | null
+          company_site?: string | null
+          company_size?: string | null
           contact_phone?: string | null
           contact_whatsapp?: string | null
           contract_type?: Database["public"]["Enums"]["job_contract_type"]
           created_at?: string
           description: string
+          education_level?: string
+          experience_level?: string
+          expires_on?: string | null
+          has_commission?: boolean
           id?: string
+          is_pcd?: boolean
           is_salary_negotiable?: boolean
+          openings?: number
           owner_id: string
           requirements?: string[]
+          requires_cover_letter?: boolean
+          requires_cv?: boolean
           salary_cents?: number | null
+          salary_max_cents?: number | null
+          salary_min_cents?: number | null
           salary_period?: string
+          schedule?: string | null
+          screening_questions?: Json
+          shift_end?: string | null
+          shift_start?: string | null
+          starts_on?: string | null
           status?: Database["public"]["Enums"]["job_status"]
           title: string
           updated_at?: string
           view_count?: number
+          weekly_hours?: number | null
           work_mode?: Database["public"]["Enums"]["job_work_mode"]
         }
         Update: {
@@ -812,23 +932,44 @@ export type Database = {
           applications_count?: number
           area?: string
           benefits?: string[]
+          closed_reason?: string | null
           community_id?: string | null
+          company_about?: string | null
+          company_logo_url?: string | null
           company_name?: string | null
+          company_site?: string | null
+          company_size?: string | null
           contact_phone?: string | null
           contact_whatsapp?: string | null
           contract_type?: Database["public"]["Enums"]["job_contract_type"]
           created_at?: string
           description?: string
+          education_level?: string
+          experience_level?: string
+          expires_on?: string | null
+          has_commission?: boolean
           id?: string
+          is_pcd?: boolean
           is_salary_negotiable?: boolean
+          openings?: number
           owner_id?: string
           requirements?: string[]
+          requires_cover_letter?: boolean
+          requires_cv?: boolean
           salary_cents?: number | null
+          salary_max_cents?: number | null
+          salary_min_cents?: number | null
           salary_period?: string
+          schedule?: string | null
+          screening_questions?: Json
+          shift_end?: string | null
+          shift_start?: string | null
+          starts_on?: string | null
           status?: Database["public"]["Enums"]["job_status"]
           title?: string
           updated_at?: string
           view_count?: number
+          weekly_hours?: number | null
           work_mode?: Database["public"]["Enums"]["job_work_mode"]
         }
         Relationships: [
@@ -1551,6 +1692,10 @@ export type Database = {
       }
       can_job_applicant_chat: {
         Args: { _job_id: string; _user_id: string }
+        Returns: boolean
+      }
+      has_applied_to_my_job: {
+        Args: { _candidate_id: string; _owner_id: string }
         Returns: boolean
       }
       increment_business_view: {
