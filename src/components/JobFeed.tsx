@@ -3,10 +3,14 @@ import { useSuspenseQuery } from "@tanstack/react-query";
 import { Link } from "@tanstack/react-router";
 import { Search, Briefcase, SlidersHorizontal } from "lucide-react";
 import {
+  isJobExpired,
   jobsByScopeQuery,
+  jobSalaryFloor,
   JOB_AREAS,
   JOB_CONTRACT_LABELS,
+  JOB_EXPERIENCE_LABELS,
   type JobContractType,
+  type JobExperienceLevel,
 } from "@/lib/jobs-api";
 import type { Scope } from "@/lib/listings-api";
 import { JobCard } from "./JobCard";
@@ -19,6 +23,7 @@ export function JobFeed({ scope }: { scope: Scope }) {
   const [term, setTerm] = useState("");
   const [area, setArea] = useState<string | null>(null);
   const [contract, setContract] = useState<JobContractType | "">("");
+  const [experience, setExperience] = useState<JobExperienceLevel | "">("");
   const [sort, setSort] = useState<SortKey>("recentes");
 
   const availableAreas = useMemo(
@@ -29,8 +34,10 @@ export function JobFeed({ scope }: { scope: Scope }) {
   const filtered = useMemo(() => {
     const q = term.trim().toLowerCase();
     let list = jobs.filter((j) => {
+      if (isJobExpired(j)) return false;
       if (area && j.area !== area) return false;
       if (contract && j.contract_type !== contract) return false;
+      if (experience && j.experience_level !== experience) return false;
       if (!q) return true;
       return (
         j.title.toLowerCase().includes(q) ||
@@ -39,12 +46,13 @@ export function JobFeed({ scope }: { scope: Scope }) {
       );
     });
     if (sort === "salario") {
-      list = [...list].sort((a, b) => (b.salary_cents ?? 0) - (a.salary_cents ?? 0));
+      list = [...list].sort((a, b) => (jobSalaryFloor(b) ?? 0) - (jobSalaryFloor(a) ?? 0));
     } else {
       list = [...list].sort((a, b) => (a.created_at < b.created_at ? 1 : -1));
     }
     return list;
-  }, [jobs, term, area, contract, sort]);
+  }, [jobs, term, area, contract, experience, sort]);
+
 
   return (
     <div>
