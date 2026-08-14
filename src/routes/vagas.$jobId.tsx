@@ -409,21 +409,91 @@ function VagaDetailPage() {
                 Retirar candidatura
               </button>
             </div>
-          ) : job.status !== "open" ? (
+          ) : job.status !== "open" || expired ? (
             <p className="text-sm text-muted-foreground">
               Esta vaga não está mais recebendo candidaturas.
             </p>
           ) : (
             <div className="space-y-3">
               <h2 className="font-bold">Candidatar-se</h2>
-              <textarea
-                value={message}
-                onChange={(e) => setMessage(e.target.value)}
-                rows={4}
-                maxLength={800}
-                placeholder="Conte rapidamente sua experiência e disponibilidade."
-                className="input"
-              />
+
+              <div className="p-3 rounded-xl border border-border bg-surface">
+                <p className="text-sm font-semibold inline-flex items-center gap-2">
+                  <FileText className="size-4 text-cat-vaga" /> Currículo em PDF
+                  {job.requires_cv && <span className="text-destructive">obrigatório</span>}
+                </p>
+                <p className="mt-1 text-xs text-muted-foreground">
+                  {candidate?.cv_path
+                    ? `Vamos enviar: ${candidate.cv_name ?? "seu currículo"}`
+                    : "Você ainda não tem currículo salvo."}
+                </p>
+                <div className="mt-2 flex flex-wrap items-center gap-2">
+                  <label className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full border border-border text-xs font-semibold cursor-pointer">
+                    {uploadingCv ? "Enviando…" : candidate?.cv_path ? "Trocar PDF" : "Enviar PDF"}
+                    <input
+                      type="file"
+                      accept="application/pdf"
+                      className="hidden"
+                      onChange={(e) => {
+                        const f = e.target.files?.[0];
+                        e.target.value = "";
+                        if (f) uploadCv(f);
+                      }}
+                    />
+                  </label>
+                  <Link
+                    to="/conta/candidato"
+                    className="text-xs font-bold text-cat-vaga underline"
+                  >
+                    Completar meu currículo
+                  </Link>
+                </div>
+              </div>
+
+              <label className="block">
+                <span className="block text-sm font-semibold mb-1.5">
+                  Mensagem para o anunciante
+                </span>
+                <textarea
+                  value={message}
+                  onChange={(e) => setMessage(e.target.value)}
+                  rows={4}
+                  maxLength={800}
+                  placeholder="Conte rapidamente sua experiência e disponibilidade."
+                  className="input"
+                />
+              </label>
+
+              {job.requires_cover_letter && (
+                <label className="block">
+                  <span className="block text-sm font-semibold mb-1.5">
+                    Carta de apresentação <span className="text-destructive">*</span>
+                  </span>
+                  <textarea
+                    value={coverLetter}
+                    onChange={(e) => setCoverLetter(e.target.value)}
+                    rows={5}
+                    maxLength={1500}
+                    placeholder="Por que você é a pessoa certa para esta vaga?"
+                    className="input"
+                  />
+                </label>
+              )}
+
+              {questions.map((q) => (
+                <label key={q.id} className="block">
+                  <span className="block text-sm font-semibold mb-1.5">{q.question}</span>
+                  <input
+                    value={answers[q.id] ?? ""}
+                    onChange={(e) =>
+                      setAnswers((prev) => ({ ...prev, [q.id]: e.target.value }))
+                    }
+                    maxLength={300}
+                    className="input"
+                  />
+                </label>
+              ))}
+
               <button
                 type="button"
                 onClick={handleApply}
@@ -434,6 +504,7 @@ function VagaDetailPage() {
               </button>
             </div>
           )}
+
         </section>
       </main>
       <SiteFooter />
