@@ -34,6 +34,7 @@ import { Route as ImoveisPropertyIdRouteImport } from './routes/imoveis.$propert
 import { Route as FreelancesNovoRouteImport } from './routes/freelances.novo'
 import { Route as FreelancesGigIdRouteImport } from './routes/freelances.$gigId'
 import { Route as EstadoStateSlugRouteImport } from './routes/estado.$stateSlug'
+import { Route as ContaVagasRouteImport } from './routes/conta.vagas'
 import { Route as ContaProfissionalRouteImport } from './routes/conta.profissional'
 import { Route as ContaPerfilRouteImport } from './routes/conta.perfil'
 import { Route as ContaNotificacoesRouteImport } from './routes/conta.notificacoes'
@@ -177,6 +178,11 @@ const EstadoStateSlugRoute = EstadoStateSlugRouteImport.update({
   path: '/estado/$stateSlug',
   getParentRoute: () => rootRouteImport,
 } as any)
+const ContaVagasRoute = ContaVagasRouteImport.update({
+  id: '/vagas',
+  path: '/vagas',
+  getParentRoute: () => ContaRoute,
+} as any)
 const ContaProfissionalRoute = ContaProfissionalRouteImport.update({
   id: '/profissional',
   path: '/profissional',
@@ -284,6 +290,7 @@ export interface FileRoutesByFullPath {
   '/conta/notificacoes': typeof ContaNotificacoesRoute
   '/conta/perfil': typeof ContaPerfilRoute
   '/conta/profissional': typeof ContaProfissionalRoute
+  '/conta/vagas': typeof ContaVagasRoute
   '/estado/$stateSlug': typeof EstadoStateSlugRoute
   '/freelances/$gigId': typeof FreelancesGigIdRoute
   '/freelances/novo': typeof FreelancesNovoRoute
@@ -324,6 +331,7 @@ export interface FileRoutesByTo {
   '/conta/notificacoes': typeof ContaNotificacoesRoute
   '/conta/perfil': typeof ContaPerfilRoute
   '/conta/profissional': typeof ContaProfissionalRoute
+  '/conta/vagas': typeof ContaVagasRoute
   '/estado/$stateSlug': typeof EstadoStateSlugRoute
   '/freelances/$gigId': typeof FreelancesGigIdRoute
   '/freelances/novo': typeof FreelancesNovoRoute
@@ -369,6 +377,7 @@ export interface FileRoutesById {
   '/conta/notificacoes': typeof ContaNotificacoesRoute
   '/conta/perfil': typeof ContaPerfilRoute
   '/conta/profissional': typeof ContaProfissionalRoute
+  '/conta/vagas': typeof ContaVagasRoute
   '/estado/$stateSlug': typeof EstadoStateSlugRoute
   '/freelances/$gigId': typeof FreelancesGigIdRoute
   '/freelances/novo': typeof FreelancesNovoRoute
@@ -415,6 +424,7 @@ export interface FileRouteTypes {
     | '/conta/notificacoes'
     | '/conta/perfil'
     | '/conta/profissional'
+    | '/conta/vagas'
     | '/estado/$stateSlug'
     | '/freelances/$gigId'
     | '/freelances/novo'
@@ -455,6 +465,7 @@ export interface FileRouteTypes {
     | '/conta/notificacoes'
     | '/conta/perfil'
     | '/conta/profissional'
+    | '/conta/vagas'
     | '/estado/$stateSlug'
     | '/freelances/$gigId'
     | '/freelances/novo'
@@ -499,6 +510,7 @@ export interface FileRouteTypes {
     | '/conta/notificacoes'
     | '/conta/perfil'
     | '/conta/profissional'
+    | '/conta/vagas'
     | '/estado/$stateSlug'
     | '/freelances/$gigId'
     | '/freelances/novo'
@@ -730,6 +742,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof EstadoStateSlugRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/conta/vagas': {
+      id: '/conta/vagas'
+      path: '/vagas'
+      fullPath: '/conta/vagas'
+      preLoaderRoute: typeof ContaVagasRouteImport
+      parentRoute: typeof ContaRoute
+    }
     '/conta/profissional': {
       id: '/conta/profissional'
       path: '/profissional'
@@ -891,6 +910,7 @@ interface ContaRouteChildren {
   ContaNotificacoesRoute: typeof ContaNotificacoesRoute
   ContaPerfilRoute: typeof ContaPerfilRoute
   ContaProfissionalRoute: typeof ContaProfissionalRoute
+  ContaVagasRoute: typeof ContaVagasRoute
   ContaIndexRoute: typeof ContaIndexRoute
 }
 
@@ -903,6 +923,7 @@ const ContaRouteChildren: ContaRouteChildren = {
   ContaNotificacoesRoute: ContaNotificacoesRoute,
   ContaPerfilRoute: ContaPerfilRoute,
   ContaProfissionalRoute: ContaProfissionalRoute,
+  ContaVagasRoute: ContaVagasRoute,
   ContaIndexRoute: ContaIndexRoute,
 }
 
