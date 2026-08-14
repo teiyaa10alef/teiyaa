@@ -511,3 +511,22 @@ function VagaDetailPage() {
     </div>
   );
 }
+
+function Info({
+  icon,
+  label,
+  value,
+}: {
+  icon: React.ReactNode;
+  label: string;
+  value: string;
+}) {
+  return (
+    <div className="p-3 rounded-2xl border border-border bg-card">
+      <span className="text-muted-foreground inline-flex items-center gap-1.5 text-xs font-semibold">
+        {icon} {label}
+      </span>
+      <p className="mt-1 text-sm font-bold leading-snug">{value}</p>
+    </div>
+  );
+}
