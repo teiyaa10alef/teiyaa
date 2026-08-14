@@ -26,7 +26,10 @@ export const Route = createFileRoute("/mensagens/")({
 
 type Row = {
   key: string;
-  to: "/mensagens/$conversationId" | "/mensagens/bico/$conversationId";
+  to:
+    | "/mensagens/$conversationId"
+    | "/mensagens/bico/$conversationId"
+    | "/mensagens/vaga/$conversationId";
   id: string;
   title: string;
   subtitle: string;
@@ -45,6 +48,9 @@ function MensagensPage() {
   );
   const { data: gigConvos = [], isLoading: loadingGigs } = useQuery(
     gigConversationsQuery(user?.id),
+  );
+  const { data: jobConvos = [], isLoading: loadingJobs } = useQuery(
+    jobConversationsQuery(user?.id),
   );
 
   useEffect(() => {
@@ -78,10 +84,22 @@ function MensagensPage() {
       tag: "Bico",
       sortAt: c.last_message_at,
     }));
-    return [...market, ...gigs].sort((a, b) => (a.sortAt < b.sortAt ? 1 : -1));
-  }, [marketConvos, gigConvos]);
+    const jobs: Row[] = jobConvos.map((c) => ({
+      key: `j-${c.id}`,
+      to: "/mensagens/vaga/$conversationId",
+      id: c.id,
+      title: c.job?.title ?? "Vaga removida",
+      subtitle: `com ${c.other?.display_name ?? "Vizinho"}`,
+      value: c.job ? formatSalary(c.job) : "",
+      image: null,
+      emoji: "💼",
+      tag: "Vaga",
+      sortAt: c.last_message_at,
+    }));
+    return [...market, ...gigs, ...jobs].sort((a, b) => (a.sortAt < b.sortAt ? 1 : -1));
+  }, [marketConvos, gigConvos, jobConvos]);
 
-  const isLoading = loading || loadingMarket || loadingGigs;
+  const isLoading = loading || loadingMarket || loadingGigs || loadingJobs;
 
   return (
     <div className="min-h-screen bg-background text-foreground flex flex-col">
