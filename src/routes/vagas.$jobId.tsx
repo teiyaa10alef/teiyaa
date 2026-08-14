@@ -1,26 +1,45 @@
 import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
-import { useEffect, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { toast } from "sonner";
-import { ArrowLeft, Briefcase, MapPin, Check, MessageCircle, Eye, Users } from "lucide-react";
+import {
+  ArrowLeft,
+  Briefcase,
+  MapPin,
+  Check,
+  Clock,
+  CalendarDays,
+  FileText,
+  GraduationCap,
+  MessageCircle,
+  Eye,
+  Users,
+} from "lucide-react";
 import { SiteHeader } from "@/components/SiteHeader";
 import { SiteFooter } from "@/components/SiteFooter";
 import { useAuth } from "@/hooks/use-auth";
+import { myCandidateProfileQuery, uploadResume, upsertCandidateProfile } from "@/lib/candidate-api";
 import {
   applyToJob,
   canJobApplicantChat,
+  formatJobDate,
   formatSalary,
+  formatShift,
+  isJobExpired,
   jobAreaEmoji,
   jobAreaLabel,
   jobQuery,
   JOB_APPLICATION_STATUS_LABELS,
   JOB_CONTRACT_LABELS,
+  JOB_EDUCATION_LABELS,
+  JOB_EXPERIENCE_LABELS,
   JOB_WORK_MODE_LABELS,
   myApplicationForJobQuery,
   startJobConversation,
   timeAgo,
   trackJobView,
   withdrawJobApplication,
+  type ScreeningAnswer,
 } from "@/lib/jobs-api";
 
 export const Route = createFileRoute("/vagas/$jobId")({
@@ -47,7 +66,11 @@ function VagaDetailPage() {
   const qc = useQueryClient();
   const { data: job, isLoading } = useQuery(jobQuery(jobId));
   const { data: myApp } = useQuery(myApplicationForJobQuery(jobId, user?.id));
+  const { data: candidate } = useQuery(myCandidateProfileQuery(user?.id));
   const [message, setMessage] = useState("");
+  const [coverLetter, setCoverLetter] = useState("");
+  const [answers, setAnswers] = useState<Record<string, string>>({});
+  const [uploadingCv, setUploadingCv] = useState(false);
   const [busy, setBusy] = useState(false);
 
   useEffect(() => {
@@ -55,17 +78,66 @@ function VagaDetailPage() {
   }, [jobId]);
 
   const isOwner = !!user && !!job && job.owner_id === user.id;
+  const expired = !!job && isJobExpired(job);
+  const questions = useMemo(() => job?.screening_questions ?? [], [job]);
+
+  const uploadCv = async (file: File) => {
+    if (!user) return;
+    setUploadingCv(true);
+    try {
+      const { path, name } = await uploadResume(file, user.id);
+      await upsertCandidateProfile(user.id, {
+        cv_path: path,
+        cv_name: name,
+        cv_updated_at: new Date().toISOString(),
+      });
+      qc.invalidateQueries({ queryKey: ["candidate-profile"] });
+      toast.success("Currículo enviado");
+    } catch (err) {
+      toast.error((err as Error).message);
+    } finally {
+      setUploadingCv(false);
+    }
+  };
 
   const handleApply = async () => {
     if (!user) {
       navigate({ to: "/login" });
       return;
     }
+    if (!job) return;
+    if (job.requires_cv && !candidate?.cv_path) {
+      toast.error("Esta vaga exige currículo em PDF. Envie o seu antes de se candidatar.");
+      return;
+    }
+    if (job.requires_cover_letter && coverLetter.trim().length < 20) {
+      toast.error("Escreva uma carta de apresentação (mínimo 20 caracteres).");
+      return;
+    }
+    const missing = questions.find((q) => !(answers[q.id] ?? "").trim());
+    if (missing) {
+      toast.error("Responda todas as perguntas da empresa.");
+      return;
+    }
     setBusy(true);
     try {
-      await applyToJob({ jobId, applicantId: user.id, message: message.trim() });
+      const payloadAnswers: ScreeningAnswer[] = questions.map((q) => ({
+        id: q.id,
+        question: q.question,
+        answer: (answers[q.id] ?? "").trim(),
+      }));
+      await applyToJob({
+        jobId,
+        applicantId: user.id,
+        message: message.trim(),
+        coverLetter: coverLetter.trim() || null,
+        cvPath: candidate?.cv_path ?? null,
+        answers: payloadAnswers,
+      });
       toast.success("Candidatura enviada!");
       setMessage("");
+      setCoverLetter("");
+      setAnswers({});
       qc.invalidateQueries({ queryKey: ["job-application", jobId] });
       qc.invalidateQueries({ queryKey: ["job", jobId] });
     } catch (err) {
@@ -74,6 +146,7 @@ function VagaDetailPage() {
       setBusy(false);
     }
   };
+
 
   const handleWithdraw = async () => {
     if (!myApp) return;
