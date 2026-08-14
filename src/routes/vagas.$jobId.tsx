@@ -279,10 +279,65 @@ function VagaDetailPage() {
           <span>Publicada {timeAgo(job.created_at)}</span>
         </div>
 
+        <div className="mt-5 grid grid-cols-2 sm:grid-cols-3 gap-3">
+          <Info
+            icon={<Clock className="size-4" />}
+            label="Jornada"
+            value={
+              [job.schedule, job.weekly_hours ? `${job.weekly_hours}h/semana` : null]
+                .filter(Boolean)
+                .join(" · ") || "A combinar"
+            }
+          />
+          <Info
+            icon={<Clock className="size-4" />}
+            label="Horário"
+            value={formatShift(job) ?? "A combinar"}
+          />
+          <Info
+            icon={<Briefcase className="size-4" />}
+            label="Experiência"
+            value={JOB_EXPERIENCE_LABELS[job.experience_level]}
+          />
+          <Info
+            icon={<GraduationCap className="size-4" />}
+            label="Escolaridade"
+            value={JOB_EDUCATION_LABELS[job.education_level]}
+          />
+          <Info
+            icon={<Users className="size-4" />}
+            label="Vagas"
+            value={String(job.openings ?? 1)}
+          />
+          <Info
+            icon={<CalendarDays className="size-4" />}
+            label="Início"
+            value={formatJobDate(job.starts_on) ?? "A combinar"}
+          />
+        </div>
+        {job.expires_on && (
+          <p className="mt-2 text-xs text-muted-foreground">
+            Candidaturas até {formatJobDate(job.expires_on)}
+          </p>
+        )}
+
         <section className="mt-6">
           <h2 className="font-bold text-lg">Sobre a vaga</h2>
           <p className="mt-2 whitespace-pre-line text-sm leading-relaxed">{job.description}</p>
         </section>
+
+        {job.company_about && (
+          <section className="mt-6">
+            <h2 className="font-bold text-lg">Sobre a empresa</h2>
+            <p className="mt-2 whitespace-pre-line text-sm leading-relaxed">{job.company_about}</p>
+            {job.company_site && (
+              <p className="mt-1 text-sm font-semibold text-cat-vaga break-all">
+                {job.company_site}
+              </p>
+            )}
+          </section>
+        )}
+
 
         {job.requirements.length > 0 && (
           <section className="mt-6">
