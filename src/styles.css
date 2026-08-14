@@ -255,7 +255,5 @@
   padding: 0.625rem 0.875rem;
   font-size: 0.875rem;
   outline: none;
-}
-@utility input {
-  &:focus { border-color: var(--brand, var(--primary)); }
+  &:focus { border-color: var(--brand); }
 }
