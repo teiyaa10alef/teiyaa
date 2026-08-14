@@ -45,6 +45,7 @@ import { Route as ContaFreelancesRouteImport } from './routes/conta.freelances'
 import { Route as ContaCandidaturasRouteImport } from './routes/conta.candidaturas'
 import { Route as CidadeCitySlugRouteImport } from './routes/cidade.$citySlug'
 import { Route as CCommunitySlugRouteImport } from './routes/c.$communitySlug'
+import { Route as ContaVagasIndexRouteImport } from './routes/conta.vagas.index'
 import { Route as ContaNegociosIndexRouteImport } from './routes/conta.negocios.index'
 import { Route as ContaFreelancesIndexRouteImport } from './routes/conta.freelances.index'
 import { Route as ProfissionaisPerfilUserIdRouteImport } from './routes/profissionais.perfil.$userId'
@@ -233,6 +234,11 @@ const CCommunitySlugRoute = CCommunitySlugRouteImport.update({
   path: '/c/$communitySlug',
   getParentRoute: () => rootRouteImport,
 } as any)
+const ContaVagasIndexRoute = ContaVagasIndexRouteImport.update({
+  id: '/',
+  path: '/',
+  getParentRoute: () => ContaVagasRoute,
+} as any)
 const ContaNegociosIndexRoute = ContaNegociosIndexRouteImport.update({
   id: '/',
   path: '/',
@@ -290,7 +296,7 @@ export interface FileRoutesByFullPath {
   '/conta/notificacoes': typeof ContaNotificacoesRoute
   '/conta/perfil': typeof ContaPerfilRoute
   '/conta/profissional': typeof ContaProfissionalRoute
-  '/conta/vagas': typeof ContaVagasRoute
+  '/conta/vagas': typeof ContaVagasRouteWithChildren
   '/estado/$stateSlug': typeof EstadoStateSlugRoute
   '/freelances/$gigId': typeof FreelancesGigIdRoute
   '/freelances/novo': typeof FreelancesNovoRoute
@@ -315,6 +321,7 @@ export interface FileRoutesByFullPath {
   '/profissionais/perfil/$userId': typeof ProfissionaisPerfilUserIdRoute
   '/conta/freelances/': typeof ContaFreelancesIndexRoute
   '/conta/negocios/': typeof ContaNegociosIndexRoute
+  '/conta/vagas/': typeof ContaVagasIndexRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
@@ -331,7 +338,6 @@ export interface FileRoutesByTo {
   '/conta/notificacoes': typeof ContaNotificacoesRoute
   '/conta/perfil': typeof ContaPerfilRoute
   '/conta/profissional': typeof ContaProfissionalRoute
-  '/conta/vagas': typeof ContaVagasRoute
   '/estado/$stateSlug': typeof EstadoStateSlugRoute
   '/freelances/$gigId': typeof FreelancesGigIdRoute
   '/freelances/novo': typeof FreelancesNovoRoute
@@ -356,6 +362,7 @@ export interface FileRoutesByTo {
   '/profissionais/perfil/$userId': typeof ProfissionaisPerfilUserIdRoute
   '/conta/freelances': typeof ContaFreelancesIndexRoute
   '/conta/negocios': typeof ContaNegociosIndexRoute
+  '/conta/vagas': typeof ContaVagasIndexRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
@@ -377,7 +384,7 @@ export interface FileRoutesById {
   '/conta/notificacoes': typeof ContaNotificacoesRoute
   '/conta/perfil': typeof ContaPerfilRoute
   '/conta/profissional': typeof ContaProfissionalRoute
-  '/conta/vagas': typeof ContaVagasRoute
+  '/conta/vagas': typeof ContaVagasRouteWithChildren
   '/estado/$stateSlug': typeof EstadoStateSlugRoute
   '/freelances/$gigId': typeof FreelancesGigIdRoute
   '/freelances/novo': typeof FreelancesNovoRoute
@@ -402,6 +409,7 @@ export interface FileRoutesById {
   '/profissionais/perfil/$userId': typeof ProfissionaisPerfilUserIdRoute
   '/conta/freelances/': typeof ContaFreelancesIndexRoute
   '/conta/negocios/': typeof ContaNegociosIndexRoute
+  '/conta/vagas/': typeof ContaVagasIndexRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
@@ -449,6 +457,7 @@ export interface FileRouteTypes {
     | '/profissionais/perfil/$userId'
     | '/conta/freelances/'
     | '/conta/negocios/'
+    | '/conta/vagas/'
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/'
@@ -465,7 +474,6 @@ export interface FileRouteTypes {
     | '/conta/notificacoes'
     | '/conta/perfil'
     | '/conta/profissional'
-    | '/conta/vagas'
     | '/estado/$stateSlug'
     | '/freelances/$gigId'
     | '/freelances/novo'
@@ -490,6 +498,7 @@ export interface FileRouteTypes {
     | '/profissionais/perfil/$userId'
     | '/conta/freelances'
     | '/conta/negocios'
+    | '/conta/vagas'
   id:
     | '__root__'
     | '/'
@@ -535,6 +544,7 @@ export interface FileRouteTypes {
     | '/profissionais/perfil/$userId'
     | '/conta/freelances/'
     | '/conta/negocios/'
+    | '/conta/vagas/'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
@@ -819,6 +829,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof CCommunitySlugRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/conta/vagas/': {
+      id: '/conta/vagas/'
+      path: '/'
+      fullPath: '/conta/vagas/'
+      preLoaderRoute: typeof ContaVagasIndexRouteImport
+      parentRoute: typeof ContaVagasRoute
+    }
     '/conta/negocios/': {
       id: '/conta/negocios/'
       path: '/'
@@ -901,6 +918,18 @@ const ContaNegociosRouteWithChildren = ContaNegociosRoute._addFileChildren(
   ContaNegociosRouteChildren,
 )
 
+interface ContaVagasRouteChildren {
+  ContaVagasIndexRoute: typeof ContaVagasIndexRoute
+}
+
+const ContaVagasRouteChildren: ContaVagasRouteChildren = {
+  ContaVagasIndexRoute: ContaVagasIndexRoute,
+}
+
+const ContaVagasRouteWithChildren = ContaVagasRoute._addFileChildren(
+  ContaVagasRouteChildren,
+)
+
 interface ContaRouteChildren {
   ContaCandidaturasRoute: typeof ContaCandidaturasRoute
   ContaFreelancesRoute: typeof ContaFreelancesRouteWithChildren
@@ -910,7 +939,7 @@ interface ContaRouteChildren {
   ContaNotificacoesRoute: typeof ContaNotificacoesRoute
   ContaPerfilRoute: typeof ContaPerfilRoute
   ContaProfissionalRoute: typeof ContaProfissionalRoute
-  ContaVagasRoute: typeof ContaVagasRoute
+  ContaVagasRoute: typeof ContaVagasRouteWithChildren
   ContaIndexRoute: typeof ContaIndexRoute
 }
 
@@ -923,7 +952,7 @@ const ContaRouteChildren: ContaRouteChildren = {
   ContaNotificacoesRoute: ContaNotificacoesRoute,
   ContaPerfilRoute: ContaPerfilRoute,
   ContaProfissionalRoute: ContaProfissionalRoute,
-  ContaVagasRoute: ContaVagasRoute,
+  ContaVagasRoute: ContaVagasRouteWithChildren,
   ContaIndexRoute: ContaIndexRoute,
 }
 
