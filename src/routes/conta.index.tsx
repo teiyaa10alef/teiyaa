@@ -94,6 +94,14 @@ const ITEMS = [
     tone: "freelance",
   },
   {
+    to: "/conta/candidato",
+    icon: ClipboardList,
+    label: "Meu currículo",
+    hint: "Perfil de candidato e PDF",
+    tone: "brand",
+  },
+
+  {
     to: "/mensagens",
     icon: MessageCircle,
     label: "Mensagens",

@@ -1,19 +1,33 @@
 import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
-import { useEffect, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
+import { useServerFn } from "@tanstack/react-start";
 import { toast } from "sonner";
-import { ArrowLeft, Eye, MessageCircle, Users, Trash2 } from "lucide-react";
+import {
+  ArrowLeft,
+  Eye,
+  FileText,
+  MessageCircle,
+  Users,
+  Trash2,
+  ChevronDown,
+} from "lucide-react";
 import { SiteHeader } from "@/components/SiteHeader";
 import { SiteFooter } from "@/components/SiteFooter";
 import { UserAvatar } from "@/components/UserAvatar";
 import { useAuth } from "@/hooks/use-auth";
+import { availabilityLabel, candidateProfilesQuery } from "@/lib/candidate-api";
+import { getResumeUrl } from "@/lib/resume.functions";
 import {
+  closeJob,
   deleteJob,
   formatSalary,
   jobApplicationsQuery,
   jobQuery,
   JOB_APPLICATION_STATUS_LABELS,
   JOB_STATUS_LABELS,
+  markJobApplicationSeen,
+  saveJobApplicationNotes,
   setJobApplicationStatus,
   startJobConversation,
   timeAgo,
@@ -42,6 +56,14 @@ const ACTIONS: { status: JobApplicationStatus; label: string }[] = [
   { status: "rejected", label: "Recusar" },
 ];
 
+const FILTERS: { value: JobApplicationStatus | "all"; label: string }[] = [
+  { value: "all", label: "Todas" },
+  { value: "sent", label: "Novas" },
+  { value: "shortlisted", label: "Pré-selecionadas" },
+  { value: "accepted", label: "Escolhidas" },
+  { value: "rejected", label: "Recusadas" },
+];
+
 function GerenciarVagaPage() {
   const { jobId } = Route.useParams();
   const { user, loading } = useAuth();
@@ -50,11 +72,35 @@ function GerenciarVagaPage() {
   const { data: job } = useQuery(jobQuery(jobId));
   const isOwner = !!user && !!job && job.owner_id === user.id;
   const { data: apps = [] } = useQuery(jobApplicationsQuery(jobId, isOwner));
+  const { data: candidates = {} } = useQuery(
+    candidateProfilesQuery(
+      apps.map((a) => a.applicant_id),
+      isOwner,
+    ),
+  );
+  const fetchResumeUrl = useServerFn(getResumeUrl);
   const [busy, setBusy] = useState(false);
+  const [filter, setFilter] = useState<JobApplicationStatus | "all">("all");
+  const [open, setOpen] = useState<string | null>(null);
+  const [notes, setNotes] = useState<Record<string, string>>({});
 
   useEffect(() => {
     if (!loading && !user) navigate({ to: "/login" });
   }, [loading, user, navigate]);
+
+  const filtered = useMemo(
+    () => (filter === "all" ? apps : apps.filter((a) => a.status === filter)),
+    [apps, filter],
+  );
+
+  const toggleOpen = async (id: string, status: JobApplicationStatus) => {
+    const next = open === id ? null : id;
+    setOpen(next);
+    if (next && status === "sent") {
+      await markJobApplicationSeen(id);
+      qc.invalidateQueries({ queryKey: ["job-applications", jobId] });
+    }
+  };
 
   const changeStatus = async (id: string, status: JobApplicationStatus) => {
     setBusy(true);
@@ -69,6 +115,25 @@ function GerenciarVagaPage() {
     }
   };
 
+  const saveNotes = async (id: string) => {
+    try {
+      await saveJobApplicationNotes(id, (notes[id] ?? "").trim());
+      qc.invalidateQueries({ queryKey: ["job-applications", jobId] });
+      toast.success("Anotação salva");
+    } catch {
+      toast.error("Não consegui salvar a anotação");
+    }
+  };
+
+  const openResume = async (applicationId: string) => {
+    try {
+      const { url } = await fetchResumeUrl({ data: { applicationId } });
+      window.open(url, "_blank", "noopener");
+    } catch (err) {
+      toast.error((err as Error).message);
+    }
+  };
+
   const changeJobStatus = async (status: JobStatus) => {
     setBusy(true);
     try {
@@ -78,6 +143,20 @@ function GerenciarVagaPage() {
       toast.success("Vaga atualizada");
     } catch {
       toast.error("Não consegui atualizar a vaga");
+    } finally {
+      setBusy(false);
+    }
+  };
+
+  const finish = async (reason: "preenchida" | "cancelada") => {
+    setBusy(true);
+    try {
+      await closeJob(jobId, reason);
+      qc.invalidateQueries({ queryKey: ["job", jobId] });
+      qc.invalidateQueries({ queryKey: ["my-jobs"] });
+      toast.success(reason === "preenchida" ? "Vaga marcada como preenchida" : "Vaga cancelada");
+    } catch {
+      toast.error("Não consegui encerrar a vaga");
     } finally {
       setBusy(false);
     }
@@ -160,10 +239,16 @@ function GerenciarVagaPage() {
         <h1 className="mt-3 text-2xl md:text-3xl font-bold tracking-tight">{job.title}</h1>
         <p className="mt-1 text-sm text-muted-foreground">
           {formatSalary(job)} · {JOB_STATUS_LABELS[job.status]}
+          {job.closed_reason ? ` (${job.closed_reason})` : ""}
         </p>
 
-        <div className="mt-4 grid grid-cols-2 gap-3">
+        <div className="mt-4 grid grid-cols-3 gap-3">
           <Stat icon={<Users className="size-4" />} label="Candidaturas" value={apps.length} />
+          <Stat
+            icon={<Users className="size-4" />}
+            label="Pré-selecionados"
+            value={apps.filter((a) => a.status === "shortlisted").length}
+          />
           <Stat icon={<Eye className="size-4" />} label="Visualizações" value={job.view_count} />
         </div>
 
@@ -185,6 +270,14 @@ function GerenciarVagaPage() {
           ))}
           <button
             type="button"
+            onClick={() => finish("preenchida")}
+            disabled={busy}
+            className="px-4 py-2 rounded-full border border-border text-sm font-semibold"
+          >
+            Vaga preenchida
+          </button>
+          <button
+            type="button"
             onClick={removeJob}
             disabled={busy}
             className="px-4 py-2 rounded-full border border-border text-sm font-semibold text-destructive inline-flex items-center gap-1.5"
@@ -194,55 +287,191 @@ function GerenciarVagaPage() {
         </div>
 
         <h2 className="mt-8 font-bold text-lg">Candidaturas</h2>
-        {apps.length === 0 ? (
-          <p className="mt-3 text-sm text-muted-foreground">
-            Ainda ninguém se candidatou. Compartilhe a vaga com os vizinhos.
+        <div className="mt-3 flex gap-2 overflow-x-auto pb-1">
+          {FILTERS.map((f) => (
+            <button
+              key={f.value}
+              type="button"
+              onClick={() => setFilter(f.value)}
+              className={`px-3.5 py-1.5 rounded-full border text-sm font-semibold whitespace-nowrap ${
+                filter === f.value
+                  ? "bg-cat-vaga text-primary-foreground border-cat-vaga"
+                  : "bg-card border-border"
+              }`}
+            >
+              {f.label}
+            </button>
+          ))}
+        </div>
+
+        {filtered.length === 0 ? (
+          <p className="mt-4 text-sm text-muted-foreground">
+            Nenhuma candidatura por aqui. Compartilhe a vaga com os vizinhos.
           </p>
         ) : (
           <ul className="mt-3 space-y-3">
-            {apps.map((a) => (
-              <li key={a.id} className="p-4 rounded-2xl border border-border bg-card">
-                <div className="flex items-center gap-3">
-                  <UserAvatar
-                    src={a.profile?.avatar_url ?? null}
-                    name={a.profile?.display_name ?? "Vizinho"}
-                    className="size-10"
-                  />
-                  <div className="min-w-0 flex-1">
-                    <p className="font-bold truncate">{a.profile?.display_name ?? "Vizinho"}</p>
-                    <p className="text-xs text-muted-foreground">
-                      {JOB_APPLICATION_STATUS_LABELS[a.status]} · {timeAgo(a.created_at)}
-                    </p>
-                  </div>
-                </div>
-                {a.message && <p className="mt-3 text-sm whitespace-pre-line">{a.message}</p>}
-                <div className="mt-3 flex flex-wrap gap-2">
-                  {ACTIONS.map((act) => (
-                    <button
-                      key={act.status}
-                      type="button"
-                      disabled={busy || a.status === act.status}
-                      onClick={() => changeStatus(a.id, act.status)}
-                      className={`px-3.5 py-1.5 rounded-full border text-xs font-semibold ${
-                        a.status === act.status
-                          ? "bg-cat-vaga text-primary-foreground border-cat-vaga"
-                          : "bg-surface border-border"
-                      }`}
-                    >
-                      {act.label}
-                    </button>
-                  ))}
+            {filtered.map((a) => {
+              const cand = candidates[a.applicant_id];
+              const expanded = open === a.id;
+              return (
+                <li key={a.id} className="p-4 rounded-2xl border border-border bg-card">
                   <button
                     type="button"
-                    disabled={busy}
-                    onClick={() => openChat(a.applicant_id, a.id)}
-                    className="px-3.5 py-1.5 rounded-full bg-brand text-primary-foreground text-xs font-bold inline-flex items-center gap-1.5"
+                    onClick={() => toggleOpen(a.id, a.status)}
+                    className="w-full flex items-center gap-3 text-left"
                   >
-                    <MessageCircle className="size-3.5" /> Conversar
+                    <UserAvatar
+                      src={a.profile?.avatar_url ?? null}
+                      name={a.profile?.display_name ?? "Vizinho"}
+                      className="size-10"
+                    />
+                    <div className="min-w-0 flex-1">
+                      <p className="font-bold truncate">
+                        {a.profile?.display_name ?? "Vizinho"}
+                        {a.status === "sent" && (
+                          <span className="ml-2 text-[10px] uppercase font-bold text-cat-vaga">
+                            novo
+                          </span>
+                        )}
+                      </p>
+                      <p className="text-xs text-muted-foreground truncate">
+                        {cand?.headline ? `${cand.headline} · ` : ""}
+                        {JOB_APPLICATION_STATUS_LABELS[a.status]} · {timeAgo(a.created_at)}
+                      </p>
+                    </div>
+                    <ChevronDown
+                      className={`size-4 shrink-0 transition-transform ${expanded ? "rotate-180" : ""}`}
+                    />
                   </button>
-                </div>
-              </li>
-            ))}
+
+                  {expanded && (
+                    <div className="mt-3 space-y-3 text-sm">
+                      {a.message && <p className="whitespace-pre-line">{a.message}</p>}
+
+                      {a.cover_letter && (
+                        <div>
+                          <p className="text-xs font-bold text-muted-foreground">
+                            Carta de apresentação
+                          </p>
+                          <p className="mt-1 whitespace-pre-line">{a.cover_letter}</p>
+                        </div>
+                      )}
+
+                      {a.answers.length > 0 && (
+                        <div className="space-y-2">
+                          {a.answers.map((ans) => (
+                            <div key={ans.id}>
+                              <p className="text-xs font-bold text-muted-foreground">
+                                {ans.question}
+                              </p>
+                              <p>{ans.answer}</p>
+                            </div>
+                          ))}
+                        </div>
+                      )}
+
+                      {cand && (
+                        <div className="p-3 rounded-xl bg-surface border border-border space-y-2">
+                          <p className="text-xs font-bold text-muted-foreground">Perfil</p>
+                          {cand.bio && <p className="whitespace-pre-line">{cand.bio}</p>}
+                          <p className="text-xs text-muted-foreground">
+                            {availabilityLabel(cand.availability)}
+                            {cand.shifts?.length ? ` · ${cand.shifts.join(", ")}` : ""}
+                            {cand.has_cnh ? " · CNH" : ""}
+                            {cand.has_vehicle ? " · veículo próprio" : ""}
+                          </p>
+                          {cand.skills?.length > 0 && (
+                            <div className="flex flex-wrap gap-1.5">
+                              {cand.skills.map((s) => (
+                                <span
+                                  key={s}
+                                  className="px-2 py-0.5 rounded-full border border-border text-xs font-semibold"
+                                >
+                                  {s}
+                                </span>
+                              ))}
+                            </div>
+                          )}
+                          {cand.experiences?.length > 0 && (
+                            <div className="space-y-1">
+                              {cand.experiences.map((e, i) => (
+                                <p key={i} className="text-xs">
+                                  <strong>{e.role}</strong>
+                                  {e.company ? ` — ${e.company}` : ""}
+                                  {e.period ? ` (${e.period})` : ""}
+                                </p>
+                              ))}
+                            </div>
+                          )}
+                          {cand.education?.length > 0 && (
+                            <div className="space-y-1">
+                              {cand.education.map((e, i) => (
+                                <p key={i} className="text-xs">
+                                  {e.course}
+                                  {e.school ? ` — ${e.school}` : ""}
+                                  {e.year ? ` (${e.year})` : ""}
+                                </p>
+                              ))}
+                            </div>
+                          )}
+                        </div>
+                      )}
+
+                      <label className="block">
+                        <span className="block text-xs font-bold text-muted-foreground mb-1">
+                          Anotações (só você vê)
+                        </span>
+                        <textarea
+                          value={notes[a.id] ?? a.owner_notes ?? ""}
+                          onChange={(e) =>
+                            setNotes((p) => ({ ...p, [a.id]: e.target.value }))
+                          }
+                          onBlur={() => saveNotes(a.id)}
+                          rows={2}
+                          maxLength={600}
+                          className="input"
+                        />
+                      </label>
+                    </div>
+                  )}
+
+                  <div className="mt-3 flex flex-wrap gap-2">
+                    {ACTIONS.map((act) => (
+                      <button
+                        key={act.status}
+                        type="button"
+                        disabled={busy || a.status === act.status}
+                        onClick={() => changeStatus(a.id, act.status)}
+                        className={`px-3.5 py-1.5 rounded-full border text-xs font-semibold ${
+                          a.status === act.status
+                            ? "bg-cat-vaga text-primary-foreground border-cat-vaga"
+                            : "bg-surface border-border"
+                        }`}
+                      >
+                        {act.label}
+                      </button>
+                    ))}
+                    {a.cv_path && (
+                      <button
+                        type="button"
+                        onClick={() => openResume(a.id)}
+                        className="px-3.5 py-1.5 rounded-full border border-border text-xs font-semibold inline-flex items-center gap-1.5"
+                      >
+                        <FileText className="size-3.5" /> Currículo
+                      </button>
+                    )}
+                    <button
+                      type="button"
+                      disabled={busy}
+                      onClick={() => openChat(a.applicant_id, a.id)}
+                      className="px-3.5 py-1.5 rounded-full bg-brand text-primary-foreground text-xs font-bold inline-flex items-center gap-1.5"
+                    >
+                      <MessageCircle className="size-3.5" /> Conversar
+                    </button>
+                  </div>
+                </li>
+              );
+            })}
           </ul>
         )}
       </main>

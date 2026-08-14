@@ -1,10 +1,11 @@
 import { Link } from "@tanstack/react-router";
-import { Briefcase, MapPin, Users } from "lucide-react";
+import { Briefcase, Clock, MapPin, Users } from "lucide-react";
 import {
   formatSalary,
   jobAreaEmoji,
   jobAreaLabel,
   JOB_CONTRACT_LABELS,
+  JOB_EXPERIENCE_LABELS,
   JOB_WORK_MODE_LABELS,
   timeAgo,
   type Job,
@@ -27,17 +28,49 @@ export function JobCard({ job }: { job: Job }) {
         <span className="px-2 py-0.5 rounded-full border border-border text-muted-foreground font-semibold">
           {JOB_WORK_MODE_LABELS[job.work_mode]}
         </span>
+        {job.is_pcd && (
+          <span className="px-2 py-0.5 rounded-full border border-cat-vaga/25 text-cat-vaga font-semibold">
+            PcD
+          </span>
+        )}
       </div>
 
-      <h3 className="font-bold leading-tight line-clamp-2">{job.title}</h3>
-      {job.company_name && (
-        <p className="text-sm font-semibold text-muted-foreground inline-flex items-center gap-1.5">
-          <Briefcase className="size-3.5" /> {job.company_name}
-        </p>
-      )}
+      <div className="flex items-start gap-2">
+        {job.company_logo_url && (
+          <img
+            src={job.company_logo_url}
+            alt={`Logo de ${job.company_name ?? "empresa"}`}
+            className="size-9 rounded-lg object-cover border border-border shrink-0"
+            loading="lazy"
+          />
+        )}
+        <div className="min-w-0">
+          <h3 className="font-bold leading-tight line-clamp-2">{job.title}</h3>
+          {job.company_name && (
+            <p className="text-sm font-semibold text-muted-foreground inline-flex items-center gap-1.5">
+              <Briefcase className="size-3.5" /> {job.company_name}
+            </p>
+          )}
+        </div>
+      </div>
       <p className="text-sm text-muted-foreground line-clamp-2">{job.description}</p>
 
-      <p className="text-lg font-bold text-cat-vaga">{formatSalary(job)}</p>
+      <p className="text-lg font-bold text-cat-vaga">
+        {formatSalary(job)}
+        {job.has_commission && <span className="text-xs font-semibold"> + comissão</span>}
+      </p>
+
+      <div className="flex flex-wrap gap-1.5 text-xs text-muted-foreground">
+        <span className="inline-flex items-center gap-1">
+          {JOB_EXPERIENCE_LABELS[job.experience_level]}
+        </span>
+        {job.schedule && (
+          <span className="inline-flex items-center gap-1">
+            · <Clock className="size-3.5" /> {job.schedule}
+          </span>
+        )}
+      </div>
+
 
       <div className="mt-auto pt-2 flex items-center gap-3 text-xs text-muted-foreground flex-wrap">
         {job.community?.name && (

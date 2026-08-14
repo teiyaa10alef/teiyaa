@@ -43,6 +43,7 @@ import { Route as ContaMercadoRouteImport } from './routes/conta.mercado'
 import { Route as ContaImoveisRouteImport } from './routes/conta.imoveis'
 import { Route as ContaFreelancesRouteImport } from './routes/conta.freelances'
 import { Route as ContaCandidaturasRouteImport } from './routes/conta.candidaturas'
+import { Route as ContaCandidatoRouteImport } from './routes/conta.candidato'
 import { Route as CidadeCitySlugRouteImport } from './routes/cidade.$citySlug'
 import { Route as CCommunitySlugRouteImport } from './routes/c.$communitySlug'
 import { Route as ContaVagasIndexRouteImport } from './routes/conta.vagas.index'
@@ -226,6 +227,11 @@ const ContaCandidaturasRoute = ContaCandidaturasRouteImport.update({
   path: '/candidaturas',
   getParentRoute: () => ContaRoute,
 } as any)
+const ContaCandidatoRoute = ContaCandidatoRouteImport.update({
+  id: '/candidato',
+  path: '/candidato',
+  getParentRoute: () => ContaRoute,
+} as any)
 const CidadeCitySlugRoute = CidadeCitySlugRouteImport.update({
   id: '/cidade/$citySlug',
   path: '/cidade/$citySlug',
@@ -301,6 +307,7 @@ export interface FileRoutesByFullPath {
   '/vagas': typeof VagasRouteWithChildren
   '/c/$communitySlug': typeof CCommunitySlugRoute
   '/cidade/$citySlug': typeof CidadeCitySlugRoute
+  '/conta/candidato': typeof ContaCandidatoRoute
   '/conta/candidaturas': typeof ContaCandidaturasRoute
   '/conta/freelances': typeof ContaFreelancesRouteWithChildren
   '/conta/imoveis': typeof ContaImoveisRoute
@@ -347,6 +354,7 @@ export interface FileRoutesByTo {
   '/sitemap.xml': typeof SitemapDotxmlRoute
   '/c/$communitySlug': typeof CCommunitySlugRoute
   '/cidade/$citySlug': typeof CidadeCitySlugRoute
+  '/conta/candidato': typeof ContaCandidatoRoute
   '/conta/candidaturas': typeof ContaCandidaturasRoute
   '/conta/imoveis': typeof ContaImoveisRoute
   '/conta/mercado': typeof ContaMercadoRoute
@@ -393,6 +401,7 @@ export interface FileRoutesById {
   '/vagas': typeof VagasRouteWithChildren
   '/c/$communitySlug': typeof CCommunitySlugRoute
   '/cidade/$citySlug': typeof CidadeCitySlugRoute
+  '/conta/candidato': typeof ContaCandidatoRoute
   '/conta/candidaturas': typeof ContaCandidaturasRoute
   '/conta/freelances': typeof ContaFreelancesRouteWithChildren
   '/conta/imoveis': typeof ContaImoveisRoute
@@ -443,6 +452,7 @@ export interface FileRouteTypes {
     | '/vagas'
     | '/c/$communitySlug'
     | '/cidade/$citySlug'
+    | '/conta/candidato'
     | '/conta/candidaturas'
     | '/conta/freelances'
     | '/conta/imoveis'
@@ -489,6 +499,7 @@ export interface FileRouteTypes {
     | '/sitemap.xml'
     | '/c/$communitySlug'
     | '/cidade/$citySlug'
+    | '/conta/candidato'
     | '/conta/candidaturas'
     | '/conta/imoveis'
     | '/conta/mercado'
@@ -534,6 +545,7 @@ export interface FileRouteTypes {
     | '/vagas'
     | '/c/$communitySlug'
     | '/cidade/$citySlug'
+    | '/conta/candidato'
     | '/conta/candidaturas'
     | '/conta/freelances'
     | '/conta/imoveis'
@@ -841,6 +853,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof ContaCandidaturasRouteImport
       parentRoute: typeof ContaRoute
     }
+    '/conta/candidato': {
+      id: '/conta/candidato'
+      path: '/candidato'
+      fullPath: '/conta/candidato'
+      preLoaderRoute: typeof ContaCandidatoRouteImport
+      parentRoute: typeof ContaRoute
+    }
     '/cidade/$citySlug': {
       id: '/cidade/$citySlug'
       path: '/cidade/$citySlug'
@@ -973,6 +992,7 @@ const ContaVagasRouteWithChildren = ContaVagasRoute._addFileChildren(
 )
 
 interface ContaRouteChildren {
+  ContaCandidatoRoute: typeof ContaCandidatoRoute
   ContaCandidaturasRoute: typeof ContaCandidaturasRoute
   ContaFreelancesRoute: typeof ContaFreelancesRouteWithChildren
   ContaImoveisRoute: typeof ContaImoveisRoute
@@ -986,6 +1006,7 @@ interface ContaRouteChildren {
 }
 
 const ContaRouteChildren: ContaRouteChildren = {
+  ContaCandidatoRoute: ContaCandidatoRoute,
   ContaCandidaturasRoute: ContaCandidaturasRoute,
   ContaFreelancesRoute: ContaFreelancesRouteWithChildren,
   ContaImoveisRoute: ContaImoveisRoute,
