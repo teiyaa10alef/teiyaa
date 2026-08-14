@@ -80,10 +80,17 @@ const ITEMS = [
     tone: "freelance",
   },
   {
+    to: "/conta/vagas",
+    icon: Briefcase,
+    label: "Minhas vagas",
+    hint: "Vagas de emprego publicadas",
+    tone: "brand",
+  },
+  {
     to: "/conta/candidaturas",
     icon: ClipboardList,
     label: "Minhas candidaturas",
-    hint: "Status dos bicos que você pediu",
+    hint: "Status dos bicos e vagas",
     tone: "freelance",
   },
   {
