@@ -24,6 +24,7 @@ import { Route as ImoveisIndexRouteImport } from './routes/imoveis.index'
 import { Route as FreelancesIndexRouteImport } from './routes/freelances.index'
 import { Route as ContaIndexRouteImport } from './routes/conta.index'
 import { Route as VagasNovoRouteImport } from './routes/vagas.novo'
+import { Route as VagasJobIdRouteImport } from './routes/vagas.$jobId'
 import { Route as NegociosSlugRouteImport } from './routes/negocios.$slug'
 import { Route as MercadoNovoRouteImport } from './routes/mercado.novo'
 import { Route as MercadoItemIdRouteImport } from './routes/mercado.$itemId'
@@ -124,6 +125,11 @@ const ContaIndexRoute = ContaIndexRouteImport.update({
 const VagasNovoRoute = VagasNovoRouteImport.update({
   id: '/novo',
   path: '/novo',
+  getParentRoute: () => VagasRoute,
+} as any)
+const VagasJobIdRoute = VagasJobIdRouteImport.update({
+  id: '/$jobId',
+  path: '/$jobId',
   getParentRoute: () => VagasRoute,
 } as any)
 const NegociosSlugRoute = NegociosSlugRouteImport.update({
@@ -287,6 +293,7 @@ export interface FileRoutesByFullPath {
   '/mercado/$itemId': typeof MercadoItemIdRoute
   '/mercado/novo': typeof MercadoNovoRoute
   '/negocios/$slug': typeof NegociosSlugRoute
+  '/vagas/$jobId': typeof VagasJobIdRoute
   '/vagas/novo': typeof VagasNovoRoute
   '/conta/': typeof ContaIndexRoute
   '/freelances/': typeof FreelancesIndexRoute
@@ -326,6 +333,7 @@ export interface FileRoutesByTo {
   '/mercado/$itemId': typeof MercadoItemIdRoute
   '/mercado/novo': typeof MercadoNovoRoute
   '/negocios/$slug': typeof NegociosSlugRoute
+  '/vagas/$jobId': typeof VagasJobIdRoute
   '/vagas/novo': typeof VagasNovoRoute
   '/conta': typeof ContaIndexRoute
   '/freelances': typeof FreelancesIndexRoute
@@ -370,6 +378,7 @@ export interface FileRoutesById {
   '/mercado/$itemId': typeof MercadoItemIdRoute
   '/mercado/novo': typeof MercadoNovoRoute
   '/negocios/$slug': typeof NegociosSlugRoute
+  '/vagas/$jobId': typeof VagasJobIdRoute
   '/vagas/novo': typeof VagasNovoRoute
   '/conta/': typeof ContaIndexRoute
   '/freelances/': typeof FreelancesIndexRoute
@@ -415,6 +424,7 @@ export interface FileRouteTypes {
     | '/mercado/$itemId'
     | '/mercado/novo'
     | '/negocios/$slug'
+    | '/vagas/$jobId'
     | '/vagas/novo'
     | '/conta/'
     | '/freelances/'
@@ -454,6 +464,7 @@ export interface FileRouteTypes {
     | '/mercado/$itemId'
     | '/mercado/novo'
     | '/negocios/$slug'
+    | '/vagas/$jobId'
     | '/vagas/novo'
     | '/conta'
     | '/freelances'
@@ -497,6 +508,7 @@ export interface FileRouteTypes {
     | '/mercado/$itemId'
     | '/mercado/novo'
     | '/negocios/$slug'
+    | '/vagas/$jobId'
     | '/vagas/novo'
     | '/conta/'
     | '/freelances/'
@@ -646,6 +658,13 @@ declare module '@tanstack/react-router' {
       path: '/novo'
       fullPath: '/vagas/novo'
       preLoaderRoute: typeof VagasNovoRouteImport
+      parentRoute: typeof VagasRoute
+    }
+    '/vagas/$jobId': {
+      id: '/vagas/$jobId'
+      path: '/$jobId'
+      fullPath: '/vagas/$jobId'
+      preLoaderRoute: typeof VagasJobIdRouteImport
       parentRoute: typeof VagasRoute
     }
     '/negocios/$slug': {
@@ -890,11 +909,13 @@ const ContaRouteChildren: ContaRouteChildren = {
 const ContaRouteWithChildren = ContaRoute._addFileChildren(ContaRouteChildren)
 
 interface VagasRouteChildren {
+  VagasJobIdRoute: typeof VagasJobIdRoute
   VagasNovoRoute: typeof VagasNovoRoute
   VagasIndexRoute: typeof VagasIndexRoute
 }
 
 const VagasRouteChildren: VagasRouteChildren = {
+  VagasJobIdRoute: VagasJobIdRoute,
   VagasNovoRoute: VagasNovoRoute,
   VagasIndexRoute: VagasIndexRoute,
 }
