@@ -6,6 +6,7 @@ import { SiteFooter } from "@/components/SiteFooter";
 import { useAuth } from "@/hooks/use-auth";
 import { conversationsQuery, formatBRL } from "@/lib/market-api";
 import { formatBudget, gigConversationsQuery } from "@/lib/gigs-api";
+import { formatSalary, jobConversationsQuery } from "@/lib/jobs-api";
 
 export const Route = createFileRoute("/mensagens/")({
   head: () => ({
