@@ -1,58 +1,31 @@
-import { useMemo, useState } from "react";
-import { useSuspenseQuery } from "@tanstack/react-query";
+import { useState } from "react";
 import { Link } from "@tanstack/react-router";
 import { Search, HardHat, SlidersHorizontal } from "lucide-react";
-import { professionalsByScopeQuery, PROFESSIONS } from "@/lib/professional-api";
+import {
+  professionalsPagedQuery,
+  PROFESSIONS,
+  type ProfessionalCardData,
+  type ProfessionalSort,
+} from "@/lib/professional-api";
 import type { Scope } from "@/lib/listings-api";
+import { usePagedFeed, useDebounced } from "@/hooks/use-paged-feed";
 import { ProfessionalCard } from "./ProfessionalCard";
+import { FeedCount, FeedPagination } from "./FeedPagination";
+import { FeedSkeleton } from "./PageSkeletons";
 
-type SortKey = "relevancia" | "avaliacao" | "experiencia" | "recentes";
+type SortKey = ProfessionalSort;
 
 export function ProfessionalFeed({ scope }: { scope: Scope }) {
-  const { data: pros } = useSuspenseQuery(professionalsByScopeQuery(scope));
-
   const [term, setTerm] = useState("");
   const [cat, setCat] = useState<string | null>(null);
   const [withPortfolio, setWithPortfolio] = useState(false);
   const [sort, setSort] = useState<SortKey>("relevancia");
+  const debouncedTerm = useDebounced(term);
 
-  const availableCats = useMemo(
-    () => PROFESSIONS.filter((p) => pros.some((x) => x.category === p.value)),
-    [pros],
+  const feed = usePagedFeed<ProfessionalCardData>(
+    professionalsPagedQuery(scope, { term: debouncedTerm, category: cat, withPortfolio, sort }),
   );
-
-  const filtered = useMemo(() => {
-    const q = term.trim().toLowerCase();
-    let list = pros.filter((p) => {
-      if (cat && p.category !== cat) return false;
-      if (withPortfolio && p.portfolio_count === 0) return false;
-      if (!q) return true;
-      return (
-        p.profession.toLowerCase().includes(q) ||
-        (p.headline ?? "").toLowerCase().includes(q) ||
-        (p.about ?? "").toLowerCase().includes(q) ||
-        (p.display_name ?? "").toLowerCase().includes(q) ||
-        (p.specialties ?? []).some((s) => s.toLowerCase().includes(q))
-      );
-    });
-    if (sort === "avaliacao") {
-      list = [...list].sort(
-        (a, b) => (b.rating_avg ?? 0) - (a.rating_avg ?? 0) || b.rating_count - a.rating_count,
-      );
-    } else if (sort === "experiencia") {
-      list = [...list].sort((a, b) => (b.years_experience ?? 0) - (a.years_experience ?? 0));
-    } else if (sort === "recentes") {
-      list = [...list].sort((a, b) => (a.created_at < b.created_at ? 1 : -1));
-    } else {
-      list = [...list].sort(
-        (a, b) =>
-          (b.rating_avg ?? 0) - (a.rating_avg ?? 0) ||
-          b.portfolio_count - a.portfolio_count ||
-          b.rating_count - a.rating_count,
-      );
-    }
-    return list;
-  }, [pros, term, cat, withPortfolio, sort]);
+  const availableCats = PROFESSIONS;
 
   return (
     <div>
@@ -111,12 +84,20 @@ export function ProfessionalFeed({ scope }: { scope: Scope }) {
         </div>
       )}
 
-      <p className="mt-4 text-xs text-muted-foreground">
-        {filtered.length}{" "}
-        {filtered.length === 1 ? "profissional encontrado" : "profissionais encontrados"}
-      </p>
+      <div className="mt-4">
+        <FeedCount
+          loaded={feed.items.length}
+          total={feed.total}
+          noun="profissional encontrado"
+          nounPlural="profissionais encontrados"
+        />
+      </div>
 
-      {filtered.length === 0 ? (
+      {feed.isLoading ? (
+        <div className="mt-4">
+          <FeedSkeleton />
+        </div>
+      ) : feed.items.length === 0 ? (
         <div className="mt-4 text-center py-16 bg-card border border-dashed border-border rounded-3xl">
           <HardHat className="size-10 mx-auto text-muted-foreground" />
           <h3 className="font-bold text-lg mt-3 mb-2">Nenhum profissional por aqui ainda</h3>
@@ -131,11 +112,20 @@ export function ProfessionalFeed({ scope }: { scope: Scope }) {
           </Link>
         </div>
       ) : (
-        <div className="mt-4 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5">
-          {filtered.map((p) => (
-            <ProfessionalCard key={p.id} pro={p} />
-          ))}
-        </div>
+        <>
+          <div className="mt-4 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5">
+            {feed.items.map((p) => (
+              <ProfessionalCard key={p.id} pro={p} />
+            ))}
+          </div>
+          <FeedPagination
+            loaded={feed.items.length}
+            total={feed.total}
+            hasNextPage={feed.hasNextPage}
+            isFetchingNextPage={feed.isFetchingNextPage}
+            onLoadMore={feed.loadMore}
+          />
+        </>
       )}
     </div>
   );
