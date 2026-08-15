@@ -1,4 +1,5 @@
-import { queryOptions } from "@tanstack/react-query";
+import { infiniteQueryOptions, queryOptions } from "@tanstack/react-query";
+import { ilikeOr, makePage, rangeFor, sanitizeTerm, type Page } from "./paging";
 import { supabase } from "@/integrations/supabase/client";
 import type { Scope } from "./listings-api";
 
@@ -257,3 +258,56 @@ export function whatsappLink(number: string | null, message: string) {
   const full = digits.startsWith("55") ? digits : `55${digits}`;
   return `https://wa.me/${full}?text=${encodeURIComponent(message)}`;
 }
+
+// ===== Paginated feed =====
+export type PropertySort = "recentes" | "menor-preco" | "maior-preco";
+export type PropertyFilters = {
+  term?: string;
+  purpose?: PropertyPurpose | null;
+  kind?: PropertyKind | null;
+  minBedrooms?: number;
+  sort?: PropertySort;
+};
+
+export const propertiesPagedQuery = (scope: Scope, filters: PropertyFilters) =>
+  infiniteQueryOptions({
+    queryKey: [
+      "properties-paged",
+      scope.kind,
+      scope.slug,
+      sanitizeTerm(filters.term),
+      filters.purpose ?? "all",
+      filters.kind ?? "all",
+      filters.minBedrooms ?? 0,
+      filters.sort ?? "recentes",
+    ],
+    initialPageParam: 0,
+    getNextPageParam: (last: Page<Property>) => last.nextPage,
+    gcTime: 10 * 60_000,
+    queryFn: async ({ pageParam }): Promise<Page<Property>> => {
+      const ids = await communityIdsForScope(scope);
+      if (ids.length === 0) return { items: [], total: 0, nextPage: null };
+      const [from, to] = rangeFor(pageParam as number);
+      let q = (supabase as any)
+        .from("properties")
+        .select(SELECT, { count: "exact" })
+        .eq("is_published", true)
+        .in("status", ["active", "reserved"])
+        .in("community_id", ids);
+      const term = sanitizeTerm(filters.term);
+      if (term) q = q.or(ilikeOr(term, ["title", "description", "address_hint"]));
+      if (filters.purpose) q = q.eq("purpose", filters.purpose);
+      if (filters.kind) q = q.eq("kind", filters.kind);
+      if (filters.minBedrooms) q = q.gte("bedrooms", filters.minBedrooms);
+      if (filters.sort === "menor-preco") {
+        q = q.order("price_cents", { ascending: true, nullsFirst: false });
+      } else if (filters.sort === "maior-preco") {
+        q = q.order("price_cents", { ascending: false, nullsFirst: false });
+      } else {
+        q = q.order("created_at", { ascending: false });
+      }
+      const { data, error, count } = await q.order("id", { ascending: true }).range(from, to);
+      if (error) throw error;
+      return makePage((data ?? []) as unknown as Property[], count, pageParam as number);
+    },
+  });

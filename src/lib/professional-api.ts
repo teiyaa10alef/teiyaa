@@ -1,4 +1,5 @@
-import { queryOptions } from "@tanstack/react-query";
+import { infiniteQueryOptions, queryOptions } from "@tanstack/react-query";
+import { ilikeOr, makePage, rangeFor, sanitizeTerm, type Page } from "./paging";
 import { supabase } from "@/integrations/supabase/client";
 import type { Scope } from "./listings-api";
 import type { ProfessionalProfile, ProfessionalService } from "./account-api";
@@ -349,3 +350,78 @@ export function formatPrice(cents: number | null | undefined): string | null {
   if (cents == null) return null;
   return `R$ ${(cents / 100).toFixed(2).replace(".", ",")}`;
 }
+
+// ===== Paginated feed =====
+export type ProfessionalSort = "relevancia" | "avaliacao" | "experiencia" | "recentes";
+export type ProfessionalFilters = {
+  term?: string;
+  category?: string | null;
+  withPortfolio?: boolean;
+  sort?: ProfessionalSort;
+};
+
+export const professionalsPagedQuery = (scope: Scope, filters: ProfessionalFilters) =>
+  infiniteQueryOptions({
+    queryKey: [
+      "professionals-paged",
+      scope.kind,
+      scope.slug,
+      sanitizeTerm(filters.term),
+      filters.category ?? "all",
+      filters.withPortfolio ? "portfolio" : "any",
+      filters.sort ?? "relevancia",
+    ],
+    initialPageParam: 0,
+    getNextPageParam: (last: Page<ProfessionalCardData>) => last.nextPage,
+    gcTime: 10 * 60_000,
+    queryFn: async ({ pageParam }): Promise<Page<ProfessionalCardData>> => {
+      const communityIds = await communityIdsForScope(scope);
+      if (communityIds.length === 0) return { items: [], total: 0, nextPage: null };
+      const [from, to] = rangeFor(pageParam as number);
+      let q = db
+        .from("professional_cards")
+        .select("*", { count: "exact" })
+        .in("community_id", communityIds)
+        .eq("is_published", true);
+      const term = sanitizeTerm(filters.term);
+      if (term)
+        q = q.or(ilikeOr(term, ["profession", "headline", "about", "display_name", "category"]));
+      if (filters.category) q = q.eq("category", filters.category);
+      if (filters.withPortfolio) q = q.gt("portfolio_count", 0);
+      if (filters.sort === "avaliacao") {
+        q = q
+          .order("rating_avg", { ascending: false, nullsFirst: false })
+          .order("rating_count", { ascending: false });
+      } else if (filters.sort === "experiencia") {
+        q = q.order("years_experience", { ascending: false, nullsFirst: false });
+      } else if (filters.sort === "recentes") {
+        q = q.order("created_at", { ascending: false });
+      } else {
+        q = q
+          .order("rating_avg", { ascending: false, nullsFirst: false })
+          .order("portfolio_count", { ascending: false })
+          .order("rating_count", { ascending: false });
+      }
+      const { data, error, count } = await q.order("id", { ascending: true }).range(from, to);
+      if (error) throw error;
+      const rows = (data ?? []) as ProfessionalCardData[];
+      if (rows.length === 0) return makePage<ProfessionalCardData>([], count, pageParam as number);
+      const { data: portfolio } = await db
+        .from("portfolio_items")
+        .select("*")
+        .in(
+          "professional_id",
+          rows.map((p) => p.id),
+        )
+        .order("sort_order");
+      const items = rows.map((p) => ({
+        ...p,
+        specialties: p.specialties ?? [],
+        rating_avg: p.rating_avg != null ? Number(p.rating_avg) : null,
+        portfolio_preview: ((portfolio ?? []) as PortfolioEntry[])
+          .filter((i) => i.professional_id === p.id)
+          .slice(0, 3),
+      }));
+      return makePage(items, count, pageParam as number);
+    },
+  });
