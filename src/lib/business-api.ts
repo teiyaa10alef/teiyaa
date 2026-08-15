@@ -1,4 +1,5 @@
-import { queryOptions } from "@tanstack/react-query";
+import { infiniteQueryOptions, queryOptions } from "@tanstack/react-query";
+import { ilikeOr, makePage, rangeFor, sanitizeTerm, type Page } from "./paging";
 import { supabase } from "@/integrations/supabase/client";
 import type { Scope } from "./listings-api";
 import type { Business, BusinessHour } from "./account-api";
@@ -268,3 +269,69 @@ export async function trackBusinessView(businessId: string) {
 export async function trackWhatsappClick(businessId: string) {
   await db.rpc("increment_business_whatsapp_click", { _business_id: businessId });
 }
+
+// ===== Paginated feed (server-side filters/sort) =====
+export type BusinessSort = "relevancia" | "avaliacao" | "recentes";
+export type BusinessFilters = {
+  term?: string;
+  category?: string | null;
+  openOnly?: boolean;
+  sort?: BusinessSort;
+};
+
+export const businessesPagedQuery = (scope: Scope, filters: BusinessFilters) =>
+  infiniteQueryOptions({
+    queryKey: [
+      "businesses-paged",
+      scope.kind,
+      scope.slug,
+      sanitizeTerm(filters.term),
+      filters.category ?? "all",
+      filters.openOnly ? "open" : "any",
+      filters.sort ?? "relevancia",
+    ],
+    initialPageParam: 0,
+    getNextPageParam: (last: Page<BusinessCardData>) => last.nextPage,
+    gcTime: 10 * 60_000,
+    queryFn: async ({ pageParam }): Promise<Page<BusinessCardData>> => {
+      const communityIds = await communityIdsForScope(scope);
+      if (communityIds.length === 0) return { items: [], total: 0, nextPage: null };
+      const [from, to] = rangeFor(pageParam as number);
+      let q = db
+        .from("business_cards")
+        .select("*", { count: "exact" })
+        .in("community_id", communityIds)
+        .eq("is_published", true);
+      const term = sanitizeTerm(filters.term);
+      if (term) q = q.or(ilikeOr(term, ["name", "description", "category"]));
+      if (filters.category) q = q.eq("category", filters.category);
+      if (filters.openOnly) q = q.eq("is_open_now", true);
+      if (filters.sort === "avaliacao") {
+        q = q.order("rating_avg", { ascending: false, nullsFirst: false });
+      } else if (filters.sort === "recentes") {
+        q = q.order("created_at", { ascending: false });
+      } else {
+        q = q
+          .order("is_open_now", { ascending: false })
+          .order("promo_count", { ascending: false })
+          .order("rating_avg", { ascending: false, nullsFirst: false });
+      }
+      const { data, error, count } = await q.order("id", { ascending: true }).range(from, to);
+      if (error) throw error;
+      const rows = (data ?? []) as BusinessCardData[];
+      if (rows.length === 0) return makePage<BusinessCardData>([], count, pageParam as number);
+      const { data: hours } = await db
+        .from("business_hours")
+        .select("*")
+        .in(
+          "business_id",
+          rows.map((b) => b.id),
+        );
+      const items = rows.map((b) => ({
+        ...b,
+        rating_avg: b.rating_avg != null ? Number(b.rating_avg) : null,
+        hours: ((hours ?? []) as BusinessHour[]).filter((h) => h.business_id === b.id),
+      }));
+      return makePage(items, count, pageParam as number);
+    },
+  });
