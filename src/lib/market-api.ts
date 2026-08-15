@@ -1,4 +1,5 @@
-import { queryOptions } from "@tanstack/react-query";
+import { infiniteQueryOptions, queryOptions } from "@tanstack/react-query";
+import { ilikeOr, makePage, rangeFor, sanitizeTerm, type Page } from "./paging";
 import { supabase } from "@/integrations/supabase/client";
 
 export type MarketCondition = "novo" | "seminovo" | "usado";
@@ -322,3 +323,48 @@ export async function respondOffer(offerId: string, status: Exclude<OfferStatus,
   const { error } = await supabase.from("market_offers").update({ status }).eq("id", offerId);
   if (error) throw error;
 }
+
+// ===== Paginated feed =====
+export const marketItemsPagedQuery = (opts: {
+  communitySlug?: string;
+  category?: string;
+  q?: string;
+}) =>
+  infiniteQueryOptions({
+    queryKey: [
+      "market-items-paged",
+      opts.communitySlug ?? "all",
+      opts.category ?? "all",
+      sanitizeTerm(opts.q),
+    ],
+    initialPageParam: 0,
+    getNextPageParam: (last: Page<MarketItem>) => last.nextPage,
+    gcTime: 10 * 60_000,
+    queryFn: async ({ pageParam }): Promise<Page<MarketItem>> => {
+      let communityId: string | null = null;
+      if (opts.communitySlug) {
+        const { data } = await supabase
+          .from("communities")
+          .select("id")
+          .eq("slug", opts.communitySlug)
+          .maybeSingle();
+        communityId = data?.id ?? null;
+        if (!communityId) return { items: [], total: 0, nextPage: null };
+      }
+      const [from, to] = rangeFor(pageParam as number);
+      let query = (supabase as any)
+        .from("market_items")
+        .select("*, community:communities(name, slug)", { count: "exact" })
+        .in("status", ["active", "reserved"])
+        .order("created_at", { ascending: false })
+        .order("id", { ascending: true })
+        .range(from, to);
+      if (communityId) query = query.eq("community_id", communityId);
+      if (opts.category) query = query.eq("category", opts.category);
+      const term = sanitizeTerm(opts.q);
+      if (term) query = query.or(ilikeOr(term, ["title", "description"]));
+      const { data, error, count } = await query;
+      if (error) throw error;
+      return makePage((data ?? []) as unknown as MarketItem[], count, pageParam as number);
+    },
+  });

@@ -1,4 +1,5 @@
-import { queryOptions } from "@tanstack/react-query";
+import { infiniteQueryOptions, queryOptions } from "@tanstack/react-query";
+import { ilikeOr, makePage, rangeFor, sanitizeTerm, type Page } from "./paging";
 import { supabase } from "@/integrations/supabase/client";
 import type { Scope } from "./listings-api";
 import { fetchProfiles, type PublicProfile } from "./market-api";
@@ -591,3 +592,55 @@ export async function markJobMessagesRead(conversationId: string, userId: string
     .neq("sender_id", userId)
     .is("read_at", null);
 }
+
+// ===== Paginated feed =====
+export type JobSort = "recentes" | "salario";
+export type JobFilters = {
+  term?: string;
+  area?: string | null;
+  contract?: JobContractType | "";
+  experience?: JobExperienceLevel | "";
+  sort?: JobSort;
+};
+
+export const jobsPagedQuery = (scope: Scope, filters: JobFilters) =>
+  infiniteQueryOptions({
+    queryKey: [
+      "jobs-paged",
+      scope.kind,
+      scope.slug,
+      sanitizeTerm(filters.term),
+      filters.area ?? "all",
+      filters.contract || "all",
+      filters.experience || "all",
+      filters.sort ?? "recentes",
+    ],
+    initialPageParam: 0,
+    getNextPageParam: (last: Page<Job>) => last.nextPage,
+    gcTime: 10 * 60_000,
+    queryFn: async ({ pageParam }): Promise<Page<Job>> => {
+      const ids = await communityIdsForScope(scope);
+      if (ids.length === 0) return { items: [], total: 0, nextPage: null };
+      const [from, to] = rangeFor(pageParam as number);
+      const today = new Date().toISOString().slice(0, 10);
+      let q = db
+        .from("job_cards")
+        .select("*, community:communities(name, slug)", { count: "exact" })
+        .in("community_id", ids)
+        .eq("status", "open")
+        .or(`expires_on.is.null,expires_on.gte.${today}`);
+      const term = sanitizeTerm(filters.term);
+      if (term) q = q.or(ilikeOr(term, ["title", "description", "company_name"]));
+      if (filters.area) q = q.eq("area", filters.area);
+      if (filters.contract) q = q.eq("contract_type", filters.contract);
+      if (filters.experience) q = q.eq("experience_level", filters.experience);
+      if (filters.sort === "salario") {
+        q = q.order("salary_floor_cents", { ascending: false, nullsFirst: false });
+      } else {
+        q = q.order("created_at", { ascending: false });
+      }
+      const { data, error, count } = await q.order("id", { ascending: true }).range(from, to);
+      if (error) throw error;
+      return makePage((data ?? []) as Job[], count, pageParam as number);
+    },
+  });

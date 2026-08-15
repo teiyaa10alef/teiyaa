@@ -1,4 +1,5 @@
-import { queryOptions } from "@tanstack/react-query";
+import { infiniteQueryOptions, queryOptions } from "@tanstack/react-query";
+import { ilikeOr, makePage, rangeFor, sanitizeTerm, type Page } from "./paging";
 import { supabase } from "@/integrations/supabase/client";
 import type { CategoryKey } from "./community";
 
@@ -156,5 +157,31 @@ export const listingsQuery = (scope: Scope, category?: CategoryKey) =>
       const { data, error } = await q;
       if (error) throw error;
       return (data ?? []) as unknown as Listing[];
+    },
+  });
+
+// ===== Paginated feed =====
+export const listingsPagedQuery = (scope: Scope, category?: CategoryKey) =>
+  infiniteQueryOptions({
+    queryKey: ["listings-paged", scope.kind, scope.slug, category ?? "all"],
+    initialPageParam: 0,
+    getNextPageParam: (last: Page<Listing>) => last.nextPage,
+    gcTime: 10 * 60_000,
+    queryFn: async ({ pageParam }): Promise<Page<Listing>> => {
+      const ids = await communityIdsForScope(scope);
+      if (ids.length === 0) return { items: [], total: 0, nextPage: null };
+      const [from, to] = rangeFor(pageParam as number);
+      let q = (supabase as any)
+        .from("listings")
+        .select("*, community:communities(name, slug)", { count: "exact" })
+        .eq("status", "active")
+        .in("community_id", ids)
+        .order("created_at", { ascending: false })
+        .order("id", { ascending: true })
+        .range(from, to);
+      if (category) q = q.eq("category", category);
+      const { data, error, count } = await q;
+      if (error) throw error;
+      return makePage((data ?? []) as unknown as Listing[], count, pageParam as number);
     },
   });
