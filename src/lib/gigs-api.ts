@@ -1,4 +1,5 @@
-import { queryOptions } from "@tanstack/react-query";
+import { infiniteQueryOptions, queryOptions } from "@tanstack/react-query";
+import { ilikeOr, makePage, rangeFor, sanitizeTerm, type Page } from "./paging";
 import { supabase } from "@/integrations/supabase/client";
 import type { Scope } from "./listings-api";
 import { fetchProfiles, type PublicProfile } from "./market-api";
@@ -550,3 +551,61 @@ export async function submitGigReview(params: {
   );
   if (error) throw error;
 }
+
+// ===== Paginated feed =====
+export type GigSort = "recentes" | "pagam-mais" | "data";
+export type GigFilters = {
+  term?: string;
+  category?: string | null;
+  urgentOnly?: boolean;
+  weekOnly?: boolean;
+  sort?: GigSort;
+};
+
+export const gigsPagedQuery = (scope: Scope, filters: GigFilters) =>
+  infiniteQueryOptions({
+    queryKey: [
+      "gigs-paged",
+      scope.kind,
+      scope.slug,
+      sanitizeTerm(filters.term),
+      filters.category ?? "all",
+      filters.urgentOnly ? "urgent" : "any",
+      filters.weekOnly ? "week" : "any",
+      filters.sort ?? "recentes",
+    ],
+    initialPageParam: 0,
+    getNextPageParam: (last: Page<Gig>) => last.nextPage,
+    gcTime: 10 * 60_000,
+    queryFn: async ({ pageParam }): Promise<Page<Gig>> => {
+      const ids = await communityIdsForScope(scope);
+      if (ids.length === 0) return { items: [], total: 0, nextPage: null };
+      const [from, to] = rangeFor(pageParam as number);
+      let q = db
+        .from("gigs")
+        .select("*, community:communities(name, slug)", { count: "exact" })
+        .in("community_id", ids)
+        .in("status", ["open", "in_progress"]);
+      const term = sanitizeTerm(filters.term);
+      if (term) q = q.or(ilikeOr(term, ["title", "description", "address_hint"]));
+      if (filters.category) q = q.eq("category", filters.category);
+      if (filters.urgentOnly) q = q.eq("is_urgent", true);
+      if (filters.weekOnly) {
+        const today = new Date();
+        const end = new Date(today.getTime() + 7 * 86400000);
+        q = q
+          .gte("scheduled_date", today.toISOString().slice(0, 10))
+          .lte("scheduled_date", end.toISOString().slice(0, 10));
+      }
+      if (filters.sort === "pagam-mais") {
+        q = q.order("budget_cents", { ascending: false, nullsFirst: false });
+      } else if (filters.sort === "data") {
+        q = q.order("scheduled_date", { ascending: true, nullsFirst: false });
+      } else {
+        q = q.order("is_urgent", { ascending: false }).order("created_at", { ascending: false });
+      }
+      const { data, error, count } = await q.order("id", { ascending: true }).range(from, to);
+      if (error) throw error;
+      return makePage((data ?? []) as Gig[], count, pageParam as number);
+    },
+  });

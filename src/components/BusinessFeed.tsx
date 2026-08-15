@@ -1,30 +1,36 @@
-import { useMemo, useState } from "react";
-import { useQuery, useQueryClient, useSuspenseQuery } from "@tanstack/react-query";
+import { useState } from "react";
+import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { Link } from "@tanstack/react-router";
 import { Search, Store, SlidersHorizontal } from "lucide-react";
 import {
-  businessesByScopeQuery,
+  businessesPagedQuery,
   BUSINESS_CATEGORIES,
-  isOpenNow,
   listFavoriteIds,
   addFavorite,
   removeFavorite,
+  type BusinessCardData,
+  type BusinessSort,
 } from "@/lib/business-api";
 import type { Scope } from "@/lib/listings-api";
 import { useAuth } from "@/hooks/use-auth";
+import { usePagedFeed, useDebounced } from "@/hooks/use-paged-feed";
 import { BusinessCard } from "./BusinessCard";
-
-type SortKey = "relevancia" | "avaliacao" | "recentes";
+import { FeedCount, FeedPagination } from "./FeedPagination";
+import { FeedSkeleton } from "./PageSkeletons";
 
 export function BusinessFeed({ scope }: { scope: Scope }) {
-  const { data: businesses } = useSuspenseQuery(businessesByScopeQuery(scope));
   const { user } = useAuth();
   const qc = useQueryClient();
 
   const [term, setTerm] = useState("");
   const [cat, setCat] = useState<string | null>(null);
   const [openOnly, setOpenOnly] = useState(false);
-  const [sort, setSort] = useState<SortKey>("relevancia");
+  const [sort, setSort] = useState<BusinessSort>("relevancia");
+  const debouncedTerm = useDebounced(term);
+
+  const feed = usePagedFeed<BusinessCardData>(
+    businessesPagedQuery(scope, { term: debouncedTerm, category: cat, openOnly, sort }),
+  );
 
   const { data: favorites = [] } = useQuery({
     queryKey: ["business-favorites", user?.id],
@@ -39,37 +45,7 @@ export function BusinessFeed({ scope }: { scope: Scope }) {
     qc.invalidateQueries({ queryKey: ["business-favorites", user.id] });
   };
 
-  const availableCats = useMemo(
-    () => BUSINESS_CATEGORIES.filter((c) => businesses.some((b) => b.category === c.value)),
-    [businesses],
-  );
-
-  const filtered = useMemo(() => {
-    const q = term.trim().toLowerCase();
-    let list = businesses.filter((b) => {
-      if (cat && b.category !== cat) return false;
-      if (openOnly && isOpenNow(b.hours) !== true) return false;
-      if (!q) return true;
-      return (
-        b.name.toLowerCase().includes(q) ||
-        (b.description ?? "").toLowerCase().includes(q) ||
-        (b.category ?? "").toLowerCase().includes(q)
-      );
-    });
-    if (sort === "avaliacao") {
-      list = [...list].sort((a, b) => (b.rating_avg ?? 0) - (a.rating_avg ?? 0));
-    } else if (sort === "recentes") {
-      list = [...list].sort((a, b) => (a.created_at < b.created_at ? 1 : -1));
-    } else {
-      list = [...list].sort(
-        (a, b) =>
-          Number(isOpenNow(b.hours) === true) - Number(isOpenNow(a.hours) === true) ||
-          b.promo_count - a.promo_count ||
-          (b.rating_avg ?? 0) - (a.rating_avg ?? 0),
-      );
-    }
-    return list;
-  }, [businesses, term, cat, openOnly, sort]);
+  const hasFilters = !!term || !!cat || openOnly;
 
   return (
     <div>
@@ -101,7 +77,7 @@ export function BusinessFeed({ scope }: { scope: Scope }) {
             <SlidersHorizontal className="absolute left-3 top-1/2 -translate-y-1/2 size-4 text-muted-foreground pointer-events-none" />
             <select
               value={sort}
-              onChange={(e) => setSort(e.target.value as SortKey)}
+              onChange={(e) => setSort(e.target.value as BusinessSort)}
               aria-label="Ordenar"
               className="pl-9 pr-3 py-2.5 rounded-full border border-border bg-card text-sm font-semibold appearance-none"
             >
@@ -113,49 +89,83 @@ export function BusinessFeed({ scope }: { scope: Scope }) {
         </div>
       </div>
 
-      {availableCats.length > 0 && (
-        <div className="mt-4 flex gap-2 overflow-x-auto pb-1 -mx-4 px-4 md:mx-0 md:px-0">
-          <Chip active={cat === null} onClick={() => setCat(null)} label="Todos" />
-          {availableCats.map((c) => (
-            <Chip
-              key={c.value}
-              active={cat === c.value}
-              onClick={() => setCat(c.value)}
-              label={`${c.emoji} ${c.label}`}
-            />
-          ))}
+      <div className="mt-4 flex gap-2 overflow-x-auto pb-1 -mx-4 px-4 md:mx-0 md:px-0">
+        <Chip active={cat === null} onClick={() => setCat(null)} label="Todos" />
+        {BUSINESS_CATEGORIES.map((c) => (
+          <Chip
+            key={c.value}
+            active={cat === c.value}
+            onClick={() => setCat(c.value)}
+            label={`${c.emoji} ${c.label}`}
+          />
+        ))}
+      </div>
+
+      <div className="mt-4">
+        <FeedCount
+          loaded={feed.items.length}
+          total={feed.total}
+          noun="comércio encontrado"
+          nounPlural="comércios encontrados"
+        />
+      </div>
+
+      {feed.isLoading ? (
+        <div className="mt-4">
+          <FeedSkeleton />
         </div>
-      )}
-
-      <p className="mt-4 text-xs text-muted-foreground">
-        {filtered.length} {filtered.length === 1 ? "comércio encontrado" : "comércios encontrados"}
-      </p>
-
-      {filtered.length === 0 ? (
+      ) : feed.items.length === 0 ? (
         <div className="mt-4 text-center py-16 bg-card border border-dashed border-border rounded-3xl">
           <Store className="size-10 mx-auto text-muted-foreground" />
-          <h3 className="font-bold text-lg mt-3 mb-2">Nenhum comércio por aqui ainda</h3>
+          <h3 className="font-bold text-lg mt-3 mb-2">
+            {hasFilters ? "Nenhum comércio com esses filtros" : "Nenhum comércio por aqui ainda"}
+          </h3>
           <p className="text-muted-foreground text-sm max-w-sm mx-auto mb-6">
-            Tem um negócio no bairro? Cadastre grátis e apareça para os vizinhos.
+            {hasFilters
+              ? "Tente limpar a busca ou escolher outra categoria."
+              : "Tem um negócio no bairro? Cadastre grátis e apareça para os vizinhos."}
           </p>
-          <Link
-            to="/anunciar"
-            className="inline-block px-6 py-3 bg-brand text-primary-foreground rounded-full font-bold shadow-brand"
-          >
-            Cadastrar meu comércio
-          </Link>
+          {hasFilters ? (
+            <button
+              type="button"
+              onClick={() => {
+                setTerm("");
+                setCat(null);
+                setOpenOnly(false);
+              }}
+              className="inline-block px-6 py-3 bg-card border border-border rounded-full font-bold"
+            >
+              Limpar filtros
+            </button>
+          ) : (
+            <Link
+              to="/anunciar"
+              className="inline-block px-6 py-3 bg-brand text-primary-foreground rounded-full font-bold shadow-brand"
+            >
+              Cadastrar meu comércio
+            </Link>
+          )}
         </div>
       ) : (
-        <div className="mt-4 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5">
-          {filtered.map((b) => (
-            <BusinessCard
-              key={b.id}
-              business={b}
-              favorited={favorites.includes(b.id)}
-              onToggleFavorite={user ? toggleFavorite : undefined}
-            />
-          ))}
-        </div>
+        <>
+          <div className="mt-4 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5">
+            {feed.items.map((b) => (
+              <BusinessCard
+                key={b.id}
+                business={b}
+                favorited={favorites.includes(b.id)}
+                onToggleFavorite={user ? toggleFavorite : undefined}
+              />
+            ))}
+          </div>
+          <FeedPagination
+            loaded={feed.items.length}
+            total={feed.total}
+            hasNextPage={feed.hasNextPage}
+            isFetchingNextPage={feed.isFetchingNextPage}
+            onLoadMore={feed.loadMore}
+          />
+        </>
       )}
     </div>
   );
