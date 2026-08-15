@@ -1,59 +1,27 @@
-import { useMemo, useState } from "react";
-import { useSuspenseQuery } from "@tanstack/react-query";
+import { useState } from "react";
 import { Link } from "@tanstack/react-router";
 import { Search, Flame, SlidersHorizontal } from "lucide-react";
-import { gigsByScopeQuery, GIG_CATEGORIES, type Gig } from "@/lib/gigs-api";
+import { gigsPagedQuery, GIG_CATEGORIES, type Gig, type GigSort } from "@/lib/gigs-api";
 import type { Scope } from "@/lib/listings-api";
+import { usePagedFeed, useDebounced } from "@/hooks/use-paged-feed";
 import { GigCard } from "./GigCard";
+import { FeedCount, FeedPagination } from "./FeedPagination";
+import { FeedSkeleton } from "./PageSkeletons";
 
-type SortKey = "recentes" | "pagam-mais" | "data";
-
-function isThisWeek(gig: Gig) {
-  if (!gig.scheduled_date) return false;
-  const d = new Date(`${gig.scheduled_date}T00:00:00`);
-  const now = new Date();
-  const diff = (d.getTime() - new Date(now.toDateString()).getTime()) / 86400000;
-  return diff >= 0 && diff <= 7;
-}
+type SortKey = GigSort;
 
 export function GigFeed({ scope }: { scope: Scope }) {
-  const { data: gigs } = useSuspenseQuery(gigsByScopeQuery(scope));
-
   const [term, setTerm] = useState("");
   const [cat, setCat] = useState<string | null>(null);
   const [urgentOnly, setUrgentOnly] = useState(false);
   const [weekOnly, setWeekOnly] = useState(false);
   const [sort, setSort] = useState<SortKey>("recentes");
+  const debouncedTerm = useDebounced(term);
 
-  const availableCats = useMemo(
-    () => GIG_CATEGORIES.filter((c) => gigs.some((g) => g.category === c.value)),
-    [gigs],
+  const feed = usePagedFeed<Gig>(
+    gigsPagedQuery(scope, { term: debouncedTerm, category: cat, urgentOnly, weekOnly, sort }),
   );
-
-  const filtered = useMemo(() => {
-    const q = term.trim().toLowerCase();
-    let list = gigs.filter((g) => {
-      if (cat && g.category !== cat) return false;
-      if (urgentOnly && !g.is_urgent) return false;
-      if (weekOnly && !isThisWeek(g)) return false;
-      if (!q) return true;
-      return (
-        g.title.toLowerCase().includes(q) ||
-        g.description.toLowerCase().includes(q) ||
-        (g.address_hint ?? "").toLowerCase().includes(q)
-      );
-    });
-    if (sort === "pagam-mais") {
-      list = [...list].sort((a, b) => (b.budget_cents ?? 0) - (a.budget_cents ?? 0));
-    } else if (sort === "data") {
-      list = [...list].sort((a, b) =>
-        (a.scheduled_date ?? "9999").localeCompare(b.scheduled_date ?? "9999"),
-      );
-    } else {
-      list = [...list].sort((a, b) => (a.created_at < b.created_at ? 1 : -1));
-    }
-    return list;
-  }, [gigs, term, cat, urgentOnly, weekOnly, sort]);
+  const availableCats = GIG_CATEGORIES;
 
   return (
     <div>
@@ -107,9 +75,12 @@ export function GigFeed({ scope }: { scope: Scope }) {
       )}
 
       <div className="mt-4 flex items-center justify-between gap-3">
-        <p className="text-xs text-muted-foreground">
-          {filtered.length} {filtered.length === 1 ? "bico encontrado" : "bicos encontrados"}
-        </p>
+        <FeedCount
+          loaded={feed.items.length}
+          total={feed.total}
+          noun="bico encontrado"
+          nounPlural="bicos encontrados"
+        />
         <Link
           to="/freelances/novo"
           className="text-sm font-bold text-cat-freelance whitespace-nowrap"
@@ -118,7 +89,11 @@ export function GigFeed({ scope }: { scope: Scope }) {
         </Link>
       </div>
 
-      {filtered.length === 0 ? (
+      {feed.isLoading ? (
+        <div className="mt-4">
+          <FeedSkeleton />
+        </div>
+      ) : feed.items.length === 0 ? (
         <div className="mt-4 text-center py-16 bg-card border border-dashed border-border rounded-3xl">
           <Flame className="size-10 mx-auto text-cat-freelance" />
           <h3 className="font-bold text-lg mt-3 mb-2">Nenhum bico por aqui ainda</h3>
@@ -134,11 +109,20 @@ export function GigFeed({ scope }: { scope: Scope }) {
           </Link>
         </div>
       ) : (
-        <div className="mt-4 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5">
-          {filtered.map((g) => (
-            <GigCard key={g.id} gig={g} />
-          ))}
-        </div>
+        <>
+          <div className="mt-4 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5">
+            {feed.items.map((g) => (
+              <GigCard key={g.id} gig={g} />
+            ))}
+          </div>
+          <FeedPagination
+            loaded={feed.items.length}
+            total={feed.total}
+            hasNextPage={feed.hasNextPage}
+            isFetchingNextPage={feed.isFetchingNextPage}
+            onLoadMore={feed.loadMore}
+          />
+        </>
       )}
     </div>
   );
