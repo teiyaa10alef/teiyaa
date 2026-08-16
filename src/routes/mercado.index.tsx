@@ -1,10 +1,16 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { useMemo, useState } from "react";
-import { useQuery } from "@tanstack/react-query";
 import { SiteHeader } from "@/components/SiteHeader";
 import { SiteFooter } from "@/components/SiteFooter";
 import { MarketItemCard } from "@/components/MarketItemCard";
-import { marketItemsQuery, MARKET_CATEGORIES, MARKET_CATEGORY_LABELS } from "@/lib/market-api";
+import {
+  marketItemsPagedQuery,
+  MARKET_CATEGORIES,
+  MARKET_CATEGORY_LABELS,
+  type MarketItem,
+} from "@/lib/market-api";
+import { usePagedFeed } from "@/hooks/use-paged-feed";
+import { FeedCount, FeedPagination } from "@/components/FeedPagination";
 import { useHomeCommunitySlug } from "@/lib/community";
 import { Search, Plus } from "lucide-react";
 
@@ -36,10 +42,11 @@ function MercadoPage() {
   const [q, setQ] = useState("");
 
   const options = useMemo(
-    () => marketItemsQuery({ communitySlug, category, q }),
+    () => marketItemsPagedQuery({ communitySlug, category, q }),
     [communitySlug, category, q],
   );
-  const { data: items = [], isLoading } = useQuery(options);
+  const feed = usePagedFeed<MarketItem>(options);
+  const items = feed.items;
 
   return (
     <div className="min-h-screen bg-background text-foreground flex flex-col">
@@ -108,7 +115,7 @@ function MercadoPage() {
           ))}
         </div>
 
-        {isLoading ? (
+        {feed.isLoading ? (
           <p className="py-16 text-center text-muted-foreground">Carregando…</p>
         ) : items.length === 0 ? (
           <div className="text-center py-16 bg-card border border-dashed border-border rounded-3xl">
@@ -125,11 +132,28 @@ function MercadoPage() {
             </Link>
           </div>
         ) : (
-          <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-3 md:gap-5">
-            {items.map((item) => (
-              <MarketItemCard key={item.id} item={item} />
-            ))}
-          </div>
+          <>
+            <div className="mb-3">
+              <FeedCount
+                loaded={items.length}
+                total={feed.total}
+                noun="item"
+                nounPlural="itens"
+              />
+            </div>
+            <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-3 md:gap-5">
+              {items.map((item) => (
+                <MarketItemCard key={item.id} item={item} />
+              ))}
+            </div>
+            <FeedPagination
+              loaded={items.length}
+              total={feed.total}
+              hasNextPage={feed.hasNextPage}
+              isFetchingNextPage={feed.isFetchingNextPage}
+              onLoadMore={feed.loadMore}
+            />
+          </>
         )}
       </main>
       <SiteFooter />
