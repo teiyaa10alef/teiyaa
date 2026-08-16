@@ -1,10 +1,10 @@
 import { Suspense } from "react";
 import { FeedSkeleton } from "./PageSkeletons";
-import { useSuspenseQuery } from "@tanstack/react-query";
-
 import { Link } from "@tanstack/react-router";
 import { ShoppingBag } from "lucide-react";
-import { listingsQuery, type Scope } from "@/lib/listings-api";
+import { listingsPagedQuery, type Listing, type Scope } from "@/lib/listings-api";
+import { usePagedFeed } from "@/hooks/use-paged-feed";
+import { FeedPagination } from "./FeedPagination";
 import { CATEGORY_ORDER, type CategoryKey } from "@/lib/community";
 import { CATEGORY_ICONS, CATEGORY_SOFT, VISUAL_LABELS } from "@/lib/category-visuals";
 import { ListingCard } from "./ListingCard";
@@ -82,12 +82,13 @@ export function ListingsFeed({ scope, category }: ListingsFeedProps) {
 
 
 function GenericListingsFeed({ scope, category }: Omit<ListingsFeedProps, "basePath">) {
-  const { data: listings } = useSuspenseQuery(listingsQuery(scope, category));
+  const feed = usePagedFeed<Listing>(listingsPagedQuery(scope, category));
 
+  if (feed.isLoading) return <FeedSkeleton />;
 
   return (
     <div>
-      {listings.length === 0 ? (
+      {feed.items.length === 0 ? (
         <div className="text-center py-16 bg-card border border-dashed border-border rounded-3xl">
           <div className="text-4xl mb-3">📭</div>
           <h3 className="font-bold text-lg mb-2">Nenhum anúncio por aqui ainda</h3>
@@ -102,11 +103,20 @@ function GenericListingsFeed({ scope, category }: Omit<ListingsFeedProps, "baseP
           </Link>
         </div>
       ) : (
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5">
-          {listings.map((l) => (
-            <ListingCard key={l.id} listing={l} />
-          ))}
-        </div>
+        <>
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5">
+            {feed.items.map((l) => (
+              <ListingCard key={l.id} listing={l} />
+            ))}
+          </div>
+          <FeedPagination
+            loaded={feed.items.length}
+            total={feed.total}
+            hasNextPage={feed.hasNextPage}
+            isFetchingNextPage={feed.isFetchingNextPage}
+            onLoadMore={feed.loadMore}
+          />
+        </>
       )}
     </div>
   );
