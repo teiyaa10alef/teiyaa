@@ -1,55 +1,35 @@
-import { useMemo, useState } from "react";
-import { useSuspenseQuery } from "@tanstack/react-query";
+import { useState } from "react";
 import { Link } from "@tanstack/react-router";
 import { Search, Home, SlidersHorizontal } from "lucide-react";
 import {
-  propertiesByScopeQuery,
+  propertiesPagedQuery,
   KIND_LABELS,
   PROPERTY_KINDS,
+  type Property,
   type PropertyKind,
   type PropertyPurpose,
+  type PropertySort,
 } from "@/lib/properties-api";
 import type { Scope } from "@/lib/listings-api";
+import { usePagedFeed, useDebounced } from "@/hooks/use-paged-feed";
 import { PropertyCard } from "./PropertyCard";
+import { FeedCount, FeedPagination } from "./FeedPagination";
+import { FeedSkeleton } from "./PageSkeletons";
 
-type SortKey = "recentes" | "menor-preco" | "maior-preco";
+type SortKey = PropertySort;
 
 export function PropertyFeed({ scope }: { scope: Scope }) {
-  const { data: properties } = useSuspenseQuery(propertiesByScopeQuery(scope));
-
   const [term, setTerm] = useState("");
   const [purpose, setPurpose] = useState<PropertyPurpose | null>(null);
   const [kind, setKind] = useState<PropertyKind | null>(null);
   const [minBedrooms, setMinBedrooms] = useState(0);
   const [sort, setSort] = useState<SortKey>("recentes");
+  const debouncedTerm = useDebounced(term);
 
-  const availableKinds = useMemo(
-    () => PROPERTY_KINDS.filter((k) => properties.some((p) => p.kind === k)),
-    [properties],
+  const feed = usePagedFeed<Property>(
+    propertiesPagedQuery(scope, { term: debouncedTerm, purpose, kind, minBedrooms, sort }),
   );
-
-  const filtered = useMemo(() => {
-    const q = term.trim().toLowerCase();
-    let list = properties.filter((p) => {
-      if (purpose && p.purpose !== purpose) return false;
-      if (kind && p.kind !== kind) return false;
-      if (minBedrooms && p.bedrooms < minBedrooms) return false;
-      if (!q) return true;
-      return (
-        p.title.toLowerCase().includes(q) ||
-        p.description.toLowerCase().includes(q) ||
-        (p.address_hint ?? "").toLowerCase().includes(q)
-      );
-    });
-    if (sort === "menor-preco") {
-      list = [...list].sort((a, b) => (a.price_cents ?? Infinity) - (b.price_cents ?? Infinity));
-    } else if (sort === "maior-preco") {
-      list = [...list].sort((a, b) => (b.price_cents ?? 0) - (a.price_cents ?? 0));
-    } else {
-      list = [...list].sort((a, b) => (a.created_at < b.created_at ? 1 : -1));
-    }
-    return list;
-  }, [properties, term, purpose, kind, minBedrooms, sort]);
+  const availableKinds = PROPERTY_KINDS;
 
   return (
     <div>
@@ -105,15 +85,22 @@ export function PropertyFeed({ scope }: { scope: Scope }) {
       </div>
 
       <div className="mt-4 flex items-center justify-between gap-3">
-        <p className="text-xs text-muted-foreground">
-          {filtered.length} {filtered.length === 1 ? "imóvel encontrado" : "imóveis encontrados"}
-        </p>
+        <FeedCount
+          loaded={feed.items.length}
+          total={feed.total}
+          noun="imóvel encontrado"
+          nounPlural="imóveis encontrados"
+        />
         <Link to="/imoveis/novo" className="text-sm font-bold text-cat-imovel whitespace-nowrap">
           + Anunciar imóvel
         </Link>
       </div>
 
-      {filtered.length === 0 ? (
+      {feed.isLoading ? (
+        <div className="mt-4">
+          <FeedSkeleton />
+        </div>
+      ) : feed.items.length === 0 ? (
         <div className="mt-4 text-center py-16 bg-card border border-dashed border-border rounded-3xl">
           <Home className="size-10 mx-auto text-cat-imovel" />
           <h3 className="font-bold text-lg mt-3 mb-2">Nenhum imóvel por aqui ainda</h3>
@@ -128,11 +115,20 @@ export function PropertyFeed({ scope }: { scope: Scope }) {
           </Link>
         </div>
       ) : (
-        <div className="mt-4 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5">
-          {filtered.map((p) => (
-            <PropertyCard key={p.id} property={p} />
-          ))}
-        </div>
+        <>
+          <div className="mt-4 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5">
+            {feed.items.map((p) => (
+              <PropertyCard key={p.id} property={p} />
+            ))}
+          </div>
+          <FeedPagination
+            loaded={feed.items.length}
+            total={feed.total}
+            hasNextPage={feed.hasNextPage}
+            isFetchingNextPage={feed.isFetchingNextPage}
+            onLoadMore={feed.loadMore}
+          />
+        </>
       )}
     </div>
   );
