@@ -79,6 +79,7 @@ export function GigFeed({ scope }: { scope: Scope }) {
           loaded={feed.items.length}
           total={feed.total}
           noun="bico encontrado"
+          zeroLabel="Nenhum bico encontrado"
           nounPlural="bicos encontrados"
         />
         <Link

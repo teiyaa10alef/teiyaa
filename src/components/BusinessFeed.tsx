@@ -106,6 +106,7 @@ export function BusinessFeed({ scope }: { scope: Scope }) {
           loaded={feed.items.length}
           total={feed.total}
           noun="comércio encontrado"
+          zeroLabel="Nenhum comércio encontrado"
           nounPlural="comércios encontrados"
         />
       </div>

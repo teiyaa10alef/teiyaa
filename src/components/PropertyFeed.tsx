@@ -89,6 +89,7 @@ export function PropertyFeed({ scope }: { scope: Scope }) {
           loaded={feed.items.length}
           total={feed.total}
           noun="imóvel encontrado"
+          zeroLabel="Nenhum imóvel encontrado"
           nounPlural="imóveis encontrados"
         />
         <Link to="/imoveis/novo" className="text-sm font-bold text-cat-imovel whitespace-nowrap">

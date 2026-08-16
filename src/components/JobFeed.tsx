@@ -112,6 +112,7 @@ export function JobFeed({ scope }: { scope: Scope }) {
           loaded={feed.items.length}
           total={feed.total}
           noun="vaga encontrada"
+          zeroLabel="Nenhuma vaga encontrada"
           nounPlural="vagas encontradas"
         />
         <Link to="/vagas/novo" className="text-sm font-bold text-cat-vaga whitespace-nowrap">
