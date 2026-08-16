@@ -89,6 +89,7 @@ export function ProfessionalFeed({ scope }: { scope: Scope }) {
           loaded={feed.items.length}
           total={feed.total}
           noun="profissional encontrado"
+          zeroLabel="Nenhum profissional encontrado"
           nounPlural="profissionais encontrados"
         />
       </div>

@@ -5,17 +5,19 @@ export function FeedCount({
   total,
   noun,
   nounPlural,
+  zeroLabel,
 }: {
   loaded: number;
   total: number;
   noun: string;
   nounPlural: string;
+  zeroLabel?: string;
 }) {
   const label = total === 1 ? noun : nounPlural;
   return (
     <p className="text-xs text-muted-foreground">
       {total === 0
-        ? `Nenhum ${noun}`
+        ? (zeroLabel ?? `Nenhum ${noun}`)
         : loaded >= total
           ? `${total} ${label}`
           : `Mostrando ${loaded} de ${total} ${label}`}
