@@ -389,6 +389,257 @@ export type Database = {
           },
         ]
       }
+      gig_applications: {
+        Row: {
+          applicant_id: string
+          available_at: string | null
+          created_at: string
+          gig_id: string
+          id: string
+          message: string | null
+          proposed_cents: number | null
+          status: Database["public"]["Enums"]["gig_application_status"]
+          updated_at: string
+        }
+        Insert: {
+          applicant_id: string
+          available_at?: string | null
+          created_at?: string
+          gig_id: string
+          id?: string
+          message?: string | null
+          proposed_cents?: number | null
+          status?: Database["public"]["Enums"]["gig_application_status"]
+          updated_at?: string
+        }
+        Update: {
+          applicant_id?: string
+          available_at?: string | null
+          created_at?: string
+          gig_id?: string
+          id?: string
+          message?: string | null
+          proposed_cents?: number | null
+          status?: Database["public"]["Enums"]["gig_application_status"]
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "gig_applications_gig_id_fkey"
+            columns: ["gig_id"]
+            isOneToOne: false
+            referencedRelation: "gigs"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      gig_conversations: {
+        Row: {
+          applicant_id: string
+          application_id: string | null
+          created_at: string
+          gig_id: string
+          id: string
+          last_message_at: string
+          owner_id: string
+        }
+        Insert: {
+          applicant_id: string
+          application_id?: string | null
+          created_at?: string
+          gig_id: string
+          id?: string
+          last_message_at?: string
+          owner_id: string
+        }
+        Update: {
+          applicant_id?: string
+          application_id?: string | null
+          created_at?: string
+          gig_id?: string
+          id?: string
+          last_message_at?: string
+          owner_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "gig_conversations_application_id_fkey"
+            columns: ["application_id"]
+            isOneToOne: false
+            referencedRelation: "gig_applications"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "gig_conversations_gig_id_fkey"
+            columns: ["gig_id"]
+            isOneToOne: false
+            referencedRelation: "gigs"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      gig_messages: {
+        Row: {
+          body: string
+          conversation_id: string
+          created_at: string
+          id: string
+          read_at: string | null
+          sender_id: string
+        }
+        Insert: {
+          body: string
+          conversation_id: string
+          created_at?: string
+          id?: string
+          read_at?: string | null
+          sender_id: string
+        }
+        Update: {
+          body?: string
+          conversation_id?: string
+          created_at?: string
+          id?: string
+          read_at?: string | null
+          sender_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "gig_messages_conversation_id_fkey"
+            columns: ["conversation_id"]
+            isOneToOne: false
+            referencedRelation: "gig_conversations"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      gig_reviews: {
+        Row: {
+          comment: string | null
+          created_at: string
+          gig_id: string
+          id: string
+          rating: number
+          reviewee_id: string
+          reviewer_id: string
+          role: string
+          updated_at: string
+        }
+        Insert: {
+          comment?: string | null
+          created_at?: string
+          gig_id: string
+          id?: string
+          rating: number
+          reviewee_id: string
+          reviewer_id: string
+          role?: string
+          updated_at?: string
+        }
+        Update: {
+          comment?: string | null
+          created_at?: string
+          gig_id?: string
+          id?: string
+          rating?: number
+          reviewee_id?: string
+          reviewer_id?: string
+          role?: string
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "gig_reviews_gig_id_fkey"
+            columns: ["gig_id"]
+            isOneToOne: false
+            referencedRelation: "gigs"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      gigs: {
+        Row: {
+          address_hint: string | null
+          applications_count: number
+          assigned_user_id: string | null
+          budget_cents: number | null
+          budget_type: Database["public"]["Enums"]["gig_budget_type"]
+          category: string
+          community_id: string | null
+          created_at: string
+          description: string
+          duration_hours: number | null
+          id: string
+          images: Json
+          is_negotiable: boolean
+          is_urgent: boolean
+          owner_id: string
+          requirements: string[]
+          scheduled_date: string | null
+          scheduled_time: string | null
+          status: Database["public"]["Enums"]["gig_status"]
+          title: string
+          updated_at: string
+          view_count: number
+        }
+        Insert: {
+          address_hint?: string | null
+          applications_count?: number
+          assigned_user_id?: string | null
+          budget_cents?: number | null
+          budget_type?: Database["public"]["Enums"]["gig_budget_type"]
+          category?: string
+          community_id?: string | null
+          created_at?: string
+          description: string
+          duration_hours?: number | null
+          id?: string
+          images?: Json
+          is_negotiable?: boolean
+          is_urgent?: boolean
+          owner_id: string
+          requirements?: string[]
+          scheduled_date?: string | null
+          scheduled_time?: string | null
+          status?: Database["public"]["Enums"]["gig_status"]
+          title: string
+          updated_at?: string
+          view_count?: number
+        }
+        Update: {
+          address_hint?: string | null
+          applications_count?: number
+          assigned_user_id?: string | null
+          budget_cents?: number | null
+          budget_type?: Database["public"]["Enums"]["gig_budget_type"]
+          category?: string
+          community_id?: string | null
+          created_at?: string
+          description?: string
+          duration_hours?: number | null
+          id?: string
+          images?: Json
+          is_negotiable?: boolean
+          is_urgent?: boolean
+          owner_id?: string
+          requirements?: string[]
+          scheduled_date?: string | null
+          scheduled_time?: string | null
+          status?: Database["public"]["Enums"]["gig_status"]
+          title?: string
+          updated_at?: string
+          view_count?: number
+        }
+        Relationships: [
+          {
+            foreignKeyName: "gigs_community_id_fkey"
+            columns: ["community_id"]
+            isOneToOne: false
+            referencedRelation: "communities"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       listings: {
         Row: {
           category: Database["public"]["Enums"]["listing_category"]
@@ -617,6 +868,42 @@ export type Database = {
             referencedColumns: ["id"]
           },
         ]
+      }
+      notifications: {
+        Row: {
+          body: string | null
+          created_at: string
+          entity_id: string | null
+          id: string
+          link_path: string | null
+          read_at: string | null
+          title: string
+          type: string
+          user_id: string
+        }
+        Insert: {
+          body?: string | null
+          created_at?: string
+          entity_id?: string | null
+          id?: string
+          link_path?: string | null
+          read_at?: string | null
+          title: string
+          type: string
+          user_id: string
+        }
+        Update: {
+          body?: string | null
+          created_at?: string
+          entity_id?: string | null
+          id?: string
+          link_path?: string | null
+          read_at?: string | null
+          title?: string
+          type?: string
+          user_id?: string
+        }
+        Relationships: []
       }
       portfolio_items: {
         Row: {
@@ -901,6 +1188,133 @@ export type Database = {
         }
         Relationships: []
       }
+      properties: {
+        Row: {
+          accepts_pets: boolean
+          address: string | null
+          address_hint: string | null
+          area_m2: number | null
+          bathrooms: number
+          bedrooms: number
+          community_id: string | null
+          condo_cents: number | null
+          created_at: string
+          description: string
+          id: string
+          images: Json
+          iptu_cents: number | null
+          is_furnished: boolean
+          is_published: boolean
+          kind: Database["public"]["Enums"]["property_kind"]
+          owner_id: string
+          parking_spots: number
+          phone: string | null
+          price_cents: number | null
+          purpose: Database["public"]["Enums"]["property_purpose"]
+          status: Database["public"]["Enums"]["property_status"]
+          title: string
+          updated_at: string
+          view_count: number
+          whatsapp: string | null
+          whatsapp_click_count: number
+        }
+        Insert: {
+          accepts_pets?: boolean
+          address?: string | null
+          address_hint?: string | null
+          area_m2?: number | null
+          bathrooms?: number
+          bedrooms?: number
+          community_id?: string | null
+          condo_cents?: number | null
+          created_at?: string
+          description?: string
+          id?: string
+          images?: Json
+          iptu_cents?: number | null
+          is_furnished?: boolean
+          is_published?: boolean
+          kind?: Database["public"]["Enums"]["property_kind"]
+          owner_id: string
+          parking_spots?: number
+          phone?: string | null
+          price_cents?: number | null
+          purpose?: Database["public"]["Enums"]["property_purpose"]
+          status?: Database["public"]["Enums"]["property_status"]
+          title: string
+          updated_at?: string
+          view_count?: number
+          whatsapp?: string | null
+          whatsapp_click_count?: number
+        }
+        Update: {
+          accepts_pets?: boolean
+          address?: string | null
+          address_hint?: string | null
+          area_m2?: number | null
+          bathrooms?: number
+          bedrooms?: number
+          community_id?: string | null
+          condo_cents?: number | null
+          created_at?: string
+          description?: string
+          id?: string
+          images?: Json
+          iptu_cents?: number | null
+          is_furnished?: boolean
+          is_published?: boolean
+          kind?: Database["public"]["Enums"]["property_kind"]
+          owner_id?: string
+          parking_spots?: number
+          phone?: string | null
+          price_cents?: number | null
+          purpose?: Database["public"]["Enums"]["property_purpose"]
+          status?: Database["public"]["Enums"]["property_status"]
+          title?: string
+          updated_at?: string
+          view_count?: number
+          whatsapp?: string | null
+          whatsapp_click_count?: number
+        }
+        Relationships: [
+          {
+            foreignKeyName: "properties_community_id_fkey"
+            columns: ["community_id"]
+            isOneToOne: false
+            referencedRelation: "communities"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      property_favorites: {
+        Row: {
+          created_at: string
+          id: string
+          property_id: string
+          user_id: string
+        }
+        Insert: {
+          created_at?: string
+          id?: string
+          property_id: string
+          user_id: string
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          property_id?: string
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "property_favorites_property_id_fkey"
+            columns: ["property_id"]
+            isOneToOne: false
+            referencedRelation: "properties"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       states: {
         Row: {
           code: string
@@ -930,6 +1344,10 @@ export type Database = {
       [_ in never]: never
     }
     Functions: {
+      can_gig_applicant_chat: {
+        Args: { _gig_id: string; _user_id: string }
+        Returns: boolean
+      }
       increment_business_view: {
         Args: { _business_id: string }
         Returns: undefined
@@ -938,6 +1356,7 @@ export type Database = {
         Args: { _business_id: string }
         Returns: undefined
       }
+      increment_gig_view: { Args: { _gig_id: string }; Returns: undefined }
       increment_professional_view: {
         Args: { _professional_id: string }
         Returns: undefined
@@ -946,17 +1365,62 @@ export type Database = {
         Args: { _professional_id: string }
         Returns: undefined
       }
+      increment_property_view: {
+        Args: { _property_id: string }
+        Returns: undefined
+      }
+      increment_property_whatsapp_click: {
+        Args: { _property_id: string }
+        Returns: undefined
+      }
       is_conversation_participant: {
         Args: { _conversation_id: string; _user_id: string }
         Returns: boolean
       }
+      is_gig_conversation_participant: {
+        Args: { _conversation_id: string; _user_id: string }
+        Returns: boolean
+      }
+      is_gig_owner: {
+        Args: { _gig_id: string; _user_id: string }
+        Returns: boolean
+      }
+      push_notification: {
+        Args: {
+          _body: string
+          _entity_id: string
+          _link_path: string
+          _title: string
+          _type: string
+          _user_id: string
+        }
+        Returns: undefined
+      }
     }
     Enums: {
+      gig_application_status:
+        | "sent"
+        | "seen"
+        | "shortlisted"
+        | "accepted"
+        | "rejected"
+        | "withdrawn"
+      gig_budget_type: "fixed" | "hourly" | "negotiable"
+      gig_status: "open" | "in_progress" | "completed" | "cancelled"
       listing_category: "comercio" | "servico" | "imovel" | "freelance" | "vaga"
       listing_status: "active" | "paused" | "archived"
       market_condition: "novo" | "seminovo" | "usado"
       market_status: "active" | "reserved" | "sold" | "paused"
       offer_status: "pending" | "accepted" | "rejected"
+      property_kind:
+        | "casa"
+        | "apartamento"
+        | "kitnet"
+        | "quarto"
+        | "terreno"
+        | "comercial"
+      property_purpose: "aluguel" | "venda"
+      property_status: "active" | "reserved" | "rented" | "sold" | "paused"
     }
     CompositeTypes: {
       [_ in never]: never
@@ -1084,11 +1548,31 @@ export type CompositeTypes<
 export const Constants = {
   public: {
     Enums: {
+      gig_application_status: [
+        "sent",
+        "seen",
+        "shortlisted",
+        "accepted",
+        "rejected",
+        "withdrawn",
+      ],
+      gig_budget_type: ["fixed", "hourly", "negotiable"],
+      gig_status: ["open", "in_progress", "completed", "cancelled"],
       listing_category: ["comercio", "servico", "imovel", "freelance", "vaga"],
       listing_status: ["active", "paused", "archived"],
       market_condition: ["novo", "seminovo", "usado"],
       market_status: ["active", "reserved", "sold", "paused"],
       offer_status: ["pending", "accepted", "rejected"],
+      property_kind: [
+        "casa",
+        "apartamento",
+        "kitnet",
+        "quarto",
+        "terreno",
+        "comercial",
+      ],
+      property_purpose: ["aluguel", "venda"],
+      property_status: ["active", "reserved", "rented", "sold", "paused"],
     },
   },
 } as const
