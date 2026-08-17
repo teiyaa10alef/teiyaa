@@ -14,6 +14,35 @@ export type Database = {
   }
   public: {
     Tables: {
+      business_favorites: {
+        Row: {
+          business_id: string
+          created_at: string
+          id: string
+          user_id: string
+        }
+        Insert: {
+          business_id: string
+          created_at?: string
+          id?: string
+          user_id: string
+        }
+        Update: {
+          business_id?: string
+          created_at?: string
+          id?: string
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "business_favorites_business_id_fkey"
+            columns: ["business_id"]
+            isOneToOne: false
+            referencedRelation: "businesses"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       business_hours: {
         Row: {
           business_id: string
@@ -87,6 +116,91 @@ export type Database = {
           },
         ]
       }
+      business_promotions: {
+        Row: {
+          business_id: string
+          created_at: string
+          description: string | null
+          discount_label: string | null
+          ends_at: string | null
+          id: string
+          is_active: boolean
+          starts_at: string
+          title: string
+          updated_at: string
+        }
+        Insert: {
+          business_id: string
+          created_at?: string
+          description?: string | null
+          discount_label?: string | null
+          ends_at?: string | null
+          id?: string
+          is_active?: boolean
+          starts_at?: string
+          title: string
+          updated_at?: string
+        }
+        Update: {
+          business_id?: string
+          created_at?: string
+          description?: string | null
+          discount_label?: string | null
+          ends_at?: string | null
+          id?: string
+          is_active?: boolean
+          starts_at?: string
+          title?: string
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "business_promotions_business_id_fkey"
+            columns: ["business_id"]
+            isOneToOne: false
+            referencedRelation: "businesses"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      business_reviews: {
+        Row: {
+          business_id: string
+          comment: string | null
+          created_at: string
+          id: string
+          rating: number
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          business_id: string
+          comment?: string | null
+          created_at?: string
+          id?: string
+          rating: number
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          business_id?: string
+          comment?: string | null
+          created_at?: string
+          id?: string
+          rating?: number
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "business_reviews_business_id_fkey"
+            columns: ["business_id"]
+            isOneToOne: false
+            referencedRelation: "businesses"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       business_services: {
         Row: {
           business_id: string
@@ -144,7 +258,9 @@ export type Database = {
           phone: string | null
           slug: string
           updated_at: string
+          view_count: number
           whatsapp: string | null
+          whatsapp_click_count: number
         }
         Insert: {
           address?: string | null
@@ -164,7 +280,9 @@ export type Database = {
           phone?: string | null
           slug: string
           updated_at?: string
+          view_count?: number
           whatsapp?: string | null
+          whatsapp_click_count?: number
         }
         Update: {
           address?: string | null
@@ -184,7 +302,9 @@ export type Database = {
           phone?: string | null
           slug?: string
           updated_at?: string
+          view_count?: number
           whatsapp?: string | null
+          whatsapp_click_count?: number
         }
         Relationships: [
           {
@@ -328,37 +448,257 @@ export type Database = {
           },
         ]
       }
+      market_conversations: {
+        Row: {
+          buyer_id: string
+          created_at: string
+          id: string
+          item_id: string
+          last_message_at: string
+          seller_id: string
+        }
+        Insert: {
+          buyer_id: string
+          created_at?: string
+          id?: string
+          item_id: string
+          last_message_at?: string
+          seller_id: string
+        }
+        Update: {
+          buyer_id?: string
+          created_at?: string
+          id?: string
+          item_id?: string
+          last_message_at?: string
+          seller_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "market_conversations_item_id_fkey"
+            columns: ["item_id"]
+            isOneToOne: false
+            referencedRelation: "market_items"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      market_items: {
+        Row: {
+          category: string
+          community_id: string | null
+          condition: Database["public"]["Enums"]["market_condition"]
+          created_at: string
+          description: string
+          id: string
+          images: Json
+          is_negotiable: boolean
+          price_cents: number | null
+          seller_id: string
+          status: Database["public"]["Enums"]["market_status"]
+          title: string
+          updated_at: string
+        }
+        Insert: {
+          category?: string
+          community_id?: string | null
+          condition?: Database["public"]["Enums"]["market_condition"]
+          created_at?: string
+          description?: string
+          id?: string
+          images?: Json
+          is_negotiable?: boolean
+          price_cents?: number | null
+          seller_id: string
+          status?: Database["public"]["Enums"]["market_status"]
+          title: string
+          updated_at?: string
+        }
+        Update: {
+          category?: string
+          community_id?: string | null
+          condition?: Database["public"]["Enums"]["market_condition"]
+          created_at?: string
+          description?: string
+          id?: string
+          images?: Json
+          is_negotiable?: boolean
+          price_cents?: number | null
+          seller_id?: string
+          status?: Database["public"]["Enums"]["market_status"]
+          title?: string
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "market_items_community_id_fkey"
+            columns: ["community_id"]
+            isOneToOne: false
+            referencedRelation: "communities"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      market_messages: {
+        Row: {
+          body: string
+          conversation_id: string
+          created_at: string
+          id: string
+          read_at: string | null
+          sender_id: string
+        }
+        Insert: {
+          body: string
+          conversation_id: string
+          created_at?: string
+          id?: string
+          read_at?: string | null
+          sender_id: string
+        }
+        Update: {
+          body?: string
+          conversation_id?: string
+          created_at?: string
+          id?: string
+          read_at?: string | null
+          sender_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "market_messages_conversation_id_fkey"
+            columns: ["conversation_id"]
+            isOneToOne: false
+            referencedRelation: "market_conversations"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      market_offers: {
+        Row: {
+          amount_cents: number
+          buyer_id: string
+          created_at: string
+          id: string
+          item_id: string
+          message: string | null
+          seller_id: string
+          status: Database["public"]["Enums"]["offer_status"]
+          updated_at: string
+        }
+        Insert: {
+          amount_cents: number
+          buyer_id: string
+          created_at?: string
+          id?: string
+          item_id: string
+          message?: string | null
+          seller_id: string
+          status?: Database["public"]["Enums"]["offer_status"]
+          updated_at?: string
+        }
+        Update: {
+          amount_cents?: number
+          buyer_id?: string
+          created_at?: string
+          id?: string
+          item_id?: string
+          message?: string | null
+          seller_id?: string
+          status?: Database["public"]["Enums"]["offer_status"]
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "market_offers_item_id_fkey"
+            columns: ["item_id"]
+            isOneToOne: false
+            referencedRelation: "market_items"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       portfolio_items: {
         Row: {
           caption: string | null
           created_at: string
           id: string
+          is_cover: boolean
           media_type: string
           media_url: string
           professional_id: string
           sort_order: number
+          title: string | null
         }
         Insert: {
           caption?: string | null
           created_at?: string
           id?: string
+          is_cover?: boolean
           media_type?: string
           media_url: string
           professional_id: string
           sort_order?: number
+          title?: string | null
         }
         Update: {
           caption?: string | null
           created_at?: string
           id?: string
+          is_cover?: boolean
           media_type?: string
           media_url?: string
           professional_id?: string
           sort_order?: number
+          title?: string | null
         }
         Relationships: [
           {
             foreignKeyName: "portfolio_items_professional_id_fkey"
+            columns: ["professional_id"]
+            isOneToOne: false
+            referencedRelation: "professional_profiles"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      professional_leads: {
+        Row: {
+          budget_cents: number | null
+          contact_whatsapp: string | null
+          created_at: string
+          description: string
+          id: string
+          professional_id: string
+          requester_id: string
+          status: string
+          updated_at: string
+        }
+        Insert: {
+          budget_cents?: number | null
+          contact_whatsapp?: string | null
+          created_at?: string
+          description: string
+          id?: string
+          professional_id: string
+          requester_id: string
+          status?: string
+          updated_at?: string
+        }
+        Update: {
+          budget_cents?: number | null
+          contact_whatsapp?: string | null
+          created_at?: string
+          description?: string
+          id?: string
+          professional_id?: string
+          requester_id?: string
+          status?: string
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "professional_leads_professional_id_fkey"
             columns: ["professional_id"]
             isOneToOne: false
             referencedRelation: "professional_profiles"
@@ -380,9 +720,12 @@ export type Database = {
           phone: string | null
           profession: string
           service_area_km: number | null
+          specialties: string[]
           updated_at: string
           user_id: string
+          view_count: number
           whatsapp: string | null
+          whatsapp_click_count: number
           years_experience: number | null
         }
         Insert: {
@@ -398,9 +741,12 @@ export type Database = {
           phone?: string | null
           profession: string
           service_area_km?: number | null
+          specialties?: string[]
           updated_at?: string
           user_id: string
+          view_count?: number
           whatsapp?: string | null
+          whatsapp_click_count?: number
           years_experience?: number | null
         }
         Update: {
@@ -416,9 +762,12 @@ export type Database = {
           phone?: string | null
           profession?: string
           service_area_km?: number | null
+          specialties?: string[]
           updated_at?: string
           user_id?: string
+          view_count?: number
           whatsapp?: string | null
+          whatsapp_click_count?: number
           years_experience?: number | null
         }
         Relationships: [
@@ -427,6 +776,44 @@ export type Database = {
             columns: ["community_id"]
             isOneToOne: false
             referencedRelation: "communities"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      professional_reviews: {
+        Row: {
+          comment: string | null
+          created_at: string
+          id: string
+          professional_id: string
+          rating: number
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          comment?: string | null
+          created_at?: string
+          id?: string
+          professional_id: string
+          rating: number
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          comment?: string | null
+          created_at?: string
+          id?: string
+          professional_id?: string
+          rating?: number
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "professional_reviews_professional_id_fkey"
+            columns: ["professional_id"]
+            isOneToOne: false
+            referencedRelation: "professional_profiles"
             referencedColumns: ["id"]
           },
         ]
@@ -543,11 +930,33 @@ export type Database = {
       [_ in never]: never
     }
     Functions: {
-      [_ in never]: never
+      increment_business_view: {
+        Args: { _business_id: string }
+        Returns: undefined
+      }
+      increment_business_whatsapp_click: {
+        Args: { _business_id: string }
+        Returns: undefined
+      }
+      increment_professional_view: {
+        Args: { _professional_id: string }
+        Returns: undefined
+      }
+      increment_professional_whatsapp_click: {
+        Args: { _professional_id: string }
+        Returns: undefined
+      }
+      is_conversation_participant: {
+        Args: { _conversation_id: string; _user_id: string }
+        Returns: boolean
+      }
     }
     Enums: {
       listing_category: "comercio" | "servico" | "imovel" | "freelance" | "vaga"
       listing_status: "active" | "paused" | "archived"
+      market_condition: "novo" | "seminovo" | "usado"
+      market_status: "active" | "reserved" | "sold" | "paused"
+      offer_status: "pending" | "accepted" | "rejected"
     }
     CompositeTypes: {
       [_ in never]: never
@@ -677,6 +1086,9 @@ export const Constants = {
     Enums: {
       listing_category: ["comercio", "servico", "imovel", "freelance", "vaga"],
       listing_status: ["active", "paused", "archived"],
+      market_condition: ["novo", "seminovo", "usado"],
+      market_status: ["active", "reserved", "sold", "paused"],
+      offer_status: ["pending", "accepted", "rejected"],
     },
   },
 } as const
